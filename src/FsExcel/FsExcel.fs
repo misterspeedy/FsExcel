@@ -1,4 +1,4 @@
-﻿module FExcel
+﻿module FsExcel
 
 // https://lukelowrey.com/use-github-actions-to-publish-nuget-packages/
 
