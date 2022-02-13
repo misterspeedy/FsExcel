@@ -16,14 +16,14 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/FsExcel
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore src/FsExcel
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Publish FluentEmail.Core
+      run: dotnet test --no-build --verbosity normal src/FsExcel
+    - name: Publish FsExcel
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
           PROJECT_FILE_PATH: src/FsExcel/FsExcel.fsproj
