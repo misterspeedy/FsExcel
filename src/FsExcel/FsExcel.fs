@@ -2,7 +2,7 @@
 
 // https://lukelowrey.com/use-github-actions-to-publish-nuget-packages/
 
-open SpreadsheetLight
+open ClosedXML.Excel
 open DocumentFormat.OpenXml.Spreadsheet
 
 type Position =
@@ -17,10 +17,10 @@ type FontEmphasis =
     | Italic
 
 type Border =
-    | TopBorder of BorderStyleValues * System.Drawing.Color
-    | RightBorder of BorderStyleValues * System.Drawing.Color
-    | BottomBorder of BorderStyleValues * System.Drawing.Color
-    | LeftBorder of BorderStyleValues * System.Drawing.Color
+    | TopBorder of XLBorderStyleValues
+    | RightBorder of XLBorderStyleValues
+    | BottomBorder of XLBorderStyleValues
+    | LeftBorder of XLBorderStyleValues
 
 type HorizontalAlignment =
     | Left
@@ -47,7 +47,8 @@ type Item =
 let render (items : Item list) =
     let mutable r = 1
     let mutable c = 1
-    let ss = new SLDocument()
+    let wb = new XLWorkbook()
+    let ws = wb.Worksheets.Add("TODO")
 
     let go = function
         | RC (row, col) ->
@@ -67,48 +68,48 @@ let render (items : Item list) =
         match item with
         | Cell props ->
 
-            let cellStyle = ss.CreateStyle()
-
             for prop in props do 
+
+                let cell = ws.Cell(r, c)
                 
                 match prop with
                 | Content con ->
                     match con with 
                     | String s ->
-                        ss.SetCellValue(r, c, s) |> ignore
+                        cell.Value <- s
                     | Number n ->
-                        ss.SetCellValueNumeric(r, c, string n) |> ignore
+                        cell.Value <- n
                 | Next p ->
                     go p
                 | CellProp.FontEmphasis fe -> 
                     match fe with
                     | FontEmphasis.Bold ->
-                        cellStyle.SetFontBold(true)
+                        cell.Style.Font.Bold <- true
                     | FontEmphasis.Italic ->
-                        cellStyle.SetFontItalic(true)
+                        cell.Style.Font.Italic <- true
                 | CellProp.Border b ->
                     match b with
-                    | TopBorder(style, color) ->
-                        cellStyle.SetTopBorder(style, color) |> ignore
-                    | RightBorder(style, color) ->
-                        cellStyle.SetRightBorder(style, color) |> ignore
-                    | BottomBorder(style, color) ->
-                        cellStyle.SetBottomBorder(style, color) |> ignore
-                    | LeftBorder(style, color) ->
-                        cellStyle.SetLeftBorder(style, color) |> ignore
+                    | TopBorder style ->
+                        cell.Style.Border.TopBorder <- style
+                    | RightBorder style ->
+                        cell.Style.Border.RightBorder <- style
+                    | BottomBorder style ->
+                        cell.Style.Border.BottomBorder <- style
+                    | LeftBorder style ->
+                        cell.Style.Border.LeftBorder <- style
+                    // TODO border color
                 | HorizontalAlignment h ->
                     match h with
                     | Left ->
-                        cellStyle.Alignment.Horizontal <- HorizontalAlignmentValues.Left
+                        cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Left
                     | Center ->
-                        cellStyle.Alignment.Horizontal <- HorizontalAlignmentValues.Center
+                        cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Center
                     | Right ->
-                        cellStyle.Alignment.Horizontal <- HorizontalAlignmentValues.Right
+                        cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
                 | CellProp.FormatCode fc ->
-                    cellStyle.FormatCode <- fc
+                    cell.Style.NumberFormat.Format <- fc
 
-                ss.SetCellStyle(r, c, cellStyle) |> ignore
         | Go p ->
             go p
 
-    ss
+    wb
