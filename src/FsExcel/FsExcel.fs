@@ -48,7 +48,8 @@ let render (items : Item list) =
     let mutable r = 1
     let mutable c = 1
     let wb = new XLWorkbook()
-    let ws = wb.Worksheets.Add("TODO")
+    // TODO - allow naming
+    let ws = wb.Worksheets.Add("Sheet 1")
 
     let go = function
         | RC (row, col) ->
