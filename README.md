@@ -8,8 +8,7 @@ An F# Excel spreadsheet generator, based on [SpreadsheetLight](https://www.nuget
 
 ```fsharp
 open FsExcel
-open DocumentFormat.OpenXml
-open System.Drawing
+open ClosedXML.Excel
 
 [
     Cell [
@@ -47,17 +46,21 @@ open System.Drawing
         Cell [
             Content(String(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)))
             FontEmphasis(Italic)
-            Border(TopBorder(Spreadsheet.BorderStyleValues.Medium, Color.Red))
-            Border(RightBorder(Spreadsheet.BorderStyleValues.DashDotDot, Color.Orange))
-            Border(BottomBorder(Spreadsheet.BorderStyleValues.Thick, Color.Green))
-            Border(LeftBorder(Spreadsheet.BorderStyleValues.SlantDashDot, Color.Blue))
+            Border(TopBorder(XLBorderStyleValues.Medium))
+            Border(RightBorder(XLBorderStyleValues.DashDotDot))
+            Border(BottomBorder(XLBorderStyleValues.Thick))
+            Border(LeftBorder(XLBorderStyleValues.SlantDashDot))
             HorizontalAlignment(Right)
             Next(DownBy 1)
         ]
 ] 
 |> render
-|> fun ss -> 
-    ss.FreezePanes(1, 0)
-    ss.AutoFitColumn(1, 10)
-    ss.SaveAs(@"/temp/spreadsheet.xlsx")
+|> fun wb -> 
+    match wb.Worksheets.TryGetWorksheet("Sheet 1") with
+    | true, ws -> 
+        ws.SheetView.FreezeRows(1)
+        ws.Columns().AdjustToContents() |> ignore
+    | false, _ ->
+        ()
+    wb.SaveAs(@"/temp/spreadsheet.xlsx")
 ```
