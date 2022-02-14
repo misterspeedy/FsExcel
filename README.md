@@ -1,6 +1,6 @@
 # FsExcel
 
-An F# Excel spreadsheet generator, based on [SpreadsheetLight](https://www.nuget.org/packages/SpreadsheetLight/).
+An F# Excel spreadsheet generator, based on [ClosedXML](https://www.nuget.org/packages/ClosedXML/).
 
 *This is still in early beta.  Anything might change!*
 
