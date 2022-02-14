@@ -51,10 +51,16 @@ open ClosedXML.Excel
             HorizontalAlignment(Right)
             Next(DownBy 1)
         ]
+
+    Go(Col 1)
+
+    Cell [
+        Content(String "That's all folks")
+    ]
 ] 
-|> render
+|> render "Demo"
 |> fun wb -> 
-    match wb.Worksheets.TryGetWorksheet("Sheet 1") with
+    match wb.Worksheets.TryGetWorksheet("Demo") with
     | true, ws -> 
         ws.SheetView.FreezeRows(1)
         ws.Columns().AdjustToContents() |> ignore

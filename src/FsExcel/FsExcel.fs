@@ -6,6 +6,8 @@ open ClosedXML.Excel
 open DocumentFormat.OpenXml.Spreadsheet
 
 type Position =
+    | Row of int
+    | Col of int
     | RC of int * int
     | RightBy of int
     | DownBy of int
@@ -44,17 +46,20 @@ type Item =
     | Cell of props : CellProp list
     | Go of Position
 
-let render (items : Item list) =
+let render (sheetName : string) (items : Item list) =
     let mutable r = 1
     let mutable c = 1
     let wb = new XLWorkbook()
-    // TODO - allow naming
-    let ws = wb.Worksheets.Add("Sheet 1")
+    let ws = wb.Worksheets.Add(sheetName)
 
     let go = function
+        | Row row ->
+            r <- row |> max 1
+        | Col col ->
+            c <- col |> max 1
         | RC (row, col) ->
-            r <- row
-            c <- col
+            r <- row |> max 1
+            c <- col |> max 1
         | RightBy n ->
             c <- c+n
         | DownBy n ->
