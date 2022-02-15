@@ -84,6 +84,12 @@ let render (sheetName : string) (items : Item list) =
         props
         |> List.exists (function | Next _ -> true | _ -> false)
 
+    let sort (props : CellProp list) =
+        props
+        |> List.sortBy (function
+            | Next _ -> 1
+            | _ -> 0)
+
     for item in items do
 
         match item with
@@ -94,6 +100,8 @@ let render (sheetName : string) (items : Item list) =
                     Next(RightBy 1) :: props
                 else
                     props
+                // Ensure Next() props are applied after filling content.
+                |> sort
 
             for prop in props do 
 
