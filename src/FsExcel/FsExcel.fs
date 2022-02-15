@@ -21,10 +21,10 @@ type FontEmphasis =
     | Italic
 
 type Border =
-    | TopBorder of XLBorderStyleValues
-    | RightBorder of XLBorderStyleValues
-    | BottomBorder of XLBorderStyleValues
-    | LeftBorder of XLBorderStyleValues
+    | Top of XLBorderStyleValues
+    | Right of XLBorderStyleValues
+    | Bottom of XLBorderStyleValues
+    | Left of XLBorderStyleValues
 
 type HorizontalAlignment =
     | Left
@@ -40,6 +40,18 @@ type CellProp =
     | Border of Border
     | HorizontalAlignment of HorizontalAlignment
     | FormatCode of string
+
+module CellProps = 
+
+    let hasNext (props : CellProp list) =
+        props
+        |> List.exists (function | Next _ -> true | _ -> false)
+
+    let sort (props : CellProp list) =
+        props
+        |> List.sortBy (function
+            | Next _ -> 1
+            | _ -> 0)
 
 type Item =
     | Cell of props : CellProp list
@@ -80,28 +92,18 @@ let render (sheetName : string) (items : Item list) =
         | Stay ->
             ()
 
-    let hasNext (props : CellProp list) =
-        props
-        |> List.exists (function | Next _ -> true | _ -> false)
-
-    let sort (props : CellProp list) =
-        props
-        |> List.sortBy (function
-            | Next _ -> 1
-            | _ -> 0)
-
     for item in items do
 
         match item with
         | Cell props ->
 
             let props = 
-                if props |> hasNext |> not then
+                if props |> CellProps.hasNext |> not then
                     Next(RightBy 1) :: props
                 else
                     props
                 // Ensure Next() props are applied after filling content.
-                |> sort
+                |> CellProps.sort
 
             for prop in props do 
 
@@ -124,13 +126,13 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Font.Italic <- true
                 | CellProp.Border b ->
                     match b with
-                    | TopBorder style ->
+                    | Border.Top style ->
                         cell.Style.Border.TopBorder <- style
-                    | RightBorder style ->
+                    | Border.Right style ->
                         cell.Style.Border.RightBorder <- style
-                    | BottomBorder style ->
+                    | Border.Bottom style ->
                         cell.Style.Border.BottomBorder <- style
-                    | LeftBorder style ->
+                    | Border.Left style ->
                         cell.Style.Border.LeftBorder <- style
                     // TODO border color
                 | HorizontalAlignment h ->

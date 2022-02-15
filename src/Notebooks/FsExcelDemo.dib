@@ -5,6 +5,10 @@
 
 #!fsharp
 
+#r "nuget: FsExcel"
+
+#!fsharp
+
 open FsExcel
 open ClosedXML.Excel
 
@@ -44,10 +48,10 @@ open ClosedXML.Excel
         Cell [
             String(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m))
             FontEmphasis Italic
-            Border(TopBorder(XLBorderStyleValues.Medium))
-            Border(RightBorder(XLBorderStyleValues.DashDotDot))
-            Border(BottomBorder(XLBorderStyleValues.Thick))
-            Border(LeftBorder(XLBorderStyleValues.SlantDashDot))
+            Border(Border.Top(XLBorderStyleValues.Medium))
+            Border(Border.Right(XLBorderStyleValues.DashDotDot))
+            Border(Border.Bottom(XLBorderStyleValues.Thick))
+            Border(Border.Left(XLBorderStyleValues.SlantDashDot))
             HorizontalAlignment Right
             Next(DownBy 1)
         ]
