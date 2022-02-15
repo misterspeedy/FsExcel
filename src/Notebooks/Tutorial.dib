@@ -1,0 +1,163 @@
+#!fsharp
+
+#r "nuget: FsExcel"
+
+#!fsharp
+
+#r "nuget: ClosedXML"
+#r "../FsExcel/bin/Debug/net5.0/FsExcel.dll"
+
+#!markdown
+
+# FsExcel Tutorial
+
+Welcome to FsExcel, a library for generating for generating Excel spreadsheets (`.xlsx` files), using very simple code.
+
+FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
+
+#!markdown
+
+## Hello World
+
+Here's the complete code to generate a spreadsheet containing a single string cell!
+
+Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/temp` folder. (Change the path to suit.)
+
+#!fsharp
+
+open FsExcel
+
+[
+    Cell [ String "Hello world!" ]
+]
+|> render "HelloWorld"
+|> fun wb -> wb.SaveAs "/temp/HelloWorld.xlsx"
+
+#!markdown
+
+| | *A* |
+| --- | --- |
+| *1* | Hello world! |
+
+This example already embodies the three main stages of building a spreadsheet:
+
+1) Build a list using a list comprehension: `[ ... ]`
+2) In the list make cells using `Cell`
+3) Each cell gets a list of properties, in this case just the cell content, which here is a string: `String "Hello world!"`
+
+
+If you've used `Fable.React` you'll already be familiar with the concepts so far.
+
+4) Send the resulting list to `FsExcel.render`.  Also provide a name for the worksheet tab.  (FsExcel currently only supports one worksheet per workbook.)
+5) The result is a `ClosedXML` workbook which you can save with its `.SaveAs` method.
+
+#!markdown
+
+## Multiple Cells
+
+#!fsharp
+
+open FsExcel
+
+[
+    for i in 1..10 do
+        Cell [ Integer i ]
+]
+|> render "MultipleCells"
+|> fun wb -> wb.SaveAs "/temp/MultipleCells.xlsx"
+
+#!markdown
+
+| | *A* | *B* | *C* | ... | *J* |
+| --- | ---: | ---: | ---: | --- | ---: |
+| *1* | 1 | 2 | 3 | ... | 10 |
+
+Here we use a `for...` comprehension to build multiple cells. (Don't panic: we could have used `List.map` instead!)
+
+By default each new cell is put on the right of its predecessor.
+
+#!markdown
+
+## Vertical Movement
+
+If we want the next cell to be rendered below instead of to the right, we can add a `Next(DownBy 1)` property to the cell:
+
+#!fsharp
+
+open FsExcel
+open System.Globalization
+
+[
+    for m in 1..12 do
+        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        Cell [
+            String monthName
+            Next(DownBy 1)
+        ]
+]
+|> render "VerticalMovement"
+|> fun wb -> wb.SaveAs "/temp/VerticalMovement.xlsx"
+
+#!markdown
+
+| | *A* |
+| --- | --- |
+| 1 | January |
+| 2 | February |
+| 3 | March |
+| | ... |
+| 12 | December |
+
+The `Next` property overrides the default behaviour of rendering each successive cell one to the right. In this case we override it with a 'go down by 1' behaviour.
+
+But what if we want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next(NewRow)`. This causes the next cell to be rendered in column 1 of the next row.
+
+#!fsharp
+
+open FsExcel
+open System.Globalization
+
+[
+    for m in 1..12 do
+        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        Cell [
+            String monthName
+        ]
+        Cell [
+            Integer monthName.Length
+            Next(NewRow)
+        ]
+]
+|> render "Rows"
+|> fun wb -> wb.SaveAs "/temp/Rows.xlsx"
+
+#!markdown
+
+| | *A* | *B* |
+| --- | --- | --- |
+| 1 | January | 7 |
+| 2 | February | 8 |
+| 3 | March | 5 |
+| | ... | |
+| 12 | December | 8 |
+
+Maybe you don't like the idea of attaching the notion of where to go next to the properties of a cell. No problem, you can have standalone position control with the `Go` instruction:
+
+#!fsharp
+
+open FsExcel
+open System.Globalization
+
+[
+    for m in 1..12 do
+        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        Cell [
+            String monthName
+        ]
+        Cell [
+            Integer monthName.Length
+        ]
+        Go(NewRow)
+]
+|> render "RowsGo"
+|> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
