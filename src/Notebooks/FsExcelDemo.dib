@@ -52,6 +52,16 @@ open ClosedXML.Excel
             Next(DownBy 1)
         ]
 
+    Go(Indent 3)
+
+    for i in 1..5 do
+        for j in 1..3 do
+            Cell [
+                Content(String(sprintf "I am %i, %i" i j))
+                Next(RightBy 1)
+            ]
+        Go(NewRow)
+
     Go(Col 1)
 
     Cell [

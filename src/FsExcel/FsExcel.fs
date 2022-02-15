@@ -1,7 +1,5 @@
 ﻿module FsExcel
 
-// https://lukelowrey.com/use-github-actions-to-publish-nuget-packages/
-
 open ClosedXML.Excel
 open DocumentFormat.OpenXml.Spreadsheet
 
@@ -13,6 +11,9 @@ type Position =
     | DownBy of int
     | LeftBy of int
     | UpBy of int
+    | Indent of int
+    | IndentBy of int
+    | NewRow
 
 type FontEmphasis =
     | Bold
@@ -47,6 +48,7 @@ type Item =
     | Go of Position
 
 let render (sheetName : string) (items : Item list) =
+    let mutable indent = 1
     let mutable r = 1
     let mutable c = 1
     let wb = new XLWorkbook()
@@ -67,7 +69,16 @@ let render (sheetName : string) (items : Item list) =
         | UpBy n ->
             r <- r-n |> max 1
         | LeftBy n ->
-            c <- c-n |> max 1        
+            c <- c-n |> max 1
+        | Indent n ->
+            indent <- n |> max 1
+            c <- indent
+        | IndentBy n ->
+            indent <- indent + n |> max 1
+            c <- indent
+        | NewRow -> 
+            r <- r + 1
+            c <- indent
 
     for item in items do
 
