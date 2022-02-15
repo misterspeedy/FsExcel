@@ -2,7 +2,7 @@
 
 An F# Excel spreadsheet generator, based on [ClosedXML](https://www.nuget.org/packages/ClosedXML/).
 
-*This is still in early beta.  Anything might change!*
+*This is still in alpha.  Anything might change!*
 
 ## Example code
 
@@ -12,21 +12,22 @@ open ClosedXML.Excel
 
 [
     Cell [
-        Content(String "Hello world")
+        String "Hello world"
         Next(DownBy 1)
     ]
     Cell [
-        Content(Number System.Math.PI)
-        HorizontalAlignment(Center)
-        FontEmphasis(Bold)
+        Float System.Math.PI
+        HorizontalAlignment Center
+        FontEmphasis Bold
+        Next Stay
     ]
 
     Go(DownBy 3)
 
     Cell [
-        Content(Number System.Math.E)
-        FontEmphasis(Bold)
-        FontEmphasis(Italic)
+        Float System.Math.E
+        FontEmphasis Bold
+        FontEmphasis Italic
         FormatCode "0.00"
         Next(DownBy 1)
     ]
@@ -35,29 +36,37 @@ open ClosedXML.Excel
 
     for i in 1..10 do
         Cell [
-            Content(Number(float i))
-            HorizontalAlignment(Left)
-            Next(RightBy 1)
+            Integer i
+            HorizontalAlignment Left
         ]
 
     Go(RC(7, 2))
 
     for m in 1..12 do
         Cell [
-            Content(String(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)))
-            FontEmphasis(Italic)
+            String(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m))
+            FontEmphasis Italic
             Border(TopBorder(XLBorderStyleValues.Medium))
             Border(RightBorder(XLBorderStyleValues.DashDotDot))
             Border(BottomBorder(XLBorderStyleValues.Thick))
             Border(LeftBorder(XLBorderStyleValues.SlantDashDot))
-            HorizontalAlignment(Right)
+            HorizontalAlignment Right
             Next(DownBy 1)
         ]
+
+    Go(Indent 3)
+
+    for i in 1..5 do
+        for j in 1..3 do
+            Cell [
+                String(sprintf "I am %i, %i" i j)
+            ]
+        Go(NewRow)
 
     Go(Col 1)
 
     Cell [
-        Content(String "That's all folks")
+        String "That's all folks"
     ]
 ] 
 |> render "Demo"

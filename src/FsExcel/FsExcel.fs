@@ -31,13 +31,10 @@ type HorizontalAlignment =
     | Center
     | Right
 
-type Content =
-    | String of string
-    | Number of float
-    // TODO add DateTime
-
 type CellProp =
-    | Content of Content
+    | String of string
+    | Float of float
+    | Integer of int
     | Next of Position
     | FontEmphasis of FontEmphasis
     | Border of Border
@@ -103,12 +100,12 @@ let render (sheetName : string) (items : Item list) =
                 let cell = ws.Cell(r, c)
                 
                 match prop with
-                | Content con ->
-                    match con with 
-                    | String s ->
-                        cell.Value <- s
-                    | Number n ->
-                        cell.Value <- n
+                | String s ->
+                    cell.Value <- s
+                | Float f ->
+                    cell.Value <- f
+                | Integer i ->
+                    cell.Value <- i
                 | Next p ->
                     go p
                 | CellProp.FontEmphasis fe -> 
