@@ -17,6 +17,7 @@ open ClosedXML.Excel
         Content(Number System.Math.PI)
         HorizontalAlignment(Center)
         FontEmphasis(Bold)
+        Next(Stay)
     ]
 
     Go(DownBy 3)
@@ -35,7 +36,6 @@ open ClosedXML.Excel
         Cell [
             Content(Number(float i))
             HorizontalAlignment(Left)
-            Next(RightBy 1)
         ]
 
     Go(RC(7, 2))
@@ -58,7 +58,6 @@ open ClosedXML.Excel
         for j in 1..3 do
             Cell [
                 Content(String(sprintf "I am %i, %i" i j))
-                Next(RightBy 1)
             ]
         Go(NewRow)
 

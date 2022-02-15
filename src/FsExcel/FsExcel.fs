@@ -14,6 +14,7 @@ type Position =
     | Indent of int
     | IndentBy of int
     | NewRow
+    | Stay
 
 type FontEmphasis =
     | Bold
@@ -79,11 +80,23 @@ let render (sheetName : string) (items : Item list) =
         | NewRow -> 
             r <- r + 1
             c <- indent
+        | Stay ->
+            ()
+
+    let hasNext (props : CellProp list) =
+        props
+        |> List.exists (function | Next _ -> true | _ -> false)
 
     for item in items do
 
         match item with
         | Cell props ->
+
+            let props = 
+                if props |> hasNext |> not then
+                    Next(RightBy 1) :: props
+                else
+                    props
 
             for prop in props do 
 
