@@ -133,12 +133,8 @@ open System.Globalization
 [
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
-        Cell [
-            String monthName
-        ]
-        Cell [
-            Integer monthName.Length
-        ]
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
         Go(NewRow)
 ]
 |> render "RowsGo"
@@ -167,12 +163,8 @@ open System.Globalization
 
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
-        Cell [
-            String monthName
-        ]
-        Cell [
-            Integer monthName.Length
-        ]
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
         Go(NewRow)
 ]
 |> render "Indentation"
@@ -207,20 +199,16 @@ open ClosedXML.Excel
     for heading in ["Month"; "Letter Count"] do
         Cell [
             String heading
-            Border(Border.Bottom(XLBorderStyleValues.Medium))
-            FontEmphasis(Bold)
-            FontEmphasis(Italic)
+            Border (Bottom XLBorderStyleValues.Medium)
+            FontEmphasis Bold
+            FontEmphasis Italic
         ]
     Go(NewRow)
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
-        Cell [
-            String monthName
-        ]
-        Cell [
-            Integer monthName.Length
-        ]
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
         Go(NewRow)
 ]
 |> render "Styling"
@@ -245,9 +233,9 @@ open ClosedXML.Excel
 
 let headingStyle = 
     [
-        Border(Border.Bottom(XLBorderStyleValues.Medium))
-        FontEmphasis(Bold)
-        FontEmphasis(Italic)
+        Border(Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
     ]
 
 [
@@ -260,19 +248,15 @@ let headingStyle =
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
-        Cell [
-            String monthName
-        ]
-        Cell [
-            Integer monthName.Length
-        ]
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
         Go(NewRow)
 ]
 |> render "ComposedStyling"
 |> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
 
 ```
-Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
+Number styling can be applied, using standard Excel format strings.  You can also apply horizontal alignment.
 
 ```fsharp
 open FsExcel
@@ -283,9 +267,9 @@ let r = System.Random()
 
 let headingStyle = 
     [
-        Border(Border.Bottom(XLBorderStyleValues.Medium))
-        FontEmphasis(Bold)
-        FontEmphasis(Italic)
+        Border(Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
     ]
 
 [
@@ -293,7 +277,7 @@ let headingStyle =
         Cell [
             String heading
             yield! headingStyle
-            HorizontalAlignment(alignment)
+            HorizontalAlignment alignment
         ]
     
     Go(NewRow)
