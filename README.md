@@ -1,13 +1,15 @@
-# FsExcel Tutorial
+# Welcome!
 
 Welcome to FsExcel, a library for generating for generating Excel spreadsheets (`.xlsx` files), using very simple code.
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
+> This tutorial is also available as an [interactive notebook](https://github.com/misterspeedy/FsExcel/blob/main/src/Notebooks/Tutorial.dib)! Download it, open in Visual Studio Code, and start generating spreadsheets for real!
+
 ---
 ## Hello World
 
-Here's the complete code to generate a spreadsheet containing a single cell containing a string!
+Here's the complete code to generate a spreadsheet with a single cell containing a string!
 
 Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/temp` folder. (Change the path to suit.)
 
@@ -187,7 +189,7 @@ open System.Globalization
 
 Now each row begins at column 2.
 
-Indents apply to all `NewRow` operation until some other indent value is set using `Go(Indent n)`. Specify no indenting with `Go(Indent 1)`.
+Indents apply to all `NewRow` operations until some other indent value is set using `Go(Indent n)`. Specify no indenting with `Go(Indent 1)`.
 
 You can specify indents relative to the current indent level using `Go(IndentBy n)` where _n_ can be a positive or negative integer.
 
