@@ -329,6 +329,16 @@ open ClosedXML.Excel
 |> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
 
 ```
+| | *A* | *B* | *C* | *D* | *E* |
+| --- | --- | --- | --- |--- | --- |
+| 1 | | | Col 3 | |
+| 2 | | | |  | |
+| 3 | | | | | |
+| 4 | | | |Row 4 | |
+| 5 | | | | | |
+| 6 | | | | | R6C5 |
+
+
 Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely:
 
 ```fsharp
@@ -346,3 +356,18 @@ open ClosedXML.Excel
 ]
 |> render "Stay"
 |> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
+
+```
+| | *A* |
+| --- | --- |
+| 1 | 1 |
+| 2 | 2 |
+| 3 | |
+| 4 | 3 |
+| 5 | |
+| 6 | |
+| 7 | 4 |
+| 8 | |
+| 9 | |
+| 10 | |
+| 11 | 5 |
