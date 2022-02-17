@@ -306,3 +306,43 @@ let headingStyle =
 | 2 | Apples | $124.16 | 41 |
 | 3 | Oranges | $755.89 | 40 |
 | 4 | Pears | $679.50 | 88 |
+
+---
+## Absolute Positioning
+
+FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.
+
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+
+[
+    Go (Col 3)
+    Cell [ String "Col 3"]
+    Go (Row 4)
+    Cell [ String "Row 4"]
+    Go (RC(6, 5))
+    Cell [ String "R6C5"]
+]
+|> render "AbsolutePositioning"
+|> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
+
+```
+Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely:
+
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+
+[
+    for i in 1..5 do
+        Cell [
+            Integer i
+            Next(Stay)
+        ]
+        Go(DownBy i)
+]
+|> render "Stay"
+|> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
