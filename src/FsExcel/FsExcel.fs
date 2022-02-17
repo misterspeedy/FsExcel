@@ -118,13 +118,13 @@ let render (sheetName : string) (items : Item list) =
                     cell.Value <- i
                 | Next p ->
                     go p
-                | CellProp.FontEmphasis fe -> 
+                | FontEmphasis fe -> 
                     match fe with
                     | FontEmphasis.Bold ->
                         cell.Style.Font.Bold <- true
                     | FontEmphasis.Italic ->
                         cell.Style.Font.Italic <- true
-                | CellProp.Border b ->
+                | Border b ->
                     match b with
                     | Border.Top style ->
                         cell.Style.Border.TopBorder <- style
@@ -143,7 +143,7 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Center
                     | Right ->
                         cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
-                | CellProp.FormatCode fc ->
+                | FormatCode fc ->
                     cell.Style.NumberFormat.Format <- fc
 
         | Go p ->
