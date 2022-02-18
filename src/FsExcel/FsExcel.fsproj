@@ -11,7 +11,6 @@
     <Description>FsExcel is a library for generating Excel spreadsheets with F#, using very simple code.</Description>
     <Copyright>MIT</Copyright>
     <PackageProjectUrl>>https://github.com/misterspeedy/FsExcel</PackageProjectUrl>
-    <PackageIcon>nuget-logo.png</PackageIcon>
     <PackageIconUrl>https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png</PackageIconUrl>
   </PropertyGroup>
 
