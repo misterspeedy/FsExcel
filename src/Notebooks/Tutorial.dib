@@ -410,12 +410,9 @@ open ClosedXML.Excel
 
 ## Range Styles
 
-You can apply any properties to all cells from a point in your code using the `Style` instruction:
+You can apply any properties to all cells from a point in your code using `Style [ prop; prop...]`. Don't forget to reset style with `Style []` afterwards.
 
 #!fsharp
-
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/net5.0/FsExcel.dll"
 
 open FsExcel
 open System.Globalization
