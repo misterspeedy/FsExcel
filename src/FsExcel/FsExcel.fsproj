@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <Compile Include="FsExcel.fs" />
-    <None Include="assets/logo.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\assets\logo.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>
