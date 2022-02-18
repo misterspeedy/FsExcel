@@ -10,7 +10,7 @@
     <Product>FsExcel</Product>
     <Description>FsExcel is a library for generating Excel spreadsheets with F#, using very simple code.</Description>
     <Copyright>MIT</Copyright>
-    <PackageProjectUrl>>https://github.com/misterspeedy/FsExcel</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/misterspeedy/FsExcel</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
