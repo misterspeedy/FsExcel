@@ -11,11 +11,12 @@
     <Description>FsExcel is a library for generating Excel spreadsheets with F#, using very simple code.</Description>
     <Copyright>MIT</Copyright>
     <PackageProjectUrl>>https://github.com/misterspeedy/FsExcel</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png</PackageIconUrl>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="FsExcel.fs" />
+    <None Include="assets/logo.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
