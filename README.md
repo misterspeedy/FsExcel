@@ -221,7 +221,7 @@ open ClosedXML.Excel
 ```
 | | *A* | *B* |
 | --- | --- | --- |
-| 1 | *Month* | *Letter Count* |
+| 1 | ***Month*** | ***Letter Count*** |
 | 2 | January | 7 |
 | 3 | February | 8 |
 | 4 | March | 5 |
@@ -260,7 +260,9 @@ let headingStyle =
 |> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
 
 ```
-Number styling can be applied, using standard Excel format strings.  You can also apply horizontal alignment.
+## Number Styling and Alignment
+
+Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
 
 ```fsharp
 open FsExcel
@@ -306,7 +308,7 @@ let headingStyle =
 ```
 | | *A* | *B* | *C* |
 | --- | --- | ---: | ---: |
-| 1 | *Stock Item* | *Price* | *Count* |
+| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
 | 2 | Apples | $124.16 | 41 |
 | 3 | Oranges | $755.89 | 40 |
 | 4 | Pears | $679.50 | 88 |
@@ -388,6 +390,14 @@ let r = System.Random()
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
 
 ```
+| | *A* | *B* | *C* |
+| --- | --- | ---: | ---: |
+| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
+| 2 | Apples | *$124.16* | *41* |
+| 3 | Oranges | *$755.89* | *40* |
+| 4 | Pears | *$679.50* | *88* |
+
+---
 ## Absolute Positioning
 
 FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.

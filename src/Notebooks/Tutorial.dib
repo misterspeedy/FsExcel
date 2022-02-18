@@ -242,7 +242,7 @@ open ClosedXML.Excel
 
 | | *A* | *B* |
 | --- | --- | --- |
-| 1 | *Month* | *Letter Count* |
+| 1 | ***Month*** | ***Letter Count*** |
 | 2 | January | 7 |
 | 3 | February | 8 |
 | 4 | March | 5 |
@@ -283,7 +283,9 @@ let headingStyle =
 
 #!markdown
 
-Number styling can be applied, using standard Excel format strings.  You can also apply horizontal alignment.
+## Number Styling and Alignment
+
+Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
 
 #!fsharp
 
@@ -331,7 +333,7 @@ let headingStyle =
 
 | | *A* | *B* | *C* |
 | --- | --- | ---: | ---: |
-| 1 | *Stock Item* | *Price* | *Count* |
+| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
 | 2 | Apples | $124.16 | 41 |
 | 3 | Oranges | $755.89 | 40 |
 | 4 | Pears | $679.50 | 88 |
@@ -416,6 +418,15 @@ let r = System.Random()
 ]
 |> render "RangeStyle"
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
+
+#!markdown
+
+| | *A* | *B* | *C* |
+| --- | --- | ---: | ---: |
+| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
+| 2 | Apples | *$124.16* | *41* |
+| 3 | Oranges | *$755.89* | *40* |
+| 4 | Pears | *$679.50* | *88* |
 
 #!markdown
 
