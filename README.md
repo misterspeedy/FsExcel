@@ -1,6 +1,10 @@
+<img src="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png"
+     alt="FsExcel Logo"
+     style="width: 150px;" />
+
 # Welcome!
 
-Welcome to FsExcel, a library for generating Excel spreadsheets (`.xlsx` files), using very simple code.
+Welcome to FsExcel, a library for generating Excel spreadsheets using very simple code.
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
