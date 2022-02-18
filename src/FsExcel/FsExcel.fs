@@ -55,12 +55,14 @@ module CellProps =
 
 type Item =
     | Cell of props : CellProp list
+    | Style of props : CellProp list
     | Go of Position
 
 let render (sheetName : string) (items : Item list) =
     let mutable indent = 1
     let mutable r = 1
     let mutable c = 1
+    let mutable style : CellProp list = []
     let wb = new XLWorkbook()
     let ws = wb.Worksheets.Add(sheetName)
 
@@ -102,6 +104,7 @@ let render (sheetName : string) (items : Item list) =
                     Next(RightBy 1) :: props
                 else
                     props
+                |> fun ps -> style @ ps
                 // Ensure Next() props are applied after filling content.
                 |> CellProps.sort
 
@@ -145,7 +148,8 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
                 | FormatCode fc ->
                     cell.Style.NumberFormat.Format <- fc
-
+        | Style s ->
+            style <- s        
         | Go p ->
             go p
 
