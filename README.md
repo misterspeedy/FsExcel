@@ -312,6 +312,47 @@ let headingStyle =
 | 4 | Pears | $679.50 | 88 |
 
 ---
+## Background Colors
+
+Set the background color with the `BackgroundColor` property.  The values and some color creation functions are in `ClosedXml.Excel.XLColor`.
+
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+
+let r = System.Random()
+
+[
+    let values = [0..32..240] @ [255]
+    for r in values do
+        for g in values do
+            for b in values do
+                // N.B. the API refuses to fill a cell with black if its font is black
+                // so the very first cell won't be colored.
+                let color = ClosedXML.Excel.XLColor.FromArgb(0, r, g, b)
+                Cell [
+                    String $"R={r};G={g};B={b}"
+                    BackgroundColor color
+                ]
+            Go NewRow
+        Go NewRow
+
+]
+|> render "BackgroundColor"
+|> fun wb -> wb.SaveAs "/temp/BackgroundColor.xlsx"
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/BackgroundColor.PNG?raw=true"
+     alt="BackgroundColor example"
+     style="width: 400px;" />
+
+---
+## Range Styles
+
+You can apply any properties to all cells from a point in your code using `Style [ prop; prop...]`. Don't forget to reset style with `Style []` afterwards.
+
+---
 ## Absolute Positioning
 
 FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.
@@ -375,49 +416,3 @@ open ClosedXML.Excel
 | 9 | |
 | 10 | |
 | 11 | 5 |
-
----
-## Range Styles
-
-You can apply any properties to all cells from a point in your code using the `Style` instruction:
-
-```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/net5.0/FsExcel.dll"
-
-open FsExcel
-open System.Globalization
-open ClosedXML.Excel
-
-let r = System.Random()
-
-[
-    Style [
-        Border(Bottom XLBorderStyleValues.Medium)
-        FontEmphasis Bold
-        FontEmphasis Italic 
-    ]
-    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
-        Cell [ String heading ]
-    Style []
-    
-    Go(NewRow)
-
-    for item in ["Apples"; "Oranges"; "Pears"] do
-        Cell [
-            String item
-        ]
-        Style [ FontEmphasis Italic ]        
-        Cell [
-            Float ((r.NextDouble()*1000.))
-            FormatCode "$0.00"
-        ]
-        Cell [
-            Integer (int (r.NextDouble()*100.))
-            FormatCode "#,###"
-        ]
-        Style []
-        Go(NewRow)
-]
-|> render "RangeStyle"
-|> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"

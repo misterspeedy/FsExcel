@@ -38,6 +38,7 @@ type CellProp =
     | Next of Position
     | FontEmphasis of FontEmphasis
     | Border of Border
+    | BackgroundColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
     | FormatCode of string
 
@@ -97,6 +98,8 @@ let render (sheetName : string) (items : Item list) =
     for item in items do
 
         match item with
+        | Go p ->
+            go p
         | Cell props ->
 
             let props = 
@@ -138,6 +141,8 @@ let render (sheetName : string) (items : Item list) =
                     | Border.Left style ->
                         cell.Style.Border.LeftBorder <- style
                     // TODO border color
+                | BackgroundColor c ->
+                    cell.Style.Fill.BackgroundColor <- c
                 | HorizontalAlignment h ->
                     match h with
                     | Left ->
@@ -150,7 +155,6 @@ let render (sheetName : string) (items : Item list) =
                     cell.Style.NumberFormat.Format <- fc
         | Style s ->
             style <- s        
-        | Go p ->
-            go p
+
 
     wb
