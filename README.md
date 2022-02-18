@@ -326,7 +326,7 @@ open ClosedXML.Excel
 let r = System.Random()
 
 [
-    let values = [0..32..240] @ [255]
+    let values = [0..32..224] @ [255]
     for r in values do
         for g in values do
             for b in values do
