@@ -1,7 +1,6 @@
 ﻿module FsExcel
 
 open ClosedXML.Excel
-open DocumentFormat.OpenXml.Spreadsheet
 
 type Position =
     | Row of int
@@ -155,6 +154,4 @@ let render (sheetName : string) (items : Item list) =
                     cell.Style.NumberFormat.Format <- fc
         | Style s ->
             style <- s        
-
-
     wb

@@ -99,7 +99,7 @@ open System.Globalization
 
 The `Next` property overrides the default behaviour of rendering each successive cell one to the right. In this case we override it with a 'go down by 1' behaviour.
 
-But what if we want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next(NewRow)`. This causes the next cell to be rendered in column 1 of the next row.
+But what if we want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next NewRow`. This causes the next cell to be rendered in column 1 of the next row.
 
 ```fsharp
 open FsExcel
@@ -113,7 +113,7 @@ open System.Globalization
         ]
         Cell [
             Integer monthName.Length
-            Next(NewRow)
+            Next NewRow
         ]
 ]
 |> render "Rows"
@@ -139,7 +139,7 @@ open System.Globalization
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "RowsGo"
 |> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
@@ -169,7 +169,7 @@ open System.Globalization
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "Indentation"
 |> fun wb -> wb.SaveAs "/temp/Indentation.xlsx"
@@ -213,7 +213,7 @@ open ClosedXML.Excel
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "Styling"
 |> fun wb -> wb.SaveAs "/temp/Styling.xlsx"
@@ -254,13 +254,13 @@ let headingStyle =
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "ComposedStyling"
 |> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
 
 ```
-## Number Styling and Alignment
+## Number Formatting and Alignment
 
 Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
 
@@ -300,7 +300,7 @@ let headingStyle =
             Integer (int (r.NextDouble()*100.))
             FormatCode "#,###"
         ]
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "NumberFormatAndAlignment"
 |> fun wb -> wb.SaveAs "/temp/NumberFormatAndAlignment.xlsx"
@@ -322,8 +322,6 @@ Set the background color with the `BackgroundColor` property.  The values and so
 open FsExcel
 open System.Globalization
 open ClosedXML.Excel
-
-let r = System.Random()
 
 [
     let values = [0..32..224] @ [255]
@@ -384,7 +382,7 @@ let r = System.Random()
             FormatCode "#,###"
         ]
         Style []
-        Go(NewRow)
+        Go NewRow
 ]
 |> render "RangeStyle"
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
@@ -429,7 +427,7 @@ open ClosedXML.Excel
 | 6 | | | | | R6C5 |
 
 
-Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely:
+Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
 
 ```fsharp
 open FsExcel
@@ -440,7 +438,7 @@ open ClosedXML.Excel
     for i in 1..5 do
         Cell [
             Integer i
-            Next(Stay)
+            Next Stay
         ]
         Go(DownBy i)
 ]
