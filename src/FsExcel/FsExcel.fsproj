@@ -9,11 +9,12 @@
     <Owners>Kit Eason</Owners>
     <Product>FsExcel</Product>
     <Description>FsExcel is a library for generating Excel spreadsheets with F#, using very simple code.</Description>
-    <Copyright>MIT</Copyright>
+    <Copyright>Kit Eason</Copyright>
     <ProjectUrl>https://github.com/misterspeedy/FsExcel</ProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/misterspeedy/FsExcel</RepositoryUrl> 
     <RepositoryType>git</RepositoryType>     
+    <License>MIT</License>
   </PropertyGroup>
 
   <ItemGroup>
