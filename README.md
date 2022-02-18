@@ -352,7 +352,42 @@ let r = System.Random()
 
 You can apply any properties to all cells from a point in your code using `Style [ prop; prop...]`. Don't forget to reset style with `Style []` afterwards.
 
----
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+let r = System.Random()
+[
+    Style [
+        Border(Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
+    ]
+    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
+        Cell [ String heading ]
+    Style []
+    
+    Go(NewRow)
+    for item in ["Apples"; "Oranges"; "Pears"] do
+        Cell [
+            String item
+        ]
+        Style [ FontEmphasis Italic ]        
+        Cell [
+            Float ((r.NextDouble()*1000.))
+            FormatCode "$0.00"
+        ]
+        Cell [
+            Integer (int (r.NextDouble()*100.))
+            FormatCode "#,###"
+        ]
+        Style []
+        Go(NewRow)
+]
+|> render "RangeStyle"
+|> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
+
+```
 ## Absolute Positioning
 
 FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.
