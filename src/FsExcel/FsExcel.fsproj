@@ -3,7 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.11</Version>
+    <Version>0.0.12</Version>
+    <PackageId>FsExcel</PackageId>
+    <Authors>Kit Eason</Authors>
+    <Owners>Kit Eason</Owners>
+    <Product>FsExcel</Product>
+    <Description>FsExcel is a library for generating Excel spreadsheets with F#, using very simple code.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageProjectUrl>>https://github.com/misterspeedy/FsExcel</PackageProjectUrl>
+    <PackageIcon>nuget-logo.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
