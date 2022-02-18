@@ -1,6 +1,6 @@
 # Welcome!
 
-Welcome to FsExcel, a library for generating for generating Excel spreadsheets (`.xlsx` files), using very simple code.
+Welcome to FsExcel, a library for generating Excel spreadsheets (`.xlsx` files), using very simple code.
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
@@ -30,7 +30,7 @@ open FsExcel
 | --- | --- |
 | *1* | Hello world! |
 
-This example already embodies the three main stages of building a spreadsheet using FsExcel:
+This example already embodies the main stages of building a spreadsheet using FsExcel:
 
 1) Build a list using a list comprehension: `[ ... ]`
 2) In the list make cells using `Cell`
