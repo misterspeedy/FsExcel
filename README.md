@@ -318,7 +318,7 @@ let headingStyle =
 
 You can add a formula to a cell using `FormulaA1(...)`.  
 
-Currently only the `A1` style of cell referencing is supported, meaning that you will need to keep track of the row number you want to refer to:
+Currently only the `A1` style of cell referencing is supported, meaning that you will need to keep track of the column letter and row number you want to refer to:
 
 ```fsharp
 open FsExcel
@@ -368,7 +368,7 @@ let headingStyle =
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
      alt="Styling example"
-     style="width: 200px;" />
+     style="width: 250;" />
 
 ---
 ## Background Colors
