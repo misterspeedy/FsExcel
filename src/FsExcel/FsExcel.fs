@@ -35,6 +35,7 @@ type CellProp =
     | String of string
     | Float of float
     | Integer of int
+    | FormulaA1 of string
     | Next of Position
     | FontEmphasis of FontEmphasis
     | Border of Border
@@ -122,6 +123,8 @@ let render (sheetName : string) (items : Item list) =
                     cell.Value <- f
                 | Integer i ->
                     cell.Value <- i
+                | FormulaA1 s ->
+                    cell.FormulaA1 <- s
                 | Next p ->
                     go p
                 | FontEmphasis fe -> 

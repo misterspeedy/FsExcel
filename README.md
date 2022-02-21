@@ -226,7 +226,7 @@ open ClosedXML.Excel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Styling.PNG?raw=true"
      alt="Styling example"
-     style="width: 200px;" />
+     style="width: 150px;" />
 
 As they are just list items, styles can be composed and applied together as a list. You'll need a `yield!` to include these multiple elements in your cell property list.
 
@@ -312,6 +312,63 @@ let headingStyle =
 | 2 | Apples | $124.16 | 41 |
 | 3 | Oranges | $755.89 | 40 |
 | 4 | Pears | $679.50 | 88 |
+
+---
+## Formulae
+
+You can add a formula to a cell using `FormulaA1(...)`.  
+
+Currently only the `A1` style of cell referencing is supported, meaning that you will need to keep track of the row number you want to refer to:
+
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+
+let r = System.Random()
+
+let headingStyle = 
+    [
+        Border(Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
+    ]
+
+[
+    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right; "Total", Right] do
+        Cell [
+            String heading
+            yield! headingStyle
+            HorizontalAlignment alignment
+        ]
+    
+    Go NewRow
+
+    for index, item in ["Apples"; "Oranges"; "Pears"] |> List.indexed do
+        Cell [
+            String item
+        ]
+        Cell [
+            Float ((r.NextDouble()*1000.))
+            FormatCode "$0.00"
+        ]
+        Cell [
+            Integer (int (r.NextDouble()*100.))
+            FormatCode "#,###"
+        ]
+        Cell [
+            FormulaA1 $"=B{index+2}*C{index+2}"
+            FormatCode "$#,##0.00"
+        ]
+        Go NewRow
+]
+|> render "Formulae"
+|> fun wb -> wb.SaveAs "/temp/Formulae.xlsx"
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
+     alt="Styling example"
+     style="width: 200px;" />
 
 ---
 ## Background Colors
