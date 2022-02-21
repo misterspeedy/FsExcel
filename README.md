@@ -209,7 +209,7 @@ open ClosedXML.Excel
             FontEmphasis Bold
             FontEmphasis Italic
         ]
-    Go(NewRow)
+    Go NewRow
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
@@ -286,7 +286,7 @@ let headingStyle =
             HorizontalAlignment alignment
         ]
     
-    Go(NewRow)
+    Go NewRow
 
     for item in ["Apples"; "Oranges"; "Pears"] do
         Cell [
