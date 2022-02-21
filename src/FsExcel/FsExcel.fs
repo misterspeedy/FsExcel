@@ -18,6 +18,7 @@ type Position =
 type FontEmphasis =
     | Bold
     | Italic
+    | Underline of XLFontUnderlineValues
 
 type Border =
     | Top of XLBorderStyleValues
@@ -129,6 +130,8 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Font.Bold <- true
                     | FontEmphasis.Italic ->
                         cell.Style.Font.Italic <- true
+                    | FontEmphasis.Underline v ->
+                        cell.Style.Font.Underline <- v
                 | Border b ->
                     match b with
                     | Border.Top style ->

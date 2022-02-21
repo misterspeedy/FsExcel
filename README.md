@@ -192,7 +192,9 @@ You can specify indents relative to the current indent level using `Go(IndentBy 
 ---
 ## Border and Font Styling
 
-You can add border and font emphasis (bold or italic) styling using additional cell properties.  The border style values are in `ClosedXML.Excel.XLBorderStyleValues`.
+You can add border and font emphasis (bold, italic or underline) styling using additional cell properties.
+
+The border style values are in `ClosedXML.Excel.XLBorderStyleValues` and the underline values are in `ClosedXML.Excel.XLFontUnderlineValues`.
 
 ```fsharp
 open FsExcel
@@ -211,7 +213,10 @@ open ClosedXML.Excel
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
-        Cell [ String monthName ]
+        Cell [ 
+            String monthName
+            FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
+        ]
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
@@ -219,14 +224,9 @@ open ClosedXML.Excel
 |> fun wb -> wb.SaveAs "/temp/Styling.xlsx"
 
 ```
-| | *A* | *B* |
-| --- | --- | --- |
-| 1 | ***Month*** | ***Letter Count*** |
-| 2 | January | 7 |
-| 3 | February | 8 |
-| 4 | March | 5 |
-| | ... | |
-| 13 | December | 8 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Styling.PNG?raw=true"
+     alt="Styling example"
+     style="width: 200px;" />
 
 As they are just list items, styles can be composed and applied together as a list. You'll need a `yield!` to include these multiple elements in your cell property list.
 
