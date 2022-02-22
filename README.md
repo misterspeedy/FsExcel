@@ -32,7 +32,7 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/HelloWorld.PNG?raw=true"
      alt="Hello World example"
-     style="width: 50px;" />
+     style="width: 120px;" />
 
 This example already embodies the main stages of building a spreadsheet using FsExcel:
 
@@ -61,7 +61,7 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MultipleCells.PNG?raw=true"
      alt="Multiple Cells example"
-     style="width: 300px;" />
+     style="width: 500px;" />
 
 Here we use a `for...` comprehension to build multiple cells. (Don't panic: we could have used `List.map` instead!)
 
@@ -117,7 +117,7 @@ open System.Globalization
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Rows.PNG?raw=true"
      alt="Rows example"
-     style="width: 100px;" />
+     style="width: 150px;" />
 
 Maybe you don't like the idea of saying where to go next in the properties of a cell. No problem, you can have standalone position-control with the `Go` instruction:
 
@@ -138,7 +138,7 @@ open System.Globalization
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RowsGo.PNG?raw=true"
      alt="Rows Go example"
-     style="width: 100px;" />
+     style="width: 150px;" />
 
 ---
 ## Indentation
@@ -164,7 +164,7 @@ open System.Globalization
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Indentation.PNG?raw=true"
      alt="Indentation example"
-     style="width: 150px;" />
+     style="width: 220px;" />
 
 Now each row begins at column 2.
 
@@ -290,7 +290,7 @@ let headingStyle =
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
      alt="Number Format and Alignment example"
-     style="width: 200px;" />
+     style="width: 250px;" />
 
 ---
 ## Formulae
@@ -346,7 +346,7 @@ let headingStyle =
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
      alt="Styling example"
-     style="width: 250px;" />
+     style="width: 300px;" />
 
 ---
 ## Color
