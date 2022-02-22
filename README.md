@@ -371,9 +371,9 @@ let headingStyle =
      style="width: 250;" />
 
 ---
-## Background Colors
+## Color
 
-Set the background color with the `BackgroundColor` property.  The values and some color creation functions are in `ClosedXml.Excel.XLColor`.
+Set the font color with `FontColor` and the background color with the `BackgroundColor` property.  The color values and color creation functions are in `ClosedXml.Excel.XLColor`.
 
 ```fsharp
 open FsExcel
@@ -387,21 +387,23 @@ open ClosedXML.Excel
             for b in values do
                 // N.B. the API refuses to fill a cell with black if its font is black
                 // so the very first cell won't be colored.
-                let color = ClosedXML.Excel.XLColor.FromArgb(0, r, g, b)
+                let backgroundColor = ClosedXML.Excel.XLColor.FromArgb(0, r, g, b)
+                let fontColor = ClosedXML.Excel.XLColor.FromArgb(0, b, r, g)
                 Cell [
                     String $"R={r};G={g};B={b}"
-                    BackgroundColor color
+                    FontColor fontColor
+                    BackgroundColor backgroundColor
                 ]
             Go NewRow
         Go NewRow
 
 ]
-|> render "BackgroundColor"
-|> fun wb -> wb.SaveAs "/temp/BackgroundColor.xlsx"
+|> render "Color"
+|> fun wb -> wb.SaveAs "/temp/Color.xlsx"
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/BackgroundColor.PNG?raw=true"
-     alt="BackgroundColor example"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Color.PNG?raw=true"
+     alt="Color example"
      style="width: 400px;" />
 
 ---

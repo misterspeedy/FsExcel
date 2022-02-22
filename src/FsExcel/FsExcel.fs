@@ -40,6 +40,7 @@ type CellProp =
     | FontEmphasis of FontEmphasis
     | Border of Border
     | BackgroundColor of XLColor
+    | FontColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
     | FormatCode of string
 
@@ -148,6 +149,8 @@ let render (sheetName : string) (items : Item list) =
                     // TODO border color
                 | BackgroundColor c ->
                     cell.Style.Fill.BackgroundColor <- c
+                | FontColor c ->
+                    cell.Style.Font.FontColor <- c
                 | HorizontalAlignment h ->
                     match h with
                     | Left ->
