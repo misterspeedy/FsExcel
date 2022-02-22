@@ -14,7 +14,7 @@
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/misterspeedy/FsExcel</RepositoryUrl> 
     <RepositoryType>git</RepositoryType>     
-    <License Type="expression">MIT</License>
+    <LicenseExpression>MIT</LicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
