@@ -194,7 +194,7 @@ You can specify indents relative to the current indent level using `Go(IndentBy 
 
 ## Border and Font Styling
 
-You can add border and font emphasis (bold, italic or underline) styling using additional cell properties.
+You can add border and font emphasis (bold, italic, underline or strikethrough) styling using `Border (...)` and `FontEmphasis ...` cell properties.
 
 The border style values are in `ClosedXML.Excel.XLBorderStyleValues` and the underline values are in `ClosedXML.Excel.XLFontUnderlineValues`.
 
@@ -219,6 +219,8 @@ open ClosedXML.Excel
         Cell [ 
             String monthName
             FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
+            if monthName = "May" then
+                FontEmphasis StrikeThrough
         ]
         Cell [ Integer monthName.Length ]
         Go NewRow

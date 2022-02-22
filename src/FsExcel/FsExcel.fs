@@ -19,6 +19,7 @@ type FontEmphasis =
     | Bold
     | Italic
     | Underline of XLFontUnderlineValues
+    | StrikeThrough
 
 type Border =
     | Top of XLBorderStyleValues
@@ -136,6 +137,8 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Font.Italic <- true
                     | FontEmphasis.Underline v ->
                         cell.Style.Font.Underline <- v
+                    | FontEmphasis.StrikeThrough ->
+                        cell.Style.Font.Strikethrough <- true
                 | Border b ->
                     match b with
                     | Border.Top style ->
