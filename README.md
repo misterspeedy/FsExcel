@@ -266,7 +266,6 @@ Number styling can be applied using standard Excel format strings.  You can also
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
 
 let r = System.Random()
@@ -322,7 +321,6 @@ Currently only the `A1` style of cell referencing is supported, meaning that you
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
 
 let r = System.Random()
@@ -377,7 +375,6 @@ Set the font color with `FontColor` and the background color with the `Backgroun
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
 
 [
@@ -413,9 +410,10 @@ You can apply any properties to all cells from a point in your code using `Style
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
+
 let r = System.Random()
+
 [
     Style [
         Border(Bottom XLBorderStyleValues.Medium)
@@ -461,7 +459,6 @@ FsExcel is designed to save you from having to keep track of absolute row- and c
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
 
 [
@@ -490,7 +487,6 @@ Remember that, by default, successive cells are placed to the right of their pre
 
 ```fsharp
 open FsExcel
-open System.Globalization
 open ClosedXML.Excel
 
 [
