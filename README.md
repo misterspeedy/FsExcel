@@ -30,16 +30,15 @@ open FsExcel
 |> fun wb -> wb.SaveAs "/temp/HelloWorld.xlsx"
 
 ```
-| | *A* |
-| --- | --- |
-| *1* | Hello world! |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/HelloWorld.PNG?raw=true"
+     alt="Hello World example"
+     style="width: 50px;" />
 
 This example already embodies the main stages of building a spreadsheet using FsExcel:
 
 1) Build a list using a list comprehension: `[ ... ]`
 2) In the list make cells using `Cell`
 3) Each cell gets a list of properties, in this case just the cell content, which here is a string: `String "Hello world!"`
-
 
 If you've used `Fable.React` you'll already be familiar with the concepts so far.
 
@@ -60,9 +59,9 @@ open FsExcel
 |> fun wb -> wb.SaveAs "/temp/MultipleCells.xlsx"
 
 ```
-| | *A* | *B* | *C* | ... | *J* |
-| --- | ---: | ---: | ---: | --- | ---: |
-| *1* | 1 | 2 | 3 | ... | 10 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MultipleCells.PNG?raw=true"
+     alt="Multiple Cells example"
+     style="width: 300px;" />
 
 Here we use a `for...` comprehension to build multiple cells. (Don't panic: we could have used `List.map` instead!)
 
@@ -89,13 +88,9 @@ open System.Globalization
 |> fun wb -> wb.SaveAs "/temp/VerticalMovement.xlsx"
 
 ```
-| | *A* |
-| --- | --- |
-| 1 | January |
-| 2 | February |
-| 3 | March |
-| | ... |
-| 12 | December |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/VerticalMovement.PNG?raw=true"
+     alt="Vertical Movement example"
+     style="width: 100px;" />
 
 The `Next` property overrides the default behaviour of rendering each successive cell one to the right. In this case we override it with a 'go down by 1' behaviour.
 
@@ -120,13 +115,9 @@ open System.Globalization
 |> fun wb -> wb.SaveAs "/temp/Rows.xlsx"
 
 ```
-| | *A* | *B* |
-| --- | --- | --- |
-| 1 | January | 7 |
-| 2 | February | 8 |
-| 3 | March | 5 |
-| | ... | |
-| 12 | December | 8 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Rows.PNG?raw=true"
+     alt="Rows example"
+     style="width: 100px;" />
 
 Maybe you don't like the idea of saying where to go next in the properties of a cell. No problem, you can have standalone position-control with the `Go` instruction:
 
@@ -145,13 +136,9 @@ open System.Globalization
 |> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
 
 ```
-| | *A* | *B* |
-| --- | --- | --- |
-| 1 | January | 7 |
-| 2 | February | 8 |
-| 3 | March | 5 |
-| | ... | |
-| 12 | December | 8 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RowsGo.PNG?raw=true"
+     alt="Rows Go example"
+     style="width: 100px;" />
 
 ---
 ## Indentation
@@ -175,13 +162,9 @@ open System.Globalization
 |> fun wb -> wb.SaveAs "/temp/Indentation.xlsx"
 
 ```
-| | *A* | *B* | *C* |
-| --- | --- | --- | --- |
-| 1 | | January | 7 |
-| 2 | | February | 8 |
-| 3 | | March | 5 |
-| | | ...  ||
-| 12 | | December | 8 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Indentation.PNG?raw=true"
+     alt="Indentation example"
+     style="width: 150px;" />
 
 Now each row begins at column 2.
 
@@ -305,12 +288,9 @@ let headingStyle =
 |> fun wb -> wb.SaveAs "/temp/NumberFormatAndAlignment.xlsx"
 
 ```
-| | *A* | *B* | *C* |
-| --- | --- | ---: | ---: |
-| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
-| 2 | Apples | $124.16 | 41 |
-| 3 | Oranges | $755.89 | 40 |
-| 4 | Pears | $679.50 | 88 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
+     alt="Number Format and Alignment example"
+     style="width: 200px;" />
 
 ---
 ## Formulae
@@ -366,7 +346,7 @@ let headingStyle =
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
      alt="Styling example"
-     style="width: 250;" />
+     style="width: 250px;" />
 
 ---
 ## Color
@@ -445,12 +425,9 @@ let r = System.Random()
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
 
 ```
-| | *A* | *B* | *C* |
-| --- | --- | ---: | ---: |
-| 1 | ***Stock Item*** | ***Price*** | ***Count*** |
-| 2 | Apples | *$124.16* | *41* |
-| 3 | Oranges | *$755.89* | *40* |
-| 4 | Pears | *$679.50* | *88* |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RangeStyle.PNG?raw=true"
+     alt="Range Style example"
+     style="width: 250px;" />
 
 ---
 ## Absolute Positioning
@@ -473,15 +450,9 @@ open ClosedXML.Excel
 |> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
 
 ```
-| | *A* | *B* | *C* | *D* | *E* |
-| --- | --- | --- | --- |--- | --- |
-| 1 | | | Col 3 | |
-| 2 | | | |  | |
-| 3 | | | | | |
-| 4 | | | |Row 4 | |
-| 5 | | | | | |
-| 6 | | | | | R6C5 |
-
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
+     alt="Absolute Positioning example"
+     style="width: 300px;" />
 
 Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
 
@@ -501,16 +472,6 @@ open ClosedXML.Excel
 |> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
 
 ```
-| | *A* |
-| --- | --- |
-| 1 | 1 |
-| 2 | 2 |
-| 3 | |
-| 4 | 3 |
-| 5 | |
-| 6 | |
-| 7 | 4 |
-| 8 | |
-| 9 | |
-| 10 | |
-| 11 | 5 |
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
+     alt="Stay example"
+     style="width: 75px;" />
