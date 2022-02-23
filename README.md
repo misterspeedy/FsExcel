@@ -529,3 +529,47 @@ open System.Globalization
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Worksheets.PNG?raw=true"
      alt="Workseets example"
      style="width: 350px;" />
+
+---
+## Autosize Columns
+
+You can autosize columns to their contents using the ``Columns().AdjustToContents()`` method of the relevant worksheet. If you create explicitly named worksheets you'll have to keep track of their names.
+
+```fsharp
+open FsExcel
+open System.Globalization
+open ClosedXML.Excel
+
+let headingStyle = 
+    [
+        Border(Border.Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
+    ]
+
+[
+    for heading in ["Month"; "Letter Count"] do
+        Cell [
+            String heading
+            yield! headingStyle
+        ]
+    Go(NewRow)
+    
+    for m in 1..12 do
+        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
+        Go NewRow
+]
+|> Render
+|> fun wb ->
+    match wb.TryGetWorksheet("Sheet1") with
+    | true, ws -> ws.Columns().AdjustToContents() |> ignore
+    | false, _ -> ()
+    wb
+|> fun wb -> wb.SaveAs "/temp/AutosizeColumns.xlsx"
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
+     alt="Autosize Columns example"
+     style="width: 200px;" />
