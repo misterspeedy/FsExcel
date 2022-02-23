@@ -27,6 +27,12 @@ type Border =
     | Bottom of XLBorderStyleValues
     | Left of XLBorderStyleValues
 
+type BorderColor =
+    | Top of XLColor
+    | Right of XLColor
+    | Bottom of XLColor
+    | Left of XLColor    
+
 type HorizontalAlignment =
     | Left
     | Center
@@ -40,6 +46,7 @@ type CellProp =
     | Next of Position
     | FontEmphasis of FontEmphasis
     | Border of Border
+    | BorderColor of BorderColor
     | BackgroundColor of XLColor
     | FontColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
@@ -149,7 +156,16 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Border.BottomBorder <- style
                     | Border.Left style ->
                         cell.Style.Border.LeftBorder <- style
-                    // TODO border color
+                | BorderColor bc ->
+                    match bc with
+                    | BorderColor.Top c ->
+                        cell.Style.Border.TopBorderColor <- c
+                    | BorderColor.Right c ->
+                        cell.Style.Border.RightBorderColor <- c
+                    | BorderColor.Bottom c ->
+                        cell.Style.Border.BottomBorderColor <- c
+                    | BorderColor.Left c ->
+                        cell.Style.Border.LeftBorderColor <- c
                 | BackgroundColor c ->
                     cell.Style.Fill.BackgroundColor <- c
                 | FontColor c ->

@@ -175,7 +175,7 @@ You can specify indents relative to the current indent level using `Go(IndentBy 
 ---
 ## Border and Font Styling
 
-You can add border and font emphasis (bold, italic, underline or strikethrough) styling using `Border (...)` and `FontEmphasis ...` cell properties.
+You can add border styling and font emphasis (bold, italic, underline or strikethrough) styling using `Border (...)` and `FontEmphasis ...` cell properties.
 
 The border style values are in `ClosedXML.Excel.XLBorderStyleValues` and the underline values are in `ClosedXML.Excel.XLFontUnderlineValues`.
 
@@ -188,7 +188,7 @@ open ClosedXML.Excel
     for heading in ["Month"; "Letter Count"] do
         Cell [
             String heading
-            Border (Bottom XLBorderStyleValues.Medium)
+            Border (Border.Bottom XLBorderStyleValues.Medium)
             FontEmphasis Bold
             FontEmphasis Italic
         ]
@@ -353,7 +353,9 @@ let headingStyle =
 ---
 ## Color
 
-Set the font color with `FontColor` and the background color with the `BackgroundColor` property.  The color values and color creation functions are in `ClosedXml.Excel.XLColor`.
+Set the font color with `FontColor` and the background color with the `BackgroundColor` property.  Set the border color with `BorderColor`.
+
+The color values and color creation functions are in `ClosedXml.Excel.XLColor`.
 
 ```fsharp
 open FsExcel
@@ -368,10 +370,19 @@ open ClosedXML.Excel
                 // so the very first cell won't be colored.
                 let backgroundColor = ClosedXML.Excel.XLColor.FromArgb(0, r, g, b)
                 let fontColor = ClosedXML.Excel.XLColor.FromArgb(0, b, r, g)
+                let borderColor = ClosedXML.Excel.XLColor.FromArgb(0, g, b, r)
                 Cell [
                     String $"R={r};G={g};B={b}"
                     FontColor fontColor
                     BackgroundColor backgroundColor
+                    Border (Border.Top XLBorderStyleValues.Thick)
+                    Border (Border.Right XLBorderStyleValues.Thick)
+                    Border (Border.Bottom XLBorderStyleValues.Thick)
+                    Border (Border.Left XLBorderStyleValues.Thick)
+                    BorderColor (BorderColor.Top borderColor)
+                    BorderColor (BorderColor.Right borderColor)
+                    BorderColor (BorderColor.Bottom borderColor)
+                    BorderColor (BorderColor.Left borderColor)
                 ]
             Go NewRow
         Go NewRow
