@@ -1,7 +1,7 @@
 open System.IO
 
-let inFile = "./Notebooks/Tutorial.dib"
-let outFile = "../README.md"
+let inFile = "../Notebooks/Tutorial.dib"
+let outFile = "../../README.md"
 
 let mutable firstLine = true
 let mutable inCode = false

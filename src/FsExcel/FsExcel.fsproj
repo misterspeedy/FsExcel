@@ -28,6 +28,10 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="5.0.1" />
-  </ItemGroup>  
+  </ItemGroup>
+
+  <ItemGroup>
+    <Watch Include="../Notebooks/Tutorial.dib"/>
+  </ItemGroup>
 
 </Project>
