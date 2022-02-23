@@ -409,10 +409,14 @@ open ClosedXML.Excel
                     Border (Border.Right XLBorderStyleValues.Thick)
                     Border (Border.Bottom XLBorderStyleValues.Thick)
                     Border (Border.Left XLBorderStyleValues.Thick)
+                    // Could also have used Border.All:
+                    // Border (Border.All XLBorderStyleValues.Thick)
                     BorderColor (BorderColor.Top borderColor)
                     BorderColor (BorderColor.Right borderColor)
                     BorderColor (BorderColor.Bottom borderColor)
                     BorderColor (BorderColor.Left borderColor)
+                    // Could also have used BorderColor.All:
+                    // BorderColor (BorderColor.All borderColor)
                 ]
             Go NewRow
         Go NewRow

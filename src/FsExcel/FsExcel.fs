@@ -26,12 +26,14 @@ type Border =
     | Right of XLBorderStyleValues
     | Bottom of XLBorderStyleValues
     | Left of XLBorderStyleValues
+    | All of XLBorderStyleValues
 
 type BorderColor =
     | Top of XLColor
     | Right of XLColor
     | Bottom of XLColor
     | Left of XLColor    
+    | All of XLColor
 
 type HorizontalAlignment =
     | Left
@@ -156,6 +158,11 @@ let render (sheetName : string) (items : Item list) =
                         cell.Style.Border.BottomBorder <- style
                     | Border.Left style ->
                         cell.Style.Border.LeftBorder <- style
+                    | Border.All style ->
+                        cell.Style.Border.TopBorder <- style
+                        cell.Style.Border.RightBorder <- style
+                        cell.Style.Border.BottomBorder <- style
+                        cell.Style.Border.LeftBorder <- style
                 | BorderColor bc ->
                     match bc with
                     | BorderColor.Top c ->
@@ -165,6 +172,11 @@ let render (sheetName : string) (items : Item list) =
                     | BorderColor.Bottom c ->
                         cell.Style.Border.BottomBorderColor <- c
                     | BorderColor.Left c ->
+                        cell.Style.Border.LeftBorderColor <- c
+                    | BorderColor.All c ->
+                        cell.Style.Border.TopBorderColor <- c
+                        cell.Style.Border.RightBorderColor <- c
+                        cell.Style.Border.BottomBorderColor <- c
                         cell.Style.Border.LeftBorderColor <- c
                 | BackgroundColor c ->
                     cell.Style.Fill.BackgroundColor <- c
