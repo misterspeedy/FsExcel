@@ -70,14 +70,23 @@ type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
     | Go of Position
+    | Worksheet of string
 
-let render (sheetName : string) (items : Item list) =
+let Render (items : Item list) =
+
     let mutable indent = 1
     let mutable r = 1
     let mutable c = 1
     let mutable style : CellProp list = []
+
+    let reset() =
+        indent <- 1
+        r <- 1
+        c <- 1
+        style <- []    
+
     let wb = new XLWorkbook()
-    let ws = wb.Worksheets.Add(sheetName)
+    let mutable currentWorksheet : IXLWorksheet option = None
 
     let go = function
         | Row row ->
@@ -110,9 +119,19 @@ let render (sheetName : string) (items : Item list) =
     for item in items do
 
         match item with
+        | Worksheet name ->
+            currentWorksheet <- wb.Worksheets.Add(name) |> Some
+            reset()
         | Go p ->
             go p
         | Cell props ->
+
+            let ws = 
+                currentWorksheet
+                |> Option.defaultWith (fun _ ->
+                    let newWorksheet = wb.Worksheets.Add("Sheet1")
+                    currentWorksheet <- newWorksheet |> Some
+                    newWorksheet)
 
             let props = 
                 if props |> CellProps.hasNext |> not then

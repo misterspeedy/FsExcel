@@ -26,7 +26,7 @@ open FsExcel
 [
     Cell [ String "Hello world!" ]
 ]
-|> render "HelloWorld"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/HelloWorld.xlsx"
 
 ```
@@ -42,7 +42,7 @@ This example already embodies the main stages of building a spreadsheet using Fs
 
 If you've used `Fable.React` you'll already be familiar with the concepts so far.
 
-4) Send the resulting list to `FsExcel.render`.  Also provide a name for the worksheet tab.  (FsExcel currently only supports one worksheet per workbook.)
+4) Send the resulting list to `FsExcel.Render`.
 5) The result is a `ClosedXML` workbook which you can save with its `.SaveAs` method.
 
 ---
@@ -55,7 +55,7 @@ open FsExcel
     for i in 1..10 do
         Cell [ Integer i ]
 ]
-|> render "MultipleCells"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/MultipleCells.xlsx"
 
 ```
@@ -84,7 +84,7 @@ open System.Globalization
             Next(DownBy 1)
         ]
 ]
-|> render "VerticalMovement"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/VerticalMovement.xlsx"
 
 ```
@@ -111,7 +111,7 @@ open System.Globalization
             Next NewRow
         ]
 ]
-|> render "Rows"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Rows.xlsx"
 
 ```
@@ -132,7 +132,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> render "RowsGo"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
 
 ```
@@ -158,7 +158,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> render "Indentation"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Indentation.xlsx"
 
 ```
@@ -205,7 +205,7 @@ open ClosedXML.Excel
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> render "Styling"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Styling.xlsx"
 
 ```
@@ -222,7 +222,7 @@ open ClosedXML.Excel
 
 let headingStyle = 
     [
-        Border(Bottom XLBorderStyleValues.Medium)
+        Border(Border.Bottom XLBorderStyleValues.Medium)
         FontEmphasis Bold
         FontEmphasis Italic 
     ]
@@ -241,7 +241,7 @@ let headingStyle =
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> render "ComposedStyling"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
 
 ```
@@ -257,7 +257,7 @@ let r = System.Random()
 
 let headingStyle = 
     [
-        Border(Bottom XLBorderStyleValues.Medium)
+        Border(Border.Bottom XLBorderStyleValues.Medium)
         FontEmphasis Bold
         FontEmphasis Italic 
     ]
@@ -286,7 +286,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> render "NumberFormatAndAlignment"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/NumberFormatAndAlignment.xlsx"
 
 ```
@@ -309,7 +309,7 @@ let r = System.Random()
 
 let headingStyle = 
     [
-        Border(Bottom XLBorderStyleValues.Medium)
+        Border(Border.Bottom XLBorderStyleValues.Medium)
         FontEmphasis Bold
         FontEmphasis Italic 
     ]
@@ -342,7 +342,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> render "Formulae"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Formulae.xlsx"
 
 ```
@@ -392,7 +392,7 @@ open ClosedXML.Excel
         Go NewRow
 
 ]
-|> render "Color"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Color.xlsx"
 
 ```
@@ -413,7 +413,7 @@ let r = System.Random()
 
 [
     Style [
-        Border(Bottom XLBorderStyleValues.Medium)
+        Border(Border.Bottom XLBorderStyleValues.Medium)
         FontEmphasis Bold
         FontEmphasis Italic 
     ]
@@ -438,7 +438,7 @@ let r = System.Random()
         Style []
         Go NewRow
 ]
-|> render "RangeStyle"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
 
 ```
@@ -463,7 +463,7 @@ open ClosedXML.Excel
     Go (RC(6, 5))
     Cell [ String "R6C5"]
 ]
-|> render "AbsolutePositioning"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
 
 ```
@@ -485,10 +485,47 @@ open ClosedXML.Excel
         ]
         Go(DownBy i)
 ]
-|> render "Stay"
+|> Render
 |> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
      alt="Stay example"
      style="width: 150px;" />
+
+---
+## Worksheets (Tabs)
+
+By default, all cells are placed into a worksheet (tab) called "Sheet1".  You can override this, and create additional worksheets, using `Worksheet ...`.
+
+If you do not want a "Sheet1" tab you'll need to use `Worksheet` to create an explicitly named sheet - before creating any cells.
+
+Each new worksheet starts at the top-left cell, has an indent setting of 1 (no indent), and has an empty list as its current `Style [...]` value.
+
+```fsharp
+open FsExcel
+open System.Globalization
+
+[
+    Worksheet CultureInfo.CurrentCulture.NativeName
+    for m in 1..12 do
+        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
+        Go NewRow
+
+    let welshCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("cy")
+    Worksheet welshCulture.NativeName
+    for m in 1..12 do
+        let monthName = welshCulture.DateTimeFormat.GetMonthName(m)
+        Cell [ String monthName ]
+        Cell [ Integer monthName.Length ]
+        Go NewRow
+]
+|> Render
+|> fun wb -> wb.SaveAs "/temp/Worksheets.xlsx"
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Worksheets.PNG?raw=true"
+     alt="Workseets example"
+     style="width: 250px;" />
