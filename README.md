@@ -651,16 +651,16 @@ records
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceVertical.PNG?raw=true"
      alt="Table example - vertical record sequence"
-     style="width: 200px;" />
+     style="width: 350px;" />
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceHorizontal.PNG?raw=true"
      alt="Table example - horizontal record sequence"
-     style="width: 200px;" />
+     style="width: 350px;" />
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceVertical.PNG?raw=true"
      alt="Table example - vertical record instance"
-     style="width: 200px;" />
+     style="width: 350px;" />
      
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceHorizontal.PNG?raw=true"
      alt="Table example - horizontal record instance"
-     style="width: 200px;" />
+     style="width: 350px;" />
