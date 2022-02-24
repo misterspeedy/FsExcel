@@ -555,10 +555,10 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    let welshCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("cy")
-    Worksheet welshCulture.NativeName
+    let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
+    Worksheet ukrainianCulture.NativeName
     for m in 1..12 do
-        let monthName = welshCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = ukrainianCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
