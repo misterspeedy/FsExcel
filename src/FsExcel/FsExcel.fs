@@ -66,11 +66,18 @@ module CellProps =
             | Next _ -> 1
             | _ -> 0)
 
+type AutoFit =
+    | ColRange of int * int
+    | RowRange of int * int
+    | AllCols
+    | AllRows
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
     | Go of Position
     | Worksheet of string
+    | AutoFit of AutoFit
 
 let Render (items : Item list) =
 
@@ -87,6 +94,13 @@ let Render (items : Item list) =
 
     let wb = new XLWorkbook()
     let mutable currentWorksheet : IXLWorksheet option = None
+
+    let getCurrentWorksheet() = 
+        currentWorksheet
+        |> Option.defaultWith (fun _ ->
+            let newWorksheet = wb.Worksheets.Add("Sheet1")
+            currentWorksheet <- newWorksheet |> Some
+            newWorksheet)    
 
     let go = function
         | Row row ->
@@ -126,12 +140,7 @@ let Render (items : Item list) =
             go p
         | Cell props ->
 
-            let ws = 
-                currentWorksheet
-                |> Option.defaultWith (fun _ ->
-                    let newWorksheet = wb.Worksheets.Add("Sheet1")
-                    currentWorksheet <- newWorksheet |> Some
-                    newWorksheet)
+            let ws = getCurrentWorksheet()
 
             let props = 
                 if props |> CellProps.hasNext |> not then
@@ -211,6 +220,18 @@ let Render (items : Item list) =
                         cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
                 | FormatCode fc ->
                     cell.Style.NumberFormat.Format <- fc
+        | AutoFit af ->
+            let ws = getCurrentWorksheet()
+
+            match af with
+            | ColRange (a, b) ->
+                ws.Columns(a, b).AdjustToContents() |> ignore
+            | RowRange (a, b) ->
+                ws.Rows(a, b).AdjustToContents() |> ignore
+            | AllCols ->
+                ws.Columns().AdjustToContents() |> ignore
+            | AllRows ->
+                ws.Rows().AdjustToContents() |> ignore
         | Style s ->
             style <- s        
     wb

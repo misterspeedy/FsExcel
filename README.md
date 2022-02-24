@@ -70,7 +70,7 @@ By default each new cell is put on the right of its predecessor.
 ---
 ## Vertical Movement
 
-If we want the next cell to be rendered below instead of to the right, we can add a `Next(DownBy 1)` property to the cell:
+If you want the next cell to be rendered below instead of to the right, you can add a `Next(DownBy 1)` property to the cell:
 
 ```fsharp
 open FsExcel
@@ -94,7 +94,7 @@ open System.Globalization
 
 The `Next` property overrides the default behaviour of rendering each successive cell one to the right. In this case we override it with a 'go down by 1' behaviour.
 
-But what if we want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next NewRow`. This causes the next cell to be rendered in column 1 of the next row.
+But what if you want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next NewRow`. This causes the next cell to be rendered in column 1 of the next row.
 
 ```fsharp
 open FsExcel
@@ -233,7 +233,7 @@ let headingStyle =
             String heading
             yield! headingStyle
         ]
-    Go(NewRow)
+    Go NewRow
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
@@ -421,7 +421,7 @@ let r = System.Random()
         Cell [ String heading ]
     Style []
     
-    Go(NewRow)
+    Go NewRow
     for item in ["Apples"; "Oranges"; "Pears"] do
         Cell [
             String item
@@ -533,9 +533,14 @@ open System.Globalization
 ---
 ## Autosize Columns
 
-You can autosize columns to their contents using the ``Columns().AdjustToContents()`` method of the relevant worksheet. If you create explicitly named worksheets you'll have to keep track of their names.
+You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns ``AutoFit (ColRange(<c1>, <c2>))``.
+
+You can also set the heights of rows to auto fit with ``AutoFit AllRows`` and ``AutoFit (RowRange(<r1>,<r2>))``.
 
 ```fsharp
+#r "nuget: ClosedXML"
+#r "../FsExcel/bin/Debug/net5.0/FsExcel.dll"
+
 open FsExcel
 open System.Globalization
 open ClosedXML.Excel
@@ -553,20 +558,17 @@ let headingStyle =
             String heading
             yield! headingStyle
         ]
-    Go(NewRow)
+    Go NewRow
     
     for m in 1..12 do
         let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
+
+    AutoFit AllCols
 ]
 |> Render
-|> fun wb ->
-    match wb.TryGetWorksheet("Sheet1") with
-    | true, ws -> ws.Columns().AdjustToContents() |> ignore
-    | false, _ -> ()
-    wb
 |> fun wb -> wb.SaveAs "/temp/AutosizeColumns.xlsx"
 
 ```
