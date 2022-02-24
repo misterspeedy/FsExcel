@@ -533,14 +533,13 @@ open System.Globalization
 ---
 ## Autosize Columns
 
-You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns ``AutoFit (ColRange(<c1>, <c2>))``.
+You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns with ``AutoFit (ColRange(<c1>, <c2>))``.
 
-You can also set the heights of rows to auto fit with ``AutoFit AllRows`` and ``AutoFit (RowRange(<r1>,<r2>))``.
+You can autofit heights of rows with ``AutoFit AllRows`` and ``AutoFit (RowRange(<r1>,<r2>))``.
+
+Perform ``AutoFit`` operations *after* the cells have been populated!
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/net5.0/FsExcel.dll"
-
 open FsExcel
 open System.Globalization
 open ClosedXML.Excel
