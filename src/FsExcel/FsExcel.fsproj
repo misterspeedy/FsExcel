@@ -1,9 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.25</Version>
+    <Version>0.0.26</Version>
     <PackageId>FsExcel</PackageId>
     <Authors>Kit Eason</Authors>
     <Owners>Kit Eason</Owners>
@@ -12,26 +11,22 @@
     <Copyright>Kit Eason</Copyright>
     <ProjectUrl>https://github.com/misterspeedy/FsExcel</ProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
-    <RepositoryUrl>https://github.com/misterspeedy/FsExcel</RepositoryUrl> 
-    <RepositoryType>git</RepositoryType>     
+    <RepositoryUrl>https://github.com/misterspeedy/FsExcel</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <LicenseExpression>MIT</LicenseExpression>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="FsExcel.fs" />
-    <None Include="..\..\assets\logo.png" Pack="true" PackagePath=""/>
+    <Compile Include="Table.fs" />
+    <None Include="..\..\assets\logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="5.0.1" />
   </ItemGroup>
-
   <ItemGroup>
-    <Watch Include="../Notebooks/Tutorial.dib"/>
+    <Watch Include="../Notebooks/Tutorial.dib" />
   </ItemGroup>
-
 </Project>

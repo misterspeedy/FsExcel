@@ -26,7 +26,7 @@ open FsExcel
 [
     Cell [ String "Hello world!" ]
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/HelloWorld.xlsx"
 
 ```
@@ -55,7 +55,7 @@ open FsExcel
     for i in 1..10 do
         Cell [ Integer i ]
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/MultipleCells.xlsx"
 
 ```
@@ -84,7 +84,7 @@ open System.Globalization
             Next(DownBy 1)
         ]
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/VerticalMovement.xlsx"
 
 ```
@@ -111,7 +111,7 @@ open System.Globalization
             Next NewRow
         ]
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Rows.xlsx"
 
 ```
@@ -132,7 +132,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
 
 ```
@@ -158,7 +158,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Indentation.xlsx"
 
 ```
@@ -205,7 +205,7 @@ open ClosedXML.Excel
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Styling.xlsx"
 
 ```
@@ -241,7 +241,7 @@ let headingStyle =
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
 
 ```
@@ -286,7 +286,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/NumberFormatAndAlignment.xlsx"
 
 ```
@@ -342,7 +342,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Formulae.xlsx"
 
 ```
@@ -392,7 +392,7 @@ open ClosedXML.Excel
         Go NewRow
 
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Color.xlsx"
 
 ```
@@ -438,7 +438,7 @@ let r = System.Random()
         Style []
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
 
 ```
@@ -463,7 +463,7 @@ open ClosedXML.Excel
     Go (RC(6, 5))
     Cell [ String "R6C5"]
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
 
 ```
@@ -485,7 +485,7 @@ open ClosedXML.Excel
         ]
         Go(DownBy i)
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
 
 ```
@@ -522,7 +522,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/Worksheets.xlsx"
 
 ```
@@ -569,10 +569,98 @@ let headingStyle =
 
     AutoFit AllCols
 ]
-|> Render
+|> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/AutosizeColumns.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
      alt="Autosize Columns example"
+     style="width: 200px;" />
+
+---
+## Tables from types
+
+You can create a table of cells from an instance or a sequence of any type having serializable fields - for example a record type.
+
+Use `Table.fromInstance` or `Table.fromSeq` and provide
+
+- an orientation (`Table.Direction.Horizontal` or `Table.Direction.Vertical`)
+- a style for heading cells (the field names)
+- a style for body cells (the field values)
+- the instance or sequence.
+
+In horizontal tables, the values for each record appear beside one another.  In vertical tables the values for a record appear below one another.
+
+Tables don't automatically autofit - you'll have to do that (if you want) after the table is built.
+
+```fsharp
+open System
+open ClosedXML.Excel
+open FsExcel
+
+type MyRecord =  {
+    Name : string
+    Age : int
+    Fees : decimal
+    DateJoined : DateTime
+}
+
+let records = [
+    { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = DateTime(2022, 3, 12) }
+    { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = DateTime(2022, 3, 13) }
+    { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = DateTime(2022, 3, 15) }
+]
+
+let headingStyleHorizontal = [
+    Border(Border.Bottom XLBorderStyleValues.Medium)
+    FontEmphasis Bold
+]
+
+let headingStyleVertical =  [ FontEmphasis Bold ]
+
+let bodyStyle = [ FontEmphasis Italic ]
+
+records
+|> Table.fromSeq Table.Direction.Vertical headingStyleVertical bodyStyle
+|> fun cells -> cells @ [ AutoFit All ]
+|> Renderer.Render
+|> fun wb -> wb.SaveAs "/temp/RecordSequenceVertical.xlsx"
+
+records
+|> Table.fromSeq Table.Direction.Horizontal headingStyleHorizontal bodyStyle
+|> fun cells -> cells @ [ AutoFit All ]
+|> Renderer.Render
+|> fun wb -> wb.SaveAs "/temp/RecordSequenceHorizontal.xlsx"
+
+records
+|> Seq.tryHead
+|> Option.iter (fun r ->
+
+    r 
+    |> Table.fromInstance Table.Direction.Vertical headingStyleVertical bodyStyle
+    |> fun cells -> cells @ [ AutoFit All ]
+    |> Renderer.Render
+    |> fun wb -> wb.SaveAs "/temp/RecordInstanceVertical.xlsx"    
+
+    r 
+    |> Table.fromInstance Table.Direction.Horizontal headingStyleHorizontal bodyStyle
+    |> fun cells -> cells @ [ AutoFit All ]
+    |> Renderer.Render
+    |> fun wb -> wb.SaveAs "/temp/RecordInstanceHorizontal.xlsx")
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceVertical.PNG?raw=true"
+     alt="Table example - vertical record sequence"
+     style="width: 200px;" />
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceHorizontal.PNG?raw=true"
+     alt="Table example - horizontal record sequence"
+     style="width: 200px;" />
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceVertical.PNG?raw=true"
+     alt="Table example - vertical record instance"
+     style="width: 200px;" />
+     
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceHorizontal.PNG?raw=true"
+     alt="Table example - horizontal record instance"
      style="width: 200px;" />
