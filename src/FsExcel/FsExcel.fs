@@ -67,6 +67,7 @@ module CellProps =
             | _ -> 0)
 
 type AutoFit =
+    | All
     | ColRange of int * int
     | RowRange of int * int
     | AllCols
@@ -224,6 +225,9 @@ let Render (items : Item list) =
             let ws = getCurrentWorksheet()
 
             match af with
+            | All ->
+                ws.Columns().AdjustToContents() |> ignore
+                ws.Rows().AdjustToContents() |> ignore
             | ColRange (a, b) ->
                 ws.Columns(a, b).AdjustToContents() |> ignore
             | RowRange (a, b) ->
