@@ -13,7 +13,7 @@ module Table =
 
         let cache = ConcurrentDictionary<System.Type, Reflection.PropertyInfo[]>()
         
-        let getSerializableFields t = cache.GetOrAdd(t, fun _ -> 
+        let serializable t = cache.GetOrAdd(t, fun _ -> 
             let fields = FSharpType.GetRecordFields(t)
             // TODO Is this really the best way of determining if a record 
             // field should be serialized? Especially the matching-by-"Name+@" part.
@@ -28,54 +28,61 @@ module Table =
 
         open FsExcel
 
-        let body r =
+        let body getCellStyle r =
             let t = r.GetType()
-            let fields = Fields.getSerializableFields t
+            let fields = Fields.serializable t
             fields
-            |> Array.map (fun f -> FSharpValue.GetRecordField(r, f))
-            |> Array.map (fun f ->
-                match f with
-                | :? String as s ->
-                    String s
-                | :? DateTimeOffset as dto ->
-                    // TODO handle dates explictly
-                    String (dto.ToString("u"))
-                | :? DateTime as dt ->
-                    String (dt.ToString("u"))
-                | :? int as i ->
-                    Integer i
-                | :? float as f ->
-                    Float f
-                | :? float32 as f ->
-                    Float (float f)
-                | :? decimal as d ->
-                    Float (float d)
-                | _ -> 
-                    String (string f))
-            |> Array.map (fun content ->
-                Cell [ content; Next Stay])
+            |> Array.map (fun f -> f.Name, FSharpValue.GetRecordField(r, f))
+            |> Array.map (fun (name, value) ->
+
+                let style = getCellStyle name
+
+                let content = 
+                    match value with
+                    | :? String as s ->
+                        String s
+                    | :? DateTimeOffset as dto ->
+                        // TODO handle dates explictly
+                        String (dto.ToString("u"))
+                    | :? DateTime as dt ->
+                        String (dt.ToString("u"))
+                    | :? int as i ->
+                        Integer i
+                    | :? float as f ->
+                        Float f
+                    | :? float32 as f ->
+                        Float (float f)
+                    | :? decimal as d ->
+                        Float (float d)
+                    | _ -> 
+                        String (string value)
+                style, content)
+            |> Array.map (fun (style, content) ->
+                Cell [ content; yield! style; Next Stay])
             |> List.ofArray
 
-        let header<'T>() =
+        let header<'T>(getCellStyle) =
             let t = typeof<'T>
-            let fields = Fields.getSerializableFields t
-            fields
+            t
+            |> Fields.serializable
             |> Array.map (fun f -> f.Name)
-            |> Array.map (fun s -> Cell [ String s; Next Stay ])
+            |> Array.map (fun name -> 
+                let style = getCellStyle name
+                Cell [ String name; yield! style; Next Stay ])
             |> List.ofArray
 
-    let fromInstance<'T> (direction : Direction) (headingStyle : CellProp list) (bodyStyle : CellProp list) (x : 'T) =
-        let headerCells = Cells.header<'T>()
-        let bodyCells = x |> Cells.body
+    type CellStyleGetter = int -> string -> CellProp list        
+
+    let fromInstance<'T> (direction : Direction) (getCellStyle : CellStyleGetter) (x : 'T) =
+        let headerCells = Cells.header<'T> (getCellStyle 0)
+        let bodyCells = x |> Cells.body (getCellStyle 1)
         match direction with
         | Horizontal ->
             [
-                Style headingStyle
                 for headerCell in headerCells do
                     headerCell
                     Go (RightBy 1)
                 Go NewRow
-                Style bodyStyle
                 for bodyCell in bodyCells do
                     bodyCell
                     Go (RightBy 1)
@@ -83,32 +90,30 @@ module Table =
         | Vertical ->
             [
                 for heading, value in List.zip headerCells bodyCells do
-                    Style headingStyle
                     heading
                     Go (RightBy 1)
-                    Style  bodyStyle
                     value
                     Go (DownBy 1)
                     Go (LeftBy 1)
             ]
 
-    let fromSeq<'T> (direction : Direction) (headingStyle : CellProp list) (bodyStyle : CellProp list) (xs : 'T seq) =
+    type CellStyleGetterSeq = int -> string -> CellProp list
+
+    let fromSeq<'T> (direction : Direction) (getCellStyle : CellStyleGetter) (xs : 'T seq) =
         let xs = xs |> Array.ofSeq
-        let headerCells = Cells.header<'T>()
+        let headerCells = Cells.header<'T> (getCellStyle 0)
 
         match direction with
         | Vertical ->   
             [
                 let depth = xs.Length+1
-                Style headingStyle
                 for headerCell in headerCells do
                     headerCell
                     Go (DownBy 1)
                 Go (UpBy depth)
                 Go (RightBy 1)
-                Style bodyStyle
-                for x in xs do
-                    for bodyCell in x |> Cells.body do
+                for i, x in xs |> Seq.indexed do
+                    for bodyCell in x |> Cells.body (getCellStyle (i+1)) do
                         bodyCell
                         Go (DownBy 1)
                     Go (UpBy depth)
@@ -116,14 +121,12 @@ module Table =
             ]
         | Horizontal ->
             [
-                Style headingStyle
                 for headerCell in headerCells do
                     headerCell
                     Go (RightBy 1)
                 Go NewRow
-                Style bodyStyle
-                for x in xs do
-                    for bodyCell in x |> Cells.body do
+                for i, x in xs |> Seq.indexed do
+                    for bodyCell in x |> Cells.body (getCellStyle (i+1)) do
                         bodyCell
                         Go (RightBy 1)
                     Go NewRow

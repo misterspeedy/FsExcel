@@ -585,11 +585,12 @@ You can create a table of cells from an instance or a sequence of any type havin
 Use `Table.fromInstance` or `Table.fromSeq` and provide
 
 - an orientation (`Table.Direction.Horizontal` or `Table.Direction.Vertical`)
-- a style for heading cells (the field names)
-- a style for body cells (the field values)
+- a function which, given an index and a field name, returns a list of properties for styling. (This style can be an empty list.)
 - the instance or sequence.
 
 In horizontal tables, the values for each record appear beside one another.  In vertical tables the values for a record appear below one another.
+
+Calls to the cell style function are given 0 for the header, 1 for the first (or only) data row, 2 for the next and so on.
 
 Tables don't automatically autofit - you'll have to do that (if you want) after the table is built.
 
@@ -598,36 +599,48 @@ open System
 open ClosedXML.Excel
 open FsExcel
 
-type MyRecord =  {
+type JoiningInfo =  {
     Name : string
     Age : int
     Fees : decimal
     DateJoined : DateTime
 }
 
+// This works just as well if these are anonymous record instances,
+// eg. {| Name = "..."; ... |}
 let records = [
     { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = DateTime(2022, 3, 12) }
     { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = DateTime(2022, 3, 13) }
     { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = DateTime(2022, 3, 15) }
 ]
 
-let headingStyleHorizontal = [
-    Border(Border.Bottom XLBorderStyleValues.Medium)
-    FontEmphasis Bold
-]
+let cellStyleVertical index name =
+    if index = 0 then
+        [ FontEmphasis Bold ]
+    elif name = "Fees" then
+        [ FormatCode "$0.00" ]
+    else
+        []
 
-let headingStyleVertical =  [ FontEmphasis Bold ]
-
-let bodyStyle = [ FontEmphasis Italic ]
+let cellStyleHorizontal index name =
+    if index = 0 then
+        [
+            Border(Border.Bottom XLBorderStyleValues.Medium)
+            FontEmphasis Bold
+        ]
+    elif name = "Fees" then
+        [ FormatCode "$0.00" ]
+    else
+        []
 
 records
-|> Table.fromSeq Table.Direction.Vertical headingStyleVertical bodyStyle
+|> Table.fromSeq Table.Direction.Vertical cellStyleVertical
 |> fun cells -> cells @ [ AutoFit All ]
 |> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/RecordSequenceVertical.xlsx"
 
 records
-|> Table.fromSeq Table.Direction.Horizontal headingStyleHorizontal bodyStyle
+|> Table.fromSeq Table.Direction.Horizontal cellStyleHorizontal
 |> fun cells -> cells @ [ AutoFit All ]
 |> Renderer.Render
 |> fun wb -> wb.SaveAs "/temp/RecordSequenceHorizontal.xlsx"
@@ -637,13 +650,13 @@ records
 |> Option.iter (fun r ->
 
     r 
-    |> Table.fromInstance Table.Direction.Vertical headingStyleVertical bodyStyle
+    |> Table.fromInstance Table.Direction.Vertical cellStyleVertical
     |> fun cells -> cells @ [ AutoFit All ]
     |> Renderer.Render
     |> fun wb -> wb.SaveAs "/temp/RecordInstanceVertical.xlsx"    
 
     r 
-    |> Table.fromInstance Table.Direction.Horizontal headingStyleHorizontal bodyStyle
+    |> Table.fromInstance Table.Direction.Horizontal cellStyleHorizontal
     |> fun cells -> cells @ [ AutoFit All ]
     |> Renderer.Render
     |> fun wb -> wb.SaveAs "/temp/RecordInstanceHorizontal.xlsx")
