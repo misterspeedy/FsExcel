@@ -42,7 +42,7 @@ This example already embodies the main stages of building a spreadsheet using Fs
 
 If you've used `Fable.React` you'll already be familiar with the concepts so far.
 
-4) Send the resulting list to `FsExcel.Render`.
+4) Send the resulting list to `FsExcel.Renderer.Render`.
 5) The result is a `ClosedXML` workbook which you can save with its `.SaveAs` method.
 
 ---
