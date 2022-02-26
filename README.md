@@ -26,8 +26,7 @@ open FsExcel
 [
     Cell [ String "Hello world!" ]
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/HelloWorld.xlsx"
+|> Render.AsFile "/temp/HelloWorld.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/HelloWorld.PNG?raw=true"
@@ -42,8 +41,7 @@ This example already embodies the main stages of building a spreadsheet using Fs
 
 If you've used `Fable.React` you'll already be familiar with the concepts so far.
 
-4) Send the resulting list to `FsExcel.Renderer.Render`.
-5) The result is a `ClosedXML` workbook which you can save with its `.SaveAs` method.
+4) Send the resulting list to `FsExcel.Render.AsFile`, providing a path.
 
 ---
 ## Multiple Cells
@@ -55,8 +53,7 @@ open FsExcel
     for i in 1..10 do
         Cell [ Integer i ]
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/MultipleCells.xlsx"
+|> Render.AsFile "/temp/MultipleCells.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MultipleCells.PNG?raw=true"
@@ -84,8 +81,7 @@ open System.Globalization
             Next(DownBy 1)
         ]
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/VerticalMovement.xlsx"
+|> Render.AsFile "/temp/VerticalMovement.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/VerticalMovement.PNG?raw=true"
@@ -111,8 +107,7 @@ open System.Globalization
             Next NewRow
         ]
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Rows.xlsx"
+|> Render.AsFile "/temp/Rows.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Rows.PNG?raw=true"
@@ -132,8 +127,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/RowsGo.xlsx"
+|> Render.AsFile "/temp/RowsGo.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RowsGo.PNG?raw=true"
@@ -158,8 +152,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Indentation.xlsx"
+|> Render.AsFile "/temp/Indentation.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Indentation.PNG?raw=true"
@@ -205,8 +198,7 @@ open ClosedXML.Excel
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Styling.xlsx"
+|> Render.AsFile "/temp/Styling.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Styling.PNG?raw=true"
@@ -241,8 +233,7 @@ let headingStyle =
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/ComposedStyling.xlsx"
+|> Render.AsFile "/temp/ComposedStyling.xlsx"
 
 ```
 ## Number Formatting and Alignment
@@ -286,8 +277,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/NumberFormatAndAlignment.xlsx"
+|> Render.AsFile "/temp/NumberFormatAndAlignment.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
@@ -342,8 +332,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Formulae.xlsx"
+|> Render.AsFile "/temp/Formulae.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
@@ -392,8 +381,7 @@ open ClosedXML.Excel
         Go NewRow
 
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Color.xlsx"
+|> Render.AsFile "/temp/Color.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Color.PNG?raw=true"
@@ -438,8 +426,7 @@ let r = System.Random()
         Style []
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/RangeStyle.xlsx"
+|> Render.AsFile "/temp/RangeStyle.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RangeStyle.PNG?raw=true"
@@ -463,8 +450,7 @@ open ClosedXML.Excel
     Go (RC(6, 5))
     Cell [ String "R6C5"]
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/AbsolutePositioning.xlsx"
+|> Render.AsFile "/temp/AbsolutePositioning.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
@@ -485,8 +471,7 @@ open ClosedXML.Excel
         ]
         Go(DownBy i)
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Stay.xlsx"
+|> Render.AsFile"/temp/Stay.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
@@ -522,8 +507,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/Worksheets.xlsx"
+|> Render.AsFile "/temp/Worksheets.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Worksheets.PNG?raw=true"
@@ -569,8 +553,7 @@ let headingStyle =
 
     AutoFit AllCols
 ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/AutosizeColumns.xlsx"
+|> Render.AsFile "/temp/AutosizeColumns.xlsx"
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
@@ -636,14 +619,12 @@ let cellStyleHorizontal index name =
 records
 |> Table.fromSeq Table.Direction.Vertical cellStyleVertical
 |> fun cells -> cells @ [ AutoFit All ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/RecordSequenceVertical.xlsx"
+|> Render.AsFile "/temp/RecordSequenceVertical.xlsx"
 
 records
 |> Table.fromSeq Table.Direction.Horizontal cellStyleHorizontal
 |> fun cells -> cells @ [ AutoFit All ]
-|> Renderer.Render
-|> fun wb -> wb.SaveAs "/temp/RecordSequenceHorizontal.xlsx"
+|> Render.AsFile "/temp/RecordSequenceHorizontal.xlsx"
 
 records
 |> Seq.tryHead
@@ -652,28 +633,45 @@ records
     r 
     |> Table.fromInstance Table.Direction.Vertical cellStyleVertical
     |> fun cells -> cells @ [ AutoFit All ]
-    |> Renderer.Render
-    |> fun wb -> wb.SaveAs "/temp/RecordInstanceVertical.xlsx"    
+    |> Render.AsFile "/temp/RecordInstanceVertical.xlsx"    
 
     r 
     |> Table.fromInstance Table.Direction.Horizontal cellStyleHorizontal
     |> fun cells -> cells @ [ AutoFit All ]
-    |> Renderer.Render
-    |> fun wb -> wb.SaveAs "/temp/RecordInstanceHorizontal.xlsx")
+    |> Render.AsFile "/temp/RecordInstanceHorizontal.xlsx")
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceVertical.PNG?raw=true"
      alt="Table example - vertical record sequence"
-     style="width: 350px;" />
+     style="width: 450px;" />
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceHorizontal.PNG?raw=true"
      alt="Table example - horizontal record sequence"
-     style="width: 350px;" />
+     style="width: 320px;" />
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceVertical.PNG?raw=true"
      alt="Table example - vertical record instance"
-     style="width: 350px;" />
+     style="width: 200px;" />
      
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordInstanceHorizontal.PNG?raw=true"
      alt="Table example - horizontal record instance"
-     style="width: 350px;" />
+     style="width: 280px;" />
+
+---
+# Rendering in Fable Elmish and similar web applications
+
+You can use `Render.AsStream <stream> <items>` to render to a pre-existing stream, or `Render.AsStreamBytes <items>` to render as a byte array. 
+
+`Render.AsStreamBytes` is useful for Fable-based and other web app scenarios. Render to a byte array on the server, and transfer the bytes to the client using Fable Remoting.  On the client use the `SaveFileAs` extension function to start a browser download.  Make sure you have opened the `Fable.Remoting.Client` to get the `SaveFileAs` method of a byte array.
+
+There are few more details here: https://zaid-ajaj.github.io/Fable.Remoting/src/upload-and-download.html
+
+```fsharp
+open FsExcel
+
+[
+    Cell [ String "Hello world!" ]
+]
+|> Render.AsStreamBytes
+|> fun bytes ->
+    $"Bytes length: {bytes.Length}"

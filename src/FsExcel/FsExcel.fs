@@ -1,5 +1,6 @@
 ﻿namespace FsExcel
 
+open System
 open ClosedXML.Excel
 
 type Position =
@@ -80,9 +81,9 @@ type Item =
     | Worksheet of string
     | AutoFit of AutoFit
 
-module Renderer = 
+module Render = 
 
-    let Render (items : Item list) =
+    let AsWorkBook (items : Item list) =
 
         let mutable indent = 1
         let mutable r = 1
@@ -241,3 +242,21 @@ module Renderer =
             | Style s ->
                 style <- s        
         wb
+
+    let AsFile (path : string) (items : Item list) =
+        items
+        |> AsWorkBook
+        |> fun wb -> wb.SaveAs path
+
+    let AsStream (stream : IO.Stream) (items : Item list) =
+        items
+        |> AsWorkBook
+        |> fun wb ->
+            wb.SaveAs(stream)
+
+    let AsStreamBytes (items : Item list) =
+        use stream = new IO.MemoryStream()
+        items |> AsStream stream
+        let bytes = stream.ToArray()
+        bytes
+
