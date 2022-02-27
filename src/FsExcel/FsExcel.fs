@@ -83,6 +83,7 @@ type Item =
 
 module Render = 
 
+    /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
     let AsWorkBook (items : Item list) =
 
         let mutable indent = 1
@@ -243,17 +244,22 @@ module Render =
                 style <- s        
         wb
 
+    /// Renders the provided items and saves the resulting workbook as a file. The provided path
+    /// must have the extension '.xlsx'.
     let AsFile (path : string) (items : Item list) =
         items
         |> AsWorkBook
         |> fun wb -> wb.SaveAs path
 
+    /// Renders the provided items and writes the result into the provided stream.
     let AsStream (stream : IO.Stream) (items : Item list) =
         items
         |> AsWorkBook
         |> fun wb ->
             wb.SaveAs(stream)
 
+    /// Renders the provided items and returns the resulting Excel workbook as an array of bytes. This 
+    /// array can be provided as a browser download in Web App scenarios.
     let AsStreamBytes (items : Item list) =
         use stream = new IO.MemoryStream()
         items |> AsStream stream
