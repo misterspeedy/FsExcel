@@ -687,7 +687,7 @@ records
     r 
     |> Table.fromInstance Table.Direction.Horizontal cellStyleHorizontal
     |> fun cells -> cells @ [ AutoFit All ]
-    |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
 
 #!markdown
 
