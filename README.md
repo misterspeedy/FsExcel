@@ -21,12 +21,14 @@ Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/te
 // For scripts only; for programs, use NuGet to install FsExcel:
 #r "nuget: FsExcel"
 
+let savePath = "/temp"
+
 open FsExcel
 
 [
     Cell [ String "Hello world!" ]
 ]
-|> Render.AsFile "/temp/HelloWorld.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "HelloWorld.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/HelloWorld.PNG?raw=true"
@@ -53,7 +55,7 @@ open FsExcel
     for i in 1..10 do
         Cell [ Integer i ]
 ]
-|> Render.AsFile "/temp/MultipleCells.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "MultipleCells.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MultipleCells.PNG?raw=true"
@@ -81,7 +83,7 @@ open System.Globalization
             Next(DownBy 1)
         ]
 ]
-|> Render.AsFile "/temp/VerticalMovement.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "VerticalMovement.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/VerticalMovement.PNG?raw=true"
@@ -107,7 +109,7 @@ open System.Globalization
             Next NewRow
         ]
 ]
-|> Render.AsFile "/temp/Rows.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Rows.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Rows.PNG?raw=true"
@@ -127,7 +129,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/RowsGo.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "RowsGo.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RowsGo.PNG?raw=true"
@@ -152,7 +154,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/Indentation.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Indentation.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Indentation.PNG?raw=true"
@@ -198,7 +200,7 @@ open ClosedXML.Excel
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/Styling.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Styling.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Styling.PNG?raw=true"
@@ -233,7 +235,7 @@ let headingStyle =
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/ComposedStyling.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
 
 ```
 ## Number Formatting and Alignment
@@ -277,7 +279,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/NumberFormatAndAlignment.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
@@ -332,7 +334,7 @@ let headingStyle =
         ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/Formulae.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Formulae.PNG?raw=true"
@@ -381,7 +383,7 @@ open ClosedXML.Excel
         Go NewRow
 
 ]
-|> Render.AsFile "/temp/Color.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Color.PNG?raw=true"
@@ -426,7 +428,7 @@ let r = System.Random()
         Style []
         Go NewRow
 ]
-|> Render.AsFile "/temp/RangeStyle.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RangeStyle.PNG?raw=true"
@@ -450,7 +452,7 @@ open ClosedXML.Excel
     Go (RC(6, 5))
     Cell [ String "R6C5"]
 ]
-|> Render.AsFile "/temp/AbsolutePositioning.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
@@ -471,7 +473,7 @@ open ClosedXML.Excel
         ]
         Go(DownBy i)
 ]
-|> Render.AsFile"/temp/Stay.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
@@ -507,7 +509,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 ]
-|> Render.AsFile "/temp/Worksheets.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Worksheets.PNG?raw=true"
@@ -553,7 +555,7 @@ let headingStyle =
 
     AutoFit AllCols
 ]
-|> Render.AsFile "/temp/AutosizeColumns.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
@@ -619,12 +621,12 @@ let cellStyleHorizontal index name =
 records
 |> Table.fromSeq Table.Direction.Vertical cellStyleVertical
 |> fun cells -> cells @ [ AutoFit All ]
-|> Render.AsFile "/temp/RecordSequenceVertical.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "RecordSequenceVertical.xlsx"))
 
 records
 |> Table.fromSeq Table.Direction.Horizontal cellStyleHorizontal
 |> fun cells -> cells @ [ AutoFit All ]
-|> Render.AsFile "/temp/RecordSequenceHorizontal.xlsx"
+|> Render.AsFile (Path.Combine(savePath, "RecordSequenceHorizontal.xlsx"))
 
 records
 |> Seq.tryHead
@@ -633,12 +635,12 @@ records
     r 
     |> Table.fromInstance Table.Direction.Vertical cellStyleVertical
     |> fun cells -> cells @ [ AutoFit All ]
-    |> Render.AsFile "/temp/RecordInstanceVertical.xlsx"    
+    |> Render.AsFile (Path.Combine(savePath, "RecordInstanceVertical.xlsx"))
 
     r 
     |> Table.fromInstance Table.Direction.Horizontal cellStyleHorizontal
     |> fun cells -> cells @ [ AutoFit All ]
-    |> Render.AsFile "/temp/RecordInstanceHorizontal.xlsx")
+    |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/RecordSequenceVertical.PNG?raw=true"
