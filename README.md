@@ -720,4 +720,4 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/DataTypes.PNG?raw=true"
      alt="Data Types example"
-     style="width: 250px;" />
+     style="width: 200px;" />
