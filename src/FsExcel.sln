@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsExcel", "FsExcel\FsExcel.fsproj", "{668E25F6-8163-4461-8562-2508994DCB19}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D156EE67-1ACD-4104-9E5F-2401C29CFDC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Regression", "Regression", "{FE1298F8-C240-4A25-8F8A-3E2E01A2188A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RegressionTests", "Tests\Regression\RegressionTests\RegressionTests.fsproj", "{259D4628-A1FC-4320-B427-3AD088946EAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +24,13 @@ Global
 		{668E25F6-8163-4461-8562-2508994DCB19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{668E25F6-8163-4461-8562-2508994DCB19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{668E25F6-8163-4461-8562-2508994DCB19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{259D4628-A1FC-4320-B427-3AD088946EAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{259D4628-A1FC-4320-B427-3AD088946EAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{259D4628-A1FC-4320-B427-3AD088946EAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{259D4628-A1FC-4320-B427-3AD088946EAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE1298F8-C240-4A25-8F8A-3E2E01A2188A} = {D156EE67-1ACD-4104-9E5F-2401C29CFDC9}
+		{259D4628-A1FC-4320-B427-3AD088946EAA} = {FE1298F8-C240-4A25-8F8A-3E2E01A2188A}
 	EndGlobalSection
 EndGlobal

@@ -20,6 +20,8 @@ Here's the complete code to generate a spreadsheet with a single cell containing
 
 Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/temp` folder. (Change the path to suit.)
 
+<!-- Test.Files("HelloWorld.xlsx") -->
+
 #!fsharp
 
 // For scripts only; for programs, use NuGet to install FsExcel:
@@ -624,6 +626,8 @@ In horizontal tables, the values for each record appear beside one another.  In 
 Calls to the cell style function are given 0 for the header, 1 for the first (or only) data row, 2 for the next and so on.
 
 Tables don't automatically autofit - you'll have to do that (if you want) after the table is built.
+
+<!-- Test.Files("RecordSequenceVertical.xlsx", "RecordSequenceHorizontal.xlsx", "RecordInstanceVertical.xlsx", "RecordInstanceHorizontal.xlsx", ) -->
 
 #!fsharp
 
