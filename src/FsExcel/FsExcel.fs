@@ -45,6 +45,9 @@ type CellProp =
     | String of string
     | Float of float
     | Integer of int
+    | Boolean of bool
+    | DateTime of DateTime
+    | TimeSpan of TimeSpan
     | FormulaA1 of string
     | Next of Position
     | FontEmphasis of FontEmphasis
@@ -167,6 +170,12 @@ module Render =
                         cell.Value <- f
                     | Integer i ->
                         cell.Value <- i
+                    | Boolean b ->
+                        cell.Value <- b
+                    | DateTime dt ->
+                        cell.Value <- dt
+                    | TimeSpan ts ->
+                        cell.Value <- ts
                     | FormulaA1 s ->
                         cell.FormulaA1 <- s
                     | Next p ->

@@ -16,26 +16,37 @@ let ``HelloWorld`` () =
     [
         Cell [ String "Hello world!" ]
     ]
-    |> Render.AsFile (Path.Combine(savePath, "HelloWorld.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, filename))
 
     let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
-    let actual = new XLWorkbook(Path.Combine(savePath, "HelloWorld.xlsx"))
+    let actual = new XLWorkbook(Path.Combine(savePath, filename))
 
-    for ews in expected.Worksheets do
-        match actual.TryGetWorksheet(ews.Name) with
-        | true, aws ->
+    Assert.Workbook.Equal(expected, actual)    
 
-            // We combine the CellsUsed sequences from both sides because
-            // the cells that are populated in each don't necessarily overlap perfectly:
-            let allPopulatedAddresses =
-                (ews.CellsUsed())
-                |> Seq.append (aws.CellsUsed())
-                |> Seq.distinctBy (fun c -> c.Address.ColumnNumber, c.Address.RowNumber)
-                |> Seq.map (fun c -> c.Address)
+[<Fact>]
+let ``DataTypes`` () =
 
-            for address in allPopulatedAddresses do
-                let ec = ews.Cell(address)
-                let ac = aws.Cell(address)
-                Assert.Equal(ec, ac)
-        | false, _ ->
-            () // TODO
+    let filename = "DataTypes.xlsx"
+    [
+        Cell [ String "String"]; Cell [ String "string" ]
+        Go NewRow
+        Cell [ String "Integer" ]; Cell [ Integer 42 ]
+        Go NewRow
+        Cell [ String "Number" ]; Cell [ Float Math.PI ]
+        Go NewRow
+        Cell [ String "Boolean" ]; Cell [ Boolean false ]
+        Go NewRow
+        Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
+        Go NewRow
+        Cell [ String "TimeSpan" ]
+        Cell [ 
+            TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
+            FormatCode "hh:mm:ss"
+        ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, filename))
+
+    let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
+    let actual = new XLWorkbook(Path.Combine(savePath, filename))
+
+    Assert.Workbook.Equal(expected, actual)

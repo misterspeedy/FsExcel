@@ -731,3 +731,40 @@ open FsExcel
 |> Render.AsStreamBytes
 |> fun bytes ->
     $"Bytes length: {bytes.Length}"
+
+#!markdown
+
+## Data Types
+
+FsExcel supports the following data types for cell content:
+
+- String
+- Integer
+- Float
+- Boolean
+- DateTime
+- TimeSpan
+
+#!fsharp
+
+open System
+open FsExcel
+
+[
+    Cell [ String "String"]; Cell [ String "string" ]
+    Go NewRow
+    Cell [ String "Integer" ]; Cell [ Integer 42 ]
+    Go NewRow
+    Cell [ String "Number" ]; Cell [ Float Math.PI ]
+    Go NewRow
+    Cell [ String "Boolean" ]; Cell [ Boolean false  ]
+    Go NewRow
+    Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
+    Go NewRow
+    Cell [ String "TimeSpan" ]
+    Cell [ 
+        TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
+        FormatCode "hh:mm:ss"
+    ]
+]
+|> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
