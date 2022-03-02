@@ -21,13 +21,21 @@ let ``HelloWorld`` () =
     let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
     let actual = new XLWorkbook(Path.Combine(savePath, "HelloWorld.xlsx"))
 
-    // TODO we need to do this both ways round because either
-    // side might have used cells that are not used on the other side.
     for ews in expected.Worksheets do
         match actual.TryGetWorksheet(ews.Name) with
         | true, aws ->
-            for ec in ews.CellsUsed() do
-                let ac = aws.Cell(ec.Address)
+
+            // We combine the CellsUsed sequences from both sides because
+            // the cells that are populated in each don't necessarily overlap perfectly:
+            let allPopulatedAddresses =
+                (ews.CellsUsed())
+                |> Seq.append (aws.CellsUsed())
+                |> Seq.distinctBy (fun c -> c.Address.ColumnNumber, c.Address.RowNumber)
+                |> Seq.map (fun c -> c.Address)
+
+            for address in allPopulatedAddresses do
+                let ec = ews.Cell(address)
+                let ac = aws.Cell(address)
                 Assert.Equal(ec, ac)
         | false, _ ->
             () // TODO

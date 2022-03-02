@@ -21,3 +21,5 @@ let Equal (expected : IXLCell, actual : IXLCell) =
     // Boolean
     // DateTime
     // TimeSpan
+
+    // TODO styling, width
