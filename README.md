@@ -716,3 +716,8 @@ open FsExcel
     ]
 ]
 |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/DataTypes.PNG?raw=true"
+     alt="Data Types example"
+     style="width: 250px;" />
