@@ -9,6 +9,13 @@ open ClosedXML.Excel
 let savePath = "testtemp"
 do Directory.CreateDirectory(savePath) |> ignore
 
+module Check =
+
+    let fromFilename (filename : string) =
+        let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
+        let actual = new XLWorkbook(Path.Combine(savePath, filename))
+        Assert.Workbook.Equal(expected, actual)    
+
 [<Fact>]
 let ``HelloWorld`` () =
 
@@ -18,10 +25,7 @@ let ``HelloWorld`` () =
     ]
     |> Render.AsFile (Path.Combine(savePath, filename))
 
-    let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
-    let actual = new XLWorkbook(Path.Combine(savePath, filename))
-
-    Assert.Workbook.Equal(expected, actual)    
+    Check.fromFilename filename
 
 [<Fact>]
 let ``DataTypes`` () =
@@ -46,7 +50,4 @@ let ``DataTypes`` () =
     ]
     |> Render.AsFile (Path.Combine(savePath, filename))
 
-    let expected = new XLWorkbook(Path.Combine("../../../Expected", filename))
-    let actual = new XLWorkbook(Path.Combine(savePath, filename))
-
-    Assert.Workbook.Equal(expected, actual)
+    Check.fromFilename filename
