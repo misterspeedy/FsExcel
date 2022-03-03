@@ -19,13 +19,16 @@ module Check =
 [<Fact>]
 let ``HelloWorld`` () =
 
-    let filename = "HelloWorld.xlsx"
-    [
-        Cell [ String "Hello world!" ]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, filename))
+    let filenames = ["HelloWorld.xlsx"]
 
-    Check.fromFilename filename
+    filenames
+    |> List.iter (fun filename ->
+        [
+            Cell [ String "Hello world!" ]
+        ]
+        |> Render.AsFile (Path.Combine(savePath, filename))
+
+        Check.fromFilename filename)
 
 [<Fact>]
 let ``DataTypes`` () =

@@ -7,9 +7,9 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsExcel", "FsExcel\FsExcel.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D156EE67-1ACD-4104-9E5F-2401C29CFDC9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Regression", "Regression", "{FE1298F8-C240-4A25-8F8A-3E2E01A2188A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RegressionTests", "RegressionTests", "{FE1298F8-C240-4A25-8F8A-3E2E01A2188A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RegressionTests", "Tests\Regression\RegressionTests\RegressionTests.fsproj", "{259D4628-A1FC-4320-B427-3AD088946EAA}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RegressionTests", "Tests\RegressionTests\RegressionTests.fsproj", "{259D4628-A1FC-4320-B427-3AD088946EAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

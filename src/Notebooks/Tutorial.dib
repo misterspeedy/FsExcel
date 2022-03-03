@@ -19,8 +19,7 @@ FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abst
 Here's the complete code to generate a spreadsheet with a single cell containing a string!
 
 Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/temp` folder. (Change the path to suit.)
-
-<!-- Test.Files("HelloWorld.xlsx") -->
+<!-- Test -->
 
 #!fsharp
 
@@ -29,6 +28,7 @@ Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/te
 
 let savePath = "/temp"
 
+open System.IO
 open FsExcel
 
 [
@@ -55,9 +55,11 @@ If you've used `Fable.React` you'll already be familiar with the concepts so far
 #!markdown
 
 ## Multiple Cells
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 
 [
@@ -82,10 +84,13 @@ By default each new cell is put on the right of its predecessor.
 
 If you want the next cell to be rendered below instead of to the right, you can add a `Next(DownBy 1)` property to the cell:
 
+<!-- Test -->
+
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 
 [
     for m in 1..12 do
@@ -103,14 +108,19 @@ open System.Globalization
      alt="Vertical Movement example"
      style="width: 100px;" />
 
+#!markdown
+
 The `Next` property overrides the default behaviour of rendering each successive cell one to the right. In this case we override it with a 'go down by 1' behaviour.
 
 But what if you want a table of cells? Use the default behaviour for each cell in a row except the last. In the last cell use `Next NewRow`. This causes the next cell to be rendered in column 1 of the next row.
 
+<!-- Test -->
+
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 
 [
     for m in 1..12 do
@@ -131,12 +141,16 @@ open System.Globalization
      alt="Rows example"
      style="width: 150px;" />
 
+#!markdown
+
 Maybe you don't like the idea of saying where to go next in the properties of a cell. No problem, you can have standalone position-control with the `Go` instruction:
+<!-- Test -->
 
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 
 [
     for m in 1..12 do
@@ -158,11 +172,13 @@ open System.Globalization
 ## Indentation
 
 Maybe you want a series of rows that don't start in column 1.  Use `Indent`:
+<!-- Test -->
 
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 
 [
     Go(Indent 2)
@@ -194,11 +210,13 @@ You can specify indents relative to the current indent level using `Go(IndentBy 
 You can add border styling and font emphasis (bold, italic, underline or strikethrough) styling using `Border (...)` and `FontEmphasis ...` cell properties.
 
 The border style values are in `ClosedXML.Excel.XLBorderStyleValues` and the underline values are in `ClosedXML.Excel.XLFontUnderlineValues`.
+<!-- Test -->
 
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 open ClosedXML.Excel
 
 [
@@ -230,12 +248,16 @@ open ClosedXML.Excel
      alt="Styling example"
      style="width: 150px;" />
 
+#!markdown
+
 As they are just list items, styles can be composed and applied together as a list. You'll need a `yield!` to include these multiple elements in your cell property list.
+<!-- Test -->
 
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 open ClosedXML.Excel
 
 let headingStyle = 
@@ -266,9 +288,11 @@ let headingStyle =
 ## Number Formatting and Alignment
 
 Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open ClosedXML.Excel
 
@@ -320,9 +344,11 @@ let headingStyle =
 You can add a formula to a cell using `FormulaA1(...)`.  
 
 Currently only the `A1` style of cell referencing is supported, meaning that you will need to keep track of the column letter and row number you want to refer to:
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open ClosedXML.Excel
 
@@ -378,9 +404,11 @@ let headingStyle =
 Set the font color with `FontColor` and the background color with the `BackgroundColor` property.  Set the border color with `BorderColor`.
 
 The color values and color creation functions are in `ClosedXml.Excel.XLColor`.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open ClosedXML.Excel
 
@@ -428,9 +456,11 @@ open ClosedXML.Excel
 ## Range Styles
 
 You can apply any properties to all cells from a point in your code using `Style [ prop; prop...]`. Don't forget to reset style with `Style []` afterwards.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open ClosedXML.Excel
 
@@ -476,9 +506,11 @@ let r = System.Random()
 ## Absolute Positioning
 
 FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open ClosedXML.Excel
 
@@ -496,14 +528,17 @@ open ClosedXML.Excel
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
      alt="Absolute Positioning example"
-     style="width: 300px;" />
+     style="width: 300px;" />    
+
+#!markdown
 
 Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
-open ClosedXML.Excel
 
 [
     for i in 1..5 do
@@ -530,9 +565,11 @@ By default, all cells are placed into a worksheet (tab) called "Sheet1".  You ca
 If you do not want a "Sheet1" tab you'll need to use `Worksheet` to create an explicitly named sheet - before creating any cells.
 
 Each new worksheet starts at the top-left cell, has an indent setting of 1 (no indent), and has an empty list as its current `Style [...]` value.
+<!-- Test -->
 
 #!fsharp
 
+open System.IO
 open FsExcel
 open System.Globalization
 
@@ -571,11 +608,13 @@ You can autofit heights of rows with ``AutoFit AllRows`` and ``AutoFit (RowRange
 You can autofit all columns *and* all rows with ``AutoFit All``.
 
 Perform ``AutoFit`` operations *after* the cells have been populated!
+<!-- Test -->
 
 #!fsharp
 
-open FsExcel
+open System.IO
 open System.Globalization
+open FsExcel
 open ClosedXML.Excel
 
 let headingStyle = 
@@ -626,12 +665,12 @@ In horizontal tables, the values for each record appear beside one another.  In 
 Calls to the cell style function are given 0 for the header, 1 for the first (or only) data row, 2 for the next and so on.
 
 Tables don't automatically autofit - you'll have to do that (if you want) after the table is built.
-
-<!-- Test.Files("RecordSequenceVertical.xlsx", "RecordSequenceHorizontal.xlsx", "RecordInstanceVertical.xlsx", "RecordInstanceHorizontal.xlsx", ) -->
+<!-- Test -->
 
 #!fsharp
 
 open System
+open System.IO
 open ClosedXML.Excel
 open FsExcel
 
@@ -645,9 +684,9 @@ type JoiningInfo =  {
 // This works just as well if these are anonymous record instances,
 // eg. {| Name = "..."; ... |}
 let records = [
-    { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = DateTime(2022, 3, 12) }
-    { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = DateTime(2022, 3, 13) }
-    { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = DateTime(2022, 3, 15) }
+    { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = System.DateTime(2022, 3, 12) }
+    { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = System.DateTime(2022, 3, 13) }
+    { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = System.DateTime(2022, 3, 15) }
 ]
 
 let cellStyleVertical index name =
@@ -744,10 +783,12 @@ FsExcel supports the following data types for cell content:
 - Boolean
 - DateTime
 - TimeSpan
+<!-- Test -->
 
 #!fsharp
 
 open System
+open System.IO
 open FsExcel
 
 [

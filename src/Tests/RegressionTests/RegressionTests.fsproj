@@ -23,6 +23,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FsExcel\FsExcel.fsproj" />
+    <ProjectReference Include="..\..\FsExcel\FsExcel.fsproj" />
   </ItemGroup>
 </Project>
