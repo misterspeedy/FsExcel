@@ -26,8 +26,7 @@ let code =
             elif line.StartsWith "#!markdown" then
                 inCode <- false
                 inTest <- false
-            else
-                if inCode && inTest then
+            elif inCode && inTest then
                     $"    {line}"
     ]
 
