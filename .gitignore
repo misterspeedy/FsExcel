@@ -2,3 +2,5 @@ obj/
 bin/
 .ionide/
 .fake
+*.xlsx
+src/Tests/RegressionTests/Actual
