@@ -4,9 +4,9 @@
       {
         "label": "Start watching Tutorial.dib and copy to README.MD on save.",
         "type": "shell",
-        "command": "dotnet watch fsi ../Notebooks/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj",
+        "command": "dotnet watch fsi ../Scripts/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj",
         "windows": {
-          "command": "dotnet watch fsi ../Notebooks/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj"
+          "command": "dotnet watch fsi ../Scripts/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj"
         },        
         "presentation": {
           "reveal": "always",
