@@ -29,6 +29,6 @@ let code =
             else
                 if inCode && inTest then
                     $"    {line}"
-        ]
+    ]
 
 File.WriteAllLines(outFile, code)
