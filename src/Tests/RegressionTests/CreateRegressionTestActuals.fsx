@@ -1,6 +1,6 @@
 #r "nuget: ClosedXML"
 #r "../../FsExcel/bin/Debug/net5.0/FsExcel.dll"
-let savePath = "../Tests/RegressionTests/Expected"
+let savePath = "../Tests/RegressionTests/Actual"
 module Test1 =
     
     
@@ -157,7 +157,14 @@ module Test9 =
     open FsExcel
     open ClosedXML.Excel
     
-    let r = System.Random()
+    module PseudoRandom =
+    
+        let mutable index = 2
+    
+        let nextDouble() =
+            let digits = System.Math.PI.ToString().Substring(index, 4)
+            index <- (index + 4) % 10
+            (digits |> float) / 10000.
     
     let headingStyle = 
         [
@@ -181,12 +188,12 @@ module Test9 =
                 String item
             ]
             Cell [
-                Float ((r.NextDouble()*1000.))
+                Float ((PseudoRandom.nextDouble()*1000.))
                 FormatCode "$0.00"
             ]
             Cell [
-                Integer (int (r.NextDouble()*100.))
-                FormatCode "#,###"
+                Integer (int (PseudoRandom.nextDouble()*100.))
+                FormatCode "#,##0"
             ]
             Go NewRow
     ]
@@ -198,7 +205,14 @@ module Test10 =
     open FsExcel
     open ClosedXML.Excel
     
-    let r = System.Random()
+    module PseudoRandom =
+    
+        let mutable index = 2
+    
+        let nextDouble() =
+            let digits = System.Math.PI.ToString().Substring(index, 4)
+            index <- (index + 4) % 10
+            (digits |> float) / 10000.
     
     let headingStyle = 
         [
@@ -222,12 +236,12 @@ module Test10 =
                 String item
             ]
             Cell [
-                Float ((r.NextDouble()*1000.))
+                Float (PseudoRandom.nextDouble()*1000.)
                 FormatCode "$0.00"
             ]
             Cell [
-                Integer (int (r.NextDouble()*100.))
-                FormatCode "#,###"
+                Integer (int (PseudoRandom.nextDouble()*1000.))
+                FormatCode "#,##0"
             ]
             Cell [
                 FormulaA1 $"=B{index+2}*C{index+2}"
@@ -276,7 +290,14 @@ module Test12 =
     open FsExcel
     open ClosedXML.Excel
     
-    let r = System.Random()
+    module PseudoRandom =
+    
+        let mutable index = 2
+    
+        let nextDouble() =
+            let digits = System.Math.PI.ToString().Substring(index, 4)
+            index <- (index + 4) % 10
+            (digits |> float) / 10000.
     
     [
         Style [
@@ -295,12 +316,12 @@ module Test12 =
             ]
             Style [ FontEmphasis Italic ]        
             Cell [
-                Float ((r.NextDouble()*1000.))
+                Float ((PseudoRandom.nextDouble()*1000.))
                 FormatCode "$0.00"
             ]
             Cell [
-                Integer (int (r.NextDouble()*100.))
-                FormatCode "#,###"
+                Integer (int (PseudoRandom.nextDouble()*100.))
+                FormatCode "#,##0"
             ]
             Style []
             Go NewRow

@@ -269,7 +269,14 @@ open System.IO
 open FsExcel
 open ClosedXML.Excel
 
-let r = System.Random()
+module PseudoRandom =
+
+    let mutable index = 2
+
+    let nextDouble() =
+        let digits = System.Math.PI.ToString().Substring(index, 4)
+        index <- (index + 4) % 10
+        (digits |> float) / 10000.
 
 let headingStyle = 
     [
@@ -293,12 +300,12 @@ let headingStyle =
             String item
         ]
         Cell [
-            Float ((r.NextDouble()*1000.))
+            Float ((PseudoRandom.nextDouble()*1000.))
             FormatCode "$0.00"
         ]
         Cell [
-            Integer (int (r.NextDouble()*100.))
-            FormatCode "#,###"
+            Integer (int (PseudoRandom.nextDouble()*100.))
+            FormatCode "#,##0"
         ]
         Go NewRow
 ]
@@ -322,7 +329,14 @@ open System.IO
 open FsExcel
 open ClosedXML.Excel
 
-let r = System.Random()
+module PseudoRandom =
+
+    let mutable index = 2
+
+    let nextDouble() =
+        let digits = System.Math.PI.ToString().Substring(index, 4)
+        index <- (index + 4) % 10
+        (digits |> float) / 10000.
 
 let headingStyle = 
     [
@@ -346,12 +360,12 @@ let headingStyle =
             String item
         ]
         Cell [
-            Float ((r.NextDouble()*1000.))
+            Float (PseudoRandom.nextDouble()*1000.)
             FormatCode "$0.00"
         ]
         Cell [
-            Integer (int (r.NextDouble()*100.))
-            FormatCode "#,###"
+            Integer (int (PseudoRandom.nextDouble()*1000.))
+            FormatCode "#,##0"
         ]
         Cell [
             FormulaA1 $"=B{index+2}*C{index+2}"
@@ -428,7 +442,14 @@ open System.IO
 open FsExcel
 open ClosedXML.Excel
 
-let r = System.Random()
+module PseudoRandom =
+
+    let mutable index = 2
+
+    let nextDouble() =
+        let digits = System.Math.PI.ToString().Substring(index, 4)
+        index <- (index + 4) % 10
+        (digits |> float) / 10000.
 
 [
     Style [
@@ -447,12 +468,12 @@ let r = System.Random()
         ]
         Style [ FontEmphasis Italic ]        
         Cell [
-            Float ((r.NextDouble()*1000.))
+            Float ((PseudoRandom.nextDouble()*1000.))
             FormatCode "$0.00"
         ]
         Cell [
-            Integer (int (r.NextDouble()*100.))
-            FormatCode "#,###"
+            Integer (int (PseudoRandom.nextDouble()*100.))
+            FormatCode "#,##0"
         ]
         Style []
         Go NewRow

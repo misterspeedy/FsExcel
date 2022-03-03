@@ -12,7 +12,7 @@ let code =
         "#r \"nuget: ClosedXML\""
         "#r \"../../FsExcel/bin/Debug/net5.0/FsExcel.dll\""
 
-        "let savePath = \"../Tests/RegressionTests/Expected\""
+        "let savePath = \"../Tests/RegressionTests/Actual\""
 
         for line in File.ReadAllLines inFile do
             if line.StartsWith "#r \"nuget: FsExcel\"" || line.StartsWith "let savePath =" || line.TrimStart().StartsWith "//" then
