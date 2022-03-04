@@ -265,18 +265,19 @@ Number styling can be applied using standard Excel format strings.  You can also
 <!-- Test -->
 
 ```fsharp
+open System
 open System.IO
 open FsExcel
 open ClosedXML.Excel
 
 module PseudoRandom =
 
-    let mutable index = 2
+    let mutable state = 1u
+    let mangle (n : UInt64) = (n &&& (0x7fffffff |> uint64)) + (n >>> 31)
 
     let nextDouble() =
-        let digits = System.Math.PI.ToString().Substring(index, 4)
-        index <- (index + 4) % 10
-        (digits |> float) / 10000.
+        state <- (state |> uint64) * 48271UL |> mangle |> mangle |> uint32
+        (float state) / (float Int32.MaxValue)
 
 let headingStyle = 
     [
@@ -325,18 +326,19 @@ Currently only the `A1` style of cell referencing is supported, meaning that you
 <!-- Test -->
 
 ```fsharp
+open System
 open System.IO
 open FsExcel
 open ClosedXML.Excel
 
 module PseudoRandom =
 
-    let mutable index = 2
+    let mutable state = 1u
+    let mangle (n : UInt64) = (n &&& (0x7fffffff |> uint64)) + (n >>> 31)
 
     let nextDouble() =
-        let digits = System.Math.PI.ToString().Substring(index, 4)
-        index <- (index + 4) % 10
-        (digits |> float) / 10000.
+        state <- (state |> uint64) * 48271UL |> mangle |> mangle |> uint32
+        (float state) / (float Int32.MaxValue)
 
 let headingStyle = 
     [
@@ -438,18 +440,19 @@ You can apply any properties to all cells from a point in your code using `Style
 <!-- Test -->
 
 ```fsharp
+open System
 open System.IO
 open FsExcel
 open ClosedXML.Excel
 
 module PseudoRandom =
 
-    let mutable index = 2
+    let mutable state = 1u
+    let mangle (n : UInt64) = (n &&& (0x7fffffff |> uint64)) + (n >>> 31)
 
     let nextDouble() =
-        let digits = System.Math.PI.ToString().Substring(index, 4)
-        index <- (index + 4) % 10
-        (digits |> float) / 10000.
+        state <- (state |> uint64) * 48271UL |> mangle |> mangle |> uint32
+        (float state) / (float Int32.MaxValue)
 
 [
     Style [
