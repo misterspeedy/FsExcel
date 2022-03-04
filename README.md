@@ -579,7 +579,7 @@ open System.Globalization
      style="width: 350px;" />
 
 ---
-## Automatically size columns and rows to fit content
+## Autofitting
 
 You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns with ``AutoFit (ColRange(<c1>, <c2>))``.
 
