@@ -2,7 +2,7 @@
      alt="FsExcel Logo"
      style="width: 150px;" />
 
-# Welcome!
+## Welcome!
 
 Welcome to FsExcel, a library for generating Excel spreadsheets using very simple code.
 
@@ -726,7 +726,7 @@ records
      style="width: 280px;" />
 
 ---
-# Rendering in Fable Elmish and similar web applications
+## Rendering in Fable Elmish and similar web applications
 
 You can use `Render.AsStream <stream> <items>` to render to a pre-existing stream, or `Render.AsStreamBytes <items>` to render as a byte array. 
 
