@@ -1,0 +1,6 @@
+<Project>
+    <ItemGroup>
+        <Watch Include="../Scripts/CreateRegressionTestActuals.fsx" />
+    </ItemGroup>
+    <Import Project="$(MSBuildExtensionsPath)\Microsoft.Common.targets" />    
+</Project>

@@ -4,9 +4,35 @@
       {
         "label": "Start watching Tutorial.dib and copy to README.MD on save.",
         "type": "shell",
-        "command": "dotnet watch fsi ../Scripts/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj",
+        "command": "dotnet watch fsi DibToMarkdown.fsx --project ./src/Scripts/WatchTutorial.csproj   ",
         "windows": {
-          "command": "dotnet watch fsi ../Scripts/DibToMarkdown.fsx --project src/FsExcel/FsExcel.fsproj"
+          "command": "dotnet watch fsi DibToMarkdown.fsx --project ./src/Scripts/WatchTutorial.csproj   "
+        },        
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "runOptions": { "runOn": "folderOpen" }
+      },
+      {
+        "label": "Start watching Tutorial.dib and recreate test actuals generator script on save.",
+        "type": "shell",
+        "command": " dotnet watch fsi DibToActualsScript.fsx --project ./src/Scripts/WatchTutorial.csproj",
+        "windows": {
+          "command": " dotnet watch fsi DibToActualsScript.fsx --project ./src/Scripts/WatchTutorial.csproj"
+        },        
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "runOptions": { "runOn": "folderOpen" }
+      },
+      {
+        "label": "Start watching CreateRegressionTestActuals.fsx and run it when regenerated.",
+        "type": "shell",
+        "command": "dotnet watch fsi CreateRegressionTestActuals.fsx --project ./src/Scripts/WatchCreateRegressionTestActuals.csproj",
+        "windows": {
+          "command": "dotnet watch fsi CreateRegressionTestActuals.fsx --project ./src/Scripts/WatchCreateRegressionTestActuals.csproj"
         },        
         "presentation": {
           "reveal": "always",
