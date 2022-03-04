@@ -308,7 +308,7 @@ module Test12 =
             FontEmphasis Bold
             FontEmphasis Italic 
         ]
-        for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
+        for heading in ["Stock Item"; "Price"; "Count"] do
             Cell [ String heading ]
         Style []
         
@@ -344,6 +344,7 @@ module Test13 =
         Cell [ String "Row 4"]
         Go (RC(6, 5))
         Cell [ String "R6C5"]
+        Cell [ String "R6C6"]
     ]
     |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     

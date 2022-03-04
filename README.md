@@ -8,12 +8,12 @@ Welcome to FsExcel, a library for generating Excel spreadsheets using very simpl
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
-> This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>! Download it, open in Visual Studio Code, and start generating spreadsheets for real!
+> *This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>! Download it, open in Visual Studio Code, and start generating spreadsheets for real!*
 
 ---
 ## Hello World
 
-Here's the complete code to generate a spreadsheet with a single cell containing a string!
+Here's the complete code to generate a spreadsheet with a single cell containing a string.
 
 Run this and you should find a spreadsheet called `HelloWorld.xlsx` in your `/temp` folder. (Change the path to suit.)
 <!-- Test -->
@@ -37,13 +37,13 @@ open FsExcel
      alt="Hello World example"
      style="width: 120px;" />
 
-This example already embodies the main stages of building a spreadsheet using FsExcel:
+This example embodies the main stages of building a spreadsheet using FsExcel:
 
 1) Build a list using a list comprehension: `[ ... ]`
 2) In the list make cells using `Cell`
 3) Each cell gets a list of properties, in this case just the cell content, which here is a string: `String "Hello world!"`
 
-If you've used `Fable.React` you'll already be familiar with the concepts so far.
+If you've used `Fable.React`, or a similar library, you'll already be familiar with the concepts so far.
 
 4) Send the resulting list to `FsExcel.Render.AsFile`, providing a path.
 
@@ -460,7 +460,7 @@ module PseudoRandom =
         FontEmphasis Bold
         FontEmphasis Italic 
     ]
-    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
+    for heading in ["Stock Item"; "Price"; "Count"] do
         Cell [ String heading ]
     Style []
     
@@ -491,7 +491,9 @@ module PseudoRandom =
 ---
 ## Absolute Positioning
 
-FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell (and any subsequent cells) at an absolute row or column position - or both.
+FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell at an absolute row or column position - or both.
+
+After the explicitly-positioned cell, subsequent cells are by default rendered to the right again.
 <!-- Test -->
 
 ```fsharp
@@ -506,13 +508,14 @@ open ClosedXML.Excel
     Cell [ String "Row 4"]
     Go (RC(6, 5))
     Cell [ String "R6C5"]
+    Cell [ String "R6C6"]
 ]
 |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
      alt="Absolute Positioning example"
-     style="width: 300px;" />    
+     style="width: 350px;" />    
 
 ---
 Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
