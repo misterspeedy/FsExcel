@@ -52,6 +52,7 @@ type CellProp =
     | Next of Position
     | FontEmphasis of FontEmphasis
     | FontName of string
+    | FontSize of float
     | FontColor of XLColor
     | Border of Border
     | BorderColor of BorderColor
@@ -193,6 +194,8 @@ module Render =
                             cell.Style.Font.Strikethrough <- true
                     | FontName s ->
                         cell.Style.Font.FontName <- s
+                    | FontSize x ->
+                        cell.Style.Font.FontSize <- x
                     | BorderColor bc ->
                         match bc with
                         | BorderColor.Top c ->

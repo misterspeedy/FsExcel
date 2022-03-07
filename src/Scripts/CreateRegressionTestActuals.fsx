@@ -159,14 +159,15 @@ module Test9 =
     open ClosedXML.Excel
     
     [
-        for fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] do
+        for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
             Cell [
                 String fontName
                 FontName fontName
+                FontSize (10 + (i * 2) |> float)
             ]
             Go NewRow
     ]
-    |> Render.AsFile (Path.Combine(savePath, "FontName.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, "FontNameSize.xlsx"))
     
 module Test10 =
     

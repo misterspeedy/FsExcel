@@ -264,9 +264,9 @@ let headingStyle =
 |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
 
 ```
-## Font Name
+## Font Name and Size
 
-You can set the font name using `FontName`:
+You can set the font name using `FontName` and the size using `FontSize`:
 
 <!-- Test -->
 
@@ -277,17 +277,18 @@ open FsExcel
 open ClosedXML.Excel
 
 [
-    for fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] do
+    for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
         Cell [
             String fontName
             FontName fontName
+            FontSize (10 + (i * 2) |> float)
         ]
         Go NewRow
 ]
-|> Render.AsFile (Path.Combine(savePath, "FontName.xlsx"))
+|> Render.AsFile (Path.Combine(savePath, "FontNameSize.xlsx"))
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FontName.PNG?raw=true"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FontNameSize.PNG?raw=true"
      alt="Number Format and Alignment example"
      style="width: 250px;" />
 
