@@ -1,6 +1,10 @@
 <img src="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png"
      alt="FsExcel Logo"
      style="width: 150px;" />
+     
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fsexcel.svg?style=social&label=Twitter%20%40FsExcel)](https://twitter.com/fsexcel)
+[![Nuget](https://img.shields.io/nuget/v/Fsexcel)](https://www.nuget.org/packages/FsExcel/)
+
 
 ## Welcome!
 
