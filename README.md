@@ -259,7 +259,7 @@ let headingStyle =
 |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
 
 ```
-# Font Name
+## Font Name
 
 You can set the font name using `FontName`:
 

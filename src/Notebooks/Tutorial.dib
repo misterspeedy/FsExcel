@@ -285,7 +285,7 @@ let headingStyle =
 
 #!markdown
 
-# Font Name
+## Font Name
 
 You can set the font name using `FontName`:
 
