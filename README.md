@@ -259,6 +259,34 @@ let headingStyle =
 |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
 
 ```
+# Font Name
+
+You can set the font name using `FontName`:
+
+<!-- Test -->
+
+```fsharp
+open System.IO
+open System.Globalization
+open FsExcel
+open ClosedXML.Excel
+
+[
+    for fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] do
+        Cell [
+            String fontName
+            FontName fontName
+        ]
+        Go NewRow
+]
+|> Render.AsFile (Path.Combine(savePath, "FontName.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FontName.PNG?raw=true"
+     alt="Number Format and Alignment example"
+     style="width: 350px;" />
+
+---
 ## Number Formatting and Alignment
 
 Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
