@@ -16,8 +16,6 @@ FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abst
 **This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!**
 
 ---
-
----
 ## Hello World
 
 Here's the complete code to generate a spreadsheet with a single cell containing a string.
