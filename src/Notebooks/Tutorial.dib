@@ -729,6 +729,8 @@ In horizontal tables, the values for each record appear beside one another.  In 
 Calls to the cell style function are given 0 for the header, 1 for the first (or only) data row, 2 for the next and so on.
 
 Tables don't automatically autofit - you'll have to do that (if you want) after the table is built.
+
+Regardless of table orientation, the 'current cell' (i.e. the address at which any further new cell is rendered) is always just below the bottom-left corner of the table that was just created.
 <!-- Test -->
 
 #!fsharp

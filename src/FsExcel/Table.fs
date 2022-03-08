@@ -86,6 +86,7 @@ module Table =
                 for bodyCell in bodyCells do
                     bodyCell
                     Go (RightBy 1)
+                Go NewRow
             ]
         | Vertical ->
             [
@@ -118,6 +119,8 @@ module Table =
                         Go (DownBy 1)
                     Go (UpBy depth)
                     Go (RightBy 1)
+                Go (DownBy (depth-1))
+                Go NewRow
             ]
         | Horizontal ->
             [
