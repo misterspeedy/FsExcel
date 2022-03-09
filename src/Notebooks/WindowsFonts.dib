@@ -1,0 +1,30 @@
+#!fsharp
+
+#r "nuget: FSharp.Data"
+#r "nuget: FsExcel"
+
+open System
+open System.IO
+open FSharp.Data
+open FsExcel
+open System.Drawing.Text // Windows only?
+
+let saveDir = "/temp"
+
+let installedFonts = new InstalledFontCollection()
+
+let coreAlphabetLower = new String([|'a'..'z'|])
+let coreAlphabetUpper = coreAlphabetLower.ToUpperInvariant()
+
+[
+    for fontFamily in installedFonts.Families do
+        Cell [ String fontFamily.Name ]
+        Style [ FontName fontFamily.Name ]
+        Cell [ String fontFamily.Name ]
+        Cell [ String coreAlphabetLower ]
+        Cell [ String coreAlphabetUpper ]
+        Style []
+        Go NewRow
+    AutoFit All
+]
+|> Render.AsFile (Path.Combine(saveDir, "WindowsFonts.xlsx"))
