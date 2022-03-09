@@ -1,3 +1,9 @@
+#!markdown
+
+# Windows Fonts
+
+This sample lists all the fonts installed on the system and lists their names and A-Z samples in a spreadsheet.
+
 #!fsharp
 
 #r "nuget: FSharp.Data"
@@ -19,11 +25,13 @@ let coreAlphabetUpper = coreAlphabetLower.ToUpperInvariant()
 [
     for fontFamily in installedFonts.Families do
         Cell [ String fontFamily.Name ]
+
         Style [ FontName fontFamily.Name ]
         Cell [ String fontFamily.Name ]
         Cell [ String coreAlphabetLower ]
         Cell [ String coreAlphabetUpper ]
         Style []
+        
         Go NewRow
     AutoFit All
 ]
