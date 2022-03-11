@@ -33,7 +33,22 @@ module Cell =
             | _ -> 
                 raise <| System.NotImplementedException()
 
-        // TODO styling, width
+        Assert.Equal(expected.Style.Border.TopBorder, actual.Style.Border.TopBorder)
+        Assert.Equal(expected.Style.Border.RightBorder, actual.Style.Border.RightBorder)
+        Assert.Equal(expected.Style.Border.BottomBorder, actual.Style.Border.BottomBorder)
+        Assert.Equal(expected.Style.Border.LeftBorder, actual.Style.Border.LeftBorder)
+
+        Assert.Equal(expected.Style.Font.Bold, actual.Style.Font.Bold)
+        Assert.Equal(expected.Style.Font.Italic, actual.Style.Font.Italic)
+        Assert.Equal(expected.Style.Font.Underline, actual.Style.Font.Underline)
+        // TODO There seems to be a bug (in ClosedXml or Excel) which means if a spreadsheet
+        // is opened and then saved without any changes, and there is any strikethrough, this
+        // test will start failing.  Need to look at CloseXml source - may be reading the
+        // Strikethrough property incorrectly?
+        Assert.Equal(expected.Style.Font.Strikethrough, actual.Style.Font.Strikethrough)
+
+        Assert.Equal(expected.Style.Font.FontName, actual.Style.Font.FontName)
+        Assert.Equal(expected.Style.Font.FontSize, actual.Style.Font.FontSize)
 
 module Workbook = 
 
