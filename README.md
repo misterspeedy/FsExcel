@@ -6,7 +6,7 @@
 [![Nuget](https://img.shields.io/nuget/v/Fsexcel)](https://www.nuget.org/packages/FsExcel/)
 
 
-## Welcome!
+## Welcome! 
 
 Welcome to FsExcel, a library for generating Excel spreadsheets using very simple code.
 
@@ -593,7 +593,7 @@ open System.Globalization
     let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
     Worksheet britishCulture.NativeName
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = britishCulture.DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
