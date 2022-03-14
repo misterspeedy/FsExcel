@@ -388,9 +388,10 @@ module Test16 =
     open System.Globalization
     
     [
-        Worksheet CultureInfo.CurrentCulture.NativeName
+        let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+        Worksheet britishCulture.NativeName
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = britishCulture.DateTimeFormat.GetMonthName(m)
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
@@ -448,13 +449,13 @@ module Test18 =
         Name : string
         Age : int
         Fees : decimal
-        DateJoined : DateTime
+        DateJoined : string
     }
     
     let records = [
-        { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = System.DateTime(2022, 3, 12) }
-        { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = System.DateTime(2022, 3, 13) }
-        { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = System.DateTime(2022, 3, 15) }
+        { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = "2022-03-12" } // Excel will treat these strings as dates
+        { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = "2022-03-13" }
+        { Name = "Sofia Hernández"; Age = 58; Fees = 59.25m; DateJoined = "2022-03-15" }
     ]
     
     let cellStyleVertical index name =
