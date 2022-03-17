@@ -4,3 +4,6 @@ bin/
 .fake
 *.xlsx
 src/Tests/RegressionTests/Actual
+src/.vs/FsExcel/v16/.suo
+src/.vs/FsExcel/v16/TestStore/0/000.testlog
+src/.vs/FsExcel/v16/TestStore/0/testlog.manifest

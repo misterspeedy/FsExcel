@@ -1,9 +1,7 @@
 module Tests
 
-open System
 open System.IO
 open Xunit
-open FsExcel
 open ClosedXML.Excel
 
 let expectedsPath = "../../../Expected"
