@@ -99,7 +99,7 @@ open FsExcel
 
 [
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [
             String monthName
             Next(DownBy 1)
@@ -129,7 +129,7 @@ open FsExcel
 
 [
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [
             String monthName
         ]
@@ -159,7 +159,7 @@ open FsExcel
 
 [
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
@@ -189,7 +189,7 @@ open FsExcel
     Go(Indent 2)
 
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
@@ -235,7 +235,7 @@ open ClosedXML.Excel
     Go NewRow
     
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [ 
             String monthName
             FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
@@ -281,7 +281,7 @@ let headingStyle =
     Go NewRow
     
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
@@ -629,6 +629,8 @@ By default, all cells are placed into a worksheet (tab) called "Sheet1".  You ca
 If you do not want a "Sheet1" tab you'll need to use `Worksheet` to create an explicitly named sheet - before creating any cells.
 
 Each new worksheet starts at the top-left cell, has an indent setting of 1 (no indent), and has an empty list as its current `Style [...]` value.
+
+If you use `Worksheet` with the name of a worksheet that already exists, that worksheet becomes active with no indent and an empty `Style [...]` value.
 <!-- Test -->
 
 #!fsharp
@@ -653,13 +655,68 @@ open System.Globalization
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
+
+    Worksheet britishCulture.NativeName //navigate back to the first worksheet
+    Go (RC(13, 1))
+    for m in 0..11 do 
+        let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+        Cell [ String monthAbbreviation ]
+        Cell [ Integer monthAbbreviation.Length ]
+        Go NewRow
+
+    Worksheet ukrainianCulture.NativeName //switch back to the second worksheet 
+    Go (RC(13, 1))
+    for m in 0..11 do 
+        let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+        Cell [ String monthAbbreviation ]
+        Cell [ Integer monthAbbreviation.Length ]
+        Go NewRow
 ]
 |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
 
 #!markdown
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Worksheets.PNG?raw=true"
-     alt="Workseets example"
+     alt="Worksheets example"
+     style="width: 350px;" />
+
+#!markdown
+
+## Working with an existing workbook 
+
+You can update an existing workbook by using `Workbook ...` as the first item in the list. By default, this will set the first worksheet in the workbook as the active sheet. 
+
+Typically, you will want to immediately follow with a `Worksheet ...` to either move to the worksheet you want to update or create a new worksheet.
+
+`Workbook`  requires you to pass in a reference to a valid `ClosedXML.Excel.XLWorkbook` object. 
+
+<!-- Test -->
+
+#!fsharp
+
+open System.IO
+open System.Globalization
+open ClosedXML.Excel
+open FsExcel
+
+//open Worksheets.xlsx created in the previous snippet
+let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
+let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
+let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+
+[
+    Workbook workbook  
+    Worksheet ukrainianCulture.NativeName
+    Go(RC(1,3))
+    Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
+    
+]
+|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) //Typically, you would save to a different file.
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Workbook.PNG?raw=true"
+     alt="Workbook example"
      style="width: 350px;" />
 
 #!markdown
@@ -698,7 +755,7 @@ let headingStyle =
     Go NewRow
     
     for m in 1..12 do
-        let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+        let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
@@ -712,6 +769,8 @@ let headingStyle =
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
      alt="Autosize Columns example"
      style="width: 200px;" />
+#!markdown
+
 
 #!markdown
 
@@ -750,7 +809,7 @@ type JoiningInfo =  {
 
 // This works just as well if these are anonymous record instances,
 // eg. {| Name = "..."; ... |}
-// harmless change
+
 let records = [
     { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = "2022-03-12" } // Excel will treat these strings as dates
     { Name = "Michael Nguyễn"; Age = 23; Fees = 61.2m; DateJoined = "2022-03-13" }
@@ -818,7 +877,7 @@ records
      alt="Table example - horizontal record instance"
      style="width: 280px;" />
 
-#!markdown
+#! markdown
 
 ## Rendering in Fable Elmish and similar web applications
 
