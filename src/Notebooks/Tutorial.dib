@@ -699,7 +699,7 @@ open System.Globalization
 open ClosedXML.Excel
 open FsExcel
 
-//open Worksheets.xlsx created in the previous snippet
+// Open Worksheets.xlsx created in the previous snippet:
 let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
 let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
 let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
