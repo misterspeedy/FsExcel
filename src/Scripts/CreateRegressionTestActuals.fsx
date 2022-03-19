@@ -32,7 +32,7 @@ module Test3 =
     
     [
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [
                 String monthName
                 Next(DownBy 1)
@@ -48,7 +48,7 @@ module Test4 =
     
     [
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [
                 String monthName
             ]
@@ -67,7 +67,7 @@ module Test5 =
     
     [
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
@@ -84,7 +84,7 @@ module Test6 =
         Go(Indent 2)
     
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
@@ -109,7 +109,7 @@ module Test7 =
         Go NewRow
         
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [ 
                 String monthName
                 FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
@@ -144,7 +144,7 @@ module Test8 =
         Go NewRow
         
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
@@ -403,10 +403,46 @@ module Test16 =
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
+    
+        Worksheet britishCulture.NativeName //navigate back to the first worksheet
+        Go (RC(13, 1))
+        for m in 0..11 do 
+            let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+            Cell [ String monthAbbreviation ]
+            Cell [ Integer monthAbbreviation.Length ]
+            Go NewRow
+    
+        Worksheet ukrainianCulture.NativeName //switch back to the second worksheet 
+        Go (RC(13, 1))
+        for m in 0..11 do 
+            let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+            Cell [ String monthAbbreviation ]
+            Cell [ Integer monthAbbreviation.Length ]
+            Go NewRow
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
 module Test17 =
+    
+    open System.IO
+    open System.Globalization
+    open ClosedXML.Excel
+    open FsExcel
+    
+    let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
+    let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
+    let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+    
+    [
+        Workbook workbook  
+        Worksheet ukrainianCulture.NativeName
+        Go(RC(1,3))
+        Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
+        
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) //Typically, you would save to a different file.
+    
+module Test18 =
     
     open System.IO
     open System.Globalization
@@ -429,7 +465,7 @@ module Test17 =
         Go NewRow
         
         for m in 1..12 do
-            let monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
@@ -438,7 +474,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test18 =
+module Test19 =
     
     open System
     open System.IO
@@ -451,6 +487,7 @@ module Test18 =
         Fees : decimal
         DateJoined : string
     }
+    
     
     let records = [
         { Name = "Jane Smith"; Age = 32; Fees = 59.25m; DateJoined = "2022-03-12" } // Excel will treat these strings as dates
@@ -501,7 +538,7 @@ module Test18 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test19 =
+module Test20 =
     
     open System
     open System.IO

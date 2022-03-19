@@ -85,6 +85,7 @@ type Item =
     | Go of Position
     | Worksheet of string
     | AutoFit of AutoFit
+    | Workbook of XLWorkbook
 
 module Render = 
 
@@ -102,7 +103,7 @@ module Render =
             c <- 1
             style <- []    
 
-        let wb = new XLWorkbook()
+        let mutable wb = new XLWorkbook()
         let mutable currentWorksheet : IXLWorksheet option = None
 
         let getCurrentWorksheet() = 
@@ -110,7 +111,7 @@ module Render =
             |> Option.defaultWith (fun _ ->
                 let newWorksheet = wb.Worksheets.Add("Sheet1")
                 currentWorksheet <- newWorksheet |> Some
-                newWorksheet)    
+                newWorksheet)  
 
         let go = function
             | Row row ->
@@ -143,8 +144,16 @@ module Render =
         for item in items do
 
             match item with
+            | Workbook workbook ->
+                if currentWorksheet.IsNone
+                then 
+                    wb <- workbook 
+                    currentWorksheet <- workbook.Worksheet(1) |> Some // This is the first worksheet (one-based array)
+                    reset()
             | Worksheet name ->
-                currentWorksheet <- wb.Worksheets.Add(name) |> Some
+                if wb.Worksheets.Contains(name)
+                then currentWorksheet <- wb.Worksheet(name) |> Some
+                else currentWorksheet <- wb.Worksheets.Add(name) |> Some
                 reset()
             | Go p ->
                 go p
