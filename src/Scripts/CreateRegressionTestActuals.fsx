@@ -404,7 +404,7 @@ module Test16 =
             Cell [ Integer monthName.Length ]
             Go NewRow
     
-        Worksheet britishCulture.NativeName //navigate back to the first worksheet
+        Worksheet britishCulture.NativeName // Switch back to the first worksheet
         Go (RC(13, 1))
         for m in 0..11 do 
             let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
@@ -412,7 +412,7 @@ module Test16 =
             Cell [ Integer monthAbbreviation.Length ]
             Go NewRow
     
-        Worksheet ukrainianCulture.NativeName //switch back to the second worksheet 
+        Worksheet ukrainianCulture.NativeName // Switch back to the second worksheet 
         Go (RC(13, 1))
         for m in 0..11 do 
             let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
@@ -440,7 +440,7 @@ module Test17 =
         Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
         
     ]
-    |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) //Typically, you would save to a different file.
+    |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
     
 module Test18 =
     

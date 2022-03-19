@@ -583,7 +583,7 @@ If you do not want a "Sheet1" tab you'll need to use `Worksheet` to create an ex
 
 Each new worksheet starts at the top-left cell, has an indent setting of 1 (no indent), and has an empty list as its current `Style [...]` value.
 
-If you use `Worksheet` with the name of a worksheet that already exists, that worksheet becomes active with no indent and an empty `Style [...]` value.
+If you use `Worksheet` with the name of a worksheet that already exists, that worksheet becomes active with a current position of `RC(1, 1)`, no indent and an empty `Style [...]` value.
 <!-- Test -->
 
 ```fsharp
@@ -608,7 +608,7 @@ open System.Globalization
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    Worksheet britishCulture.NativeName //navigate back to the first worksheet
+    Worksheet britishCulture.NativeName // Switch back to the first worksheet
     Go (RC(13, 1))
     for m in 0..11 do 
         let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
@@ -616,7 +616,7 @@ open System.Globalization
         Cell [ Integer monthAbbreviation.Length ]
         Go NewRow
 
-    Worksheet ukrainianCulture.NativeName //switch back to the second worksheet 
+    Worksheet ukrainianCulture.NativeName // Switch back to the second worksheet 
     Go (RC(13, 1))
     for m in 0..11 do 
         let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
@@ -660,7 +660,7 @@ let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
     Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
     
 ]
-|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) //Typically, you would save to a different file.
+|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Workbook.PNG?raw=true"
@@ -714,10 +714,9 @@ let headingStyle =
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
      alt="Autosize Columns example"
      style="width: 200px;" />
----
 
 ---
-## Tables from types
+## Tables from Types
 
 You can create a table of cells from an instance or a sequence of any type having serializable fields - for example a record type.
 
@@ -818,8 +817,7 @@ records
      alt="Table example - horizontal record instance"
      style="width: 280px;" />
 
-#! markdown
-
+---
 ## Rendering in Fable Elmish and similar web applications
 
 You can use `Render.AsStream <stream> <items>` to render to a pre-existing stream, or `Render.AsStreamBytes <items>` to render as a byte array. 
