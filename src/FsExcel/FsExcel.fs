@@ -86,6 +86,7 @@ type Item =
     | Worksheet of string
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
+    | InsertRowsAbove of int
 
 module Render = 
 
@@ -155,6 +156,8 @@ module Render =
                 then currentWorksheet <- wb.Worksheet(name) |> Some
                 else currentWorksheet <- wb.Worksheets.Add(name) |> Some
                 reset()
+            | InsertRowsAbove rs -> 
+                currentWorksheet.Value.Row(r).InsertRowsAbove(rs)   |> ignore       
             | Go p ->
                 go p
             | Cell props ->
