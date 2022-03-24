@@ -10,7 +10,7 @@ let tempPath = "/temp"
 [<Fact>]
 let ``Volume test 1`` () =
     let rows = 1000
-    let cols = 1000
+    let cols = 100
     [
         for row in 1..rows do
             for col in 1..cols do
