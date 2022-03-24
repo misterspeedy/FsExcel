@@ -290,3 +290,29 @@ module Render =
         let bytes = stream.ToArray()
         bytes
 
+    ///  Renders a workbook as a set of HTML tables.
+    ///  This is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper
+    ///  method to display the resulting HTML.
+    let AsHtml (items : Item list) = 
+        items
+        |> AsWorkBook
+        |> fun wb ->
+        [
+            "<html>"
+            "<body>"
+            for ws in wb.Worksheets do
+                "<table>"
+                for row in (ws.FirstRowUsed().RowNumber())..(ws.LastRowUsed().RowNumber()) do
+                    "<tr>"
+                    for col in (ws.FirstColumnUsed().ColumnNumber())..(ws.LastColumnUsed().ColumnNumber()) do
+                        "<td>"
+                        ws.Cell(row, col).GetValue<string>()
+                        "</td>"
+                    "</tr>"
+                "</table>"
+            "</body>"
+            "</html>"
+        ]
+        |> fun strings ->
+            String.Join(Environment.NewLine, strings)
+
