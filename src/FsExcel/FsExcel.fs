@@ -293,25 +293,42 @@ module Render =
     ///  Renders a workbook as a set of HTML tables.
     ///  This is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper
     ///  method to display the resulting HTML.
-    let AsHtml (items : Item list) = 
+    //
+    // TODO
+    // - Alignment
+    // - Formatting
+    // - Borders
+    let AsHtml isHeader (items : Item list) = 
         items
         |> AsWorkBook
         |> fun wb ->
         [
-            "<html>"
-            "<body>"
             for ws in wb.Worksheets do
                 "<table>"
-                for row in (ws.FirstRowUsed().RowNumber())..(ws.LastRowUsed().RowNumber()) do
+                for rowIndex, row in [(ws.FirstRowUsed().RowNumber())..(ws.LastRowUsed().RowNumber())] |> List.indexed do
                     "<tr>"
-                    for col in (ws.FirstColumnUsed().ColumnNumber())..(ws.LastColumnUsed().ColumnNumber()) do
-                        "<td>"
-                        ws.Cell(row, col).GetValue<string>()
-                        "</td>"
+                    for colIndex, col in [(ws.FirstColumnUsed().ColumnNumber())..(ws.LastColumnUsed().ColumnNumber())] |> List.indexed do
+                        if isHeader rowIndex colIndex then
+                            "<th>"
+                        else
+                            "<td>"
+                        let cell = ws.Cell(row, col)
+                        let bold = cell.Style.Font.Bold
+                        let italic = cell.Style.Font.Italic
+                        let underline = cell.Style.Font.Underline <> XLFontUnderlineValues.None
+                        if bold then "<b>"
+                        if italic then "<i>"
+                        if underline then "<u>"
+                        cell.GetFormattedString()
+                        if underline then "</u>"
+                        if italic then "</i>"
+                        if bold then "</b>"
+                        if isHeader rowIndex colIndex then
+                            "</th>"
+                        else
+                            "</td>"
                     "</tr>"
                 "</table>"
-            "</body>"
-            "</html>"
         ]
         |> fun strings ->
             String.Join(Environment.NewLine, strings)
