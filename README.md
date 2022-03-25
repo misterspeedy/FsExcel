@@ -881,28 +881,34 @@ open FsExcel
 ---
 # Rendering as HTML
 
-*New feature - work in progress - not yet released in the Nuget package*
+You can render a workbook as a set of HTML tables. You will get one table per worksheet.
 
-You can render a workbook as a set of HTML tables.  This is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper method to display the resulting HTML.
+This feature is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper method to display the resulting HTML. This can be useful when experimenting with cell layouts, to avoid having to view an Excel file on every iteration.
+
+The styling representation is approximate:
+
+- Bold and italic font emphasis should show correctly. (Note that VS Code does not default to representing `<th>` items in bold)
+- Underlining, where present, will always be be shown as a single underline.
+- Cell borders, where present, will always be a single line. (Note that VS Code does not yet show borders on tables.)
+- Font faces, sizes, cell alignment and any kind of color are not currently supported.
+
+The `AsHtml` function takes a function parameter which is called for every cell rendered, with a row and column index (both zero based, originating from the top-left-most occupied cell). When this function returns true, the cell is rendered as `<th>`, otherwise it is rendered as `<td>`.
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-
 open System
 open System.IO
 open FsExcel
 open ClosedXML.Excel
 
-let isHeader r _ =
-    r = 0
+let isHeader r c =
+    r = 0 || c = 0
 
 [
-    // Dotnet Interactive/VS Code don't render table header cells in bold
-    // so we force that here:
+    Worksheet "Worksheet 1"
+
     Style [ FontEmphasis Bold ]
-    Cell [ String "Column 1" ]
-    Cell [ String "Column 2" ]
+    Cell [ String "Item" ]
+    Cell [ String "Example" ]
     Style []
     Go NewRow
 
@@ -953,7 +959,9 @@ let isHeader r _ =
         FontEmphasis (Underline XLFontUnderlineValues.Single)
     ]
     Go NewRow
+
+    Worksheet "Worksheet 2"
+    Cell [String "I am another table"]
 ]
-// |> Render.AsFile @"/temp/table.xlsx"
 |> Render.AsHtml isHeader
 |> HTML

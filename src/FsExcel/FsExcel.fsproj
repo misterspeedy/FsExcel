@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.34</Version>
+    <Version>0.0.35</Version>
     <PackageId>FsExcel</PackageId>
     <Authors>Kit Eason</Authors>
     <Owners>Kit Eason</Owners>

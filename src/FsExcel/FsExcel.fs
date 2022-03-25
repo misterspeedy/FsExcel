@@ -297,33 +297,38 @@ module Render =
     // TODO
     // - Alignment
     // - Formatting
-    // - Borders
+    // - Use worksheet tabs for something
+    let private buildStyle (cell : IXLCell) =
+        let fontWeight = if cell.Style.Font.Bold then "bold" else "normal"
+        let fontStyle = if cell.Style.Font.Italic then "italic" else "normal"
+        // TODO could be more faithful here
+        let borderLeft = if cell.Style.Border.LeftBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderTop = if cell.Style.Border.TopBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderRight = if cell.Style.Border.RightBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderBottom = if cell.Style.Border.BottomBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let textDecoration = if cell.Style.Font.Underline <> XLFontUnderlineValues.None then "underline" else "none"
+        $"\"font-weight: {fontWeight}; font-style: {fontStyle}; text-decoration: {textDecoration}; border-left : {borderLeft}; border-top: {borderTop}; border-right: {borderRight}; border-bottom: {borderBottom};\""
+
     let AsHtml isHeader (items : Item list) = 
         items
         |> AsWorkBook
         |> fun wb ->
         [
             for ws in wb.Worksheets do
+                $"<h3>{ws.Name}</h3>"
                 "<table>"
                 for rowIndex, row in [(ws.FirstRowUsed().RowNumber())..(ws.LastRowUsed().RowNumber())] |> List.indexed do
                     "<tr>"
                     for colIndex, col in [(ws.FirstColumnUsed().ColumnNumber())..(ws.LastColumnUsed().ColumnNumber())] |> List.indexed do
-                        if isHeader rowIndex colIndex then
-                            "<th>"
-                        else
-                            "<td>"
                         let cell = ws.Cell(row, col)
-                        let bold = cell.Style.Font.Bold
-                        let italic = cell.Style.Font.Italic
-                        let underline = cell.Style.Font.Underline <> XLFontUnderlineValues.None
-                        if bold then "<b>"
-                        if italic then "<i>"
-                        if underline then "<u>"
+                        let style = cell |> buildStyle
+                        let isHeader = isHeader rowIndex colIndex
+                        if isHeader then
+                            $"<th style = {style}>"
+                        else
+                            $"<td style = {style}>"
                         cell.GetFormattedString()
-                        if underline then "</u>"
-                        if italic then "</i>"
-                        if bold then "</b>"
-                        if isHeader rowIndex colIndex then
+                        if isHeader then
                             "</th>"
                         else
                             "</td>"
