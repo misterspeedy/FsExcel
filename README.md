@@ -879,7 +879,7 @@ open FsExcel
      style="width: 200px;" />
 
 ---
-# Rendering as HTML
+## Rendering as HTML
 
 You can render a workbook as a set of HTML tables. You will get one table per worksheet.
 
