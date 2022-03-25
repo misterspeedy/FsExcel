@@ -954,7 +954,7 @@ The styling representation is approximate:
 - Bold and italic font emphasis should show correctly. (Note that VS Code does not default to representing `<th>` items in bold)
 - Underlining, where present, will always be be shown as a single underline.
 - Cell borders, where present, will always be a single line. (Note that VS Code does not yet show borders on tables.)
-- Font faces, sizes, cell alignment and any kind of color are not currently supported.
+- Font names, sizes, cell alignment and any kind of color are not currently supported.
 
 The `AsHtml` function takes a function parameter which is called for every cell rendered, with a row and column index (both zero based, originating from the top-left-most occupied cell). When this function returns true, the cell is rendered as `<th>`, otherwise it is rendered as `<td>`.
 
