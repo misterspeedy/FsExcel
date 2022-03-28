@@ -15,11 +15,13 @@ Welcome to FsExcel, a library for generating Excel spreadsheets using very simpl
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
 ---
-**This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!**
+
+This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!
 
 ---
 
-**Contributors: Please see [Contributing.md](/Contributing.md) for getting started information.**
+Contributors: Please see [Contributing.md](/Contributing.md) for getting-started information.
+
 ---
 
 #!markdown
