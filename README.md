@@ -21,8 +21,6 @@ This tutorial is also available as an <a href="https://raw.githubusercontent.com
 Contributors: Please see [Contributing.md](/Contributing.md) for getting-started information.
 
 ---
-
----
 ## Hello World
 
 Here's the complete code to generate a spreadsheet with a single cell containing a string.
