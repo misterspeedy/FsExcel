@@ -78,6 +78,8 @@ type AutoFit =
     | RowRange of int * int
     | AllCols
     | AllRows
+    | Width of float
+    | Height of float
 
 type Item =
     | Cell of props : CellProp list
@@ -264,6 +266,10 @@ module Render =
                     ws.Columns().AdjustToContents() |> ignore
                 | AllRows ->
                     ws.Rows().AdjustToContents() |> ignore
+                | Width width ->
+                    ws.Columns().Width <- width
+                | Height height ->
+                    ws.Rows().Height <- height
             | Style s ->
                 style <- s        
         wb
