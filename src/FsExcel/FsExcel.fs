@@ -78,8 +78,10 @@ type AutoFit =
     | RowRange of int * int
     | AllCols
     | AllRows
-    | Width of float
-    | Height of float
+
+type Size =
+    | ColWidth of float
+    | RowHeight of float
 
 type Item =
     | Cell of props : CellProp list
@@ -88,6 +90,7 @@ type Item =
     | Worksheet of string
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
+    | Size of Size
 
 module Render = 
 
@@ -266,9 +269,13 @@ module Render =
                     ws.Columns().AdjustToContents() |> ignore
                 | AllRows ->
                     ws.Rows().AdjustToContents() |> ignore
-                | Width width ->
+            | Size s ->
+                let ws = getCurrentWorksheet()
+
+                match s with
+                | ColWidth width ->
                     ws.Columns().Width <- width
-                | Height height ->
+                | RowHeight height ->
                     ws.Rows().Height <- height
             | Style s ->
                 style <- s        

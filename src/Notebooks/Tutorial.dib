@@ -726,6 +726,38 @@ let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
 
 #!markdown
 
+## Column Widths and Row Heights
+
+You can set a specific width for all columns and a specific height for all rows with `Size (ColWidth x)` and `Size (RowHeight x)`.
+
+Excel and ClosedXml documentation is not clear on what units are used, but they are definitely different for width versus height. The width unit appears to be, roughly, average character width.
+<!-- Test -->
+
+#!fsharp
+
+open System.IO
+open System.Globalization
+open FsExcel
+
+[
+    for x in 1..12 do
+        for y in 0..12 do
+            Cell [ Integer (x * y) ]
+        Go NewRow
+
+    Size (ColWidth 5)
+    Size (RowHeight 20)
+]
+|> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ColumnWidthRowHeight.PNG?raw=true"
+     alt="Column Width and Row Height example"
+     style="width: 350px;" />
+
+#!markdown
+
 ## Autofitting
 
 You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns with ``AutoFit (ColRange(<c1>, <c2>))``.

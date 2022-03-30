@@ -46,9 +46,9 @@ As detailed above, the regression tests are generated based on the spreadsheets 
 
 1) When you save `Tutorial.dib`, a dotnet watch uses `DibToActualsScript.fsx` to generate a new script called `CreateRegressionTestActuals.fsx`. The content of `CreateRegressionTestActuals.fsx` is essentially the source from each of the F# cells in the tutorial.
 
-1) Another dotnet watch runs this newly-generated script to generate spreadsheets in `src/Tests/Actual`.
+1) Another dotnet watch runs this newly-generated script to generate spreadsheets in `src/Tests/RegressionTests/Actual`.
 
-1) When you run the tests using `dotnet test`, the regression test compares every spreadsheet in `src/Tests/Expected` with those in `src/Tests/Actual` and reports an error where these differ.
+1) When you run the tests using `dotnet test`, the regression test compares every spreadsheet in `src/Tests/RegressionTests/Expected` with those in `src/Tests/RegressionTests/Actual` and reports an error where these differ.
 
 Note that the regression tests don't yet compare every cell attribute that can be set using FsExcel. This is outstanding work.
 
@@ -77,7 +77,7 @@ let savePath = "/temp"
 
 1) Once your change is successfully generating a spreadsheet, take a carefully cropped screenshot and include it as an example after the code cell. (See existing markdown for many examples.) Your screenshot won't show in the markdown until you have pushed your changes, as the links are into GitHub.
 
-1) When you are happy with the change, you'll need to copy any new or changed output spreadsheets from the `savePath` where the notebook would have written them, into `src/Tests/Expected`.
+1) When you are happy with the change, you'll need to copy any new or changed output spreadsheets from the `savePath` where the notebook would have written them, into `src/Tests/RegressionTests/Expected`.
 
 1) Now run the tests with `dotnet test`.
 
@@ -87,7 +87,7 @@ With the feature working and regression tests passing...
 
 1) Verify in your git changes that the edits you made in `Tutorial.dib` are reflected in `README.md`.
 
-1) Also in your git changes, check that any new/edited spreadsheets in `src/Tests/Actual`, and any screenshots, are reflected.
+1) Also in your git changes, check that any new/edited spreadsheets in `src/Tests/RegressionTests/Actual`, and any screenshots, are reflected.
 
 1) If appropriate, upversion in `FsExcel.fsproj` to ensure a new Nuget package is built.
 
