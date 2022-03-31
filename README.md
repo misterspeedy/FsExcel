@@ -13,7 +13,12 @@ Welcome to FsExcel, a library for generating Excel spreadsheets using very simpl
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
 ---
-**This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!**
+
+This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!
+
+---
+
+Contributors: Please see [Contributing.md](/Contributing.md) for getting-started information.
 
 ---
 ## Hello World
@@ -668,6 +673,35 @@ let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
      style="width: 350px;" />
 
 ---
+## Column Widths and Row Heights
+
+You can set a specific width for all columns and a specific height for all rows with `Size (ColWidth x)` and `Size (RowHeight x)`.
+
+Excel and ClosedXml documentation is not clear on what units are used, but they are definitely different for width versus height. The width unit appears to be, roughly, average character width.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open System.Globalization
+open FsExcel
+
+[
+    for x in 1..12 do
+        for y in 0..12 do
+            Cell [ Integer (x * y) ]
+        Go NewRow
+
+    Size (ColWidth 5)
+    Size (RowHeight 20)
+]
+|> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ColumnWidthRowHeight.PNG?raw=true"
+     alt="Column Width and Row Height example"
+     style="width: 350px;" />
+
+---
 ## Autofitting
 
 You can set the widths of columns to fit their contents using ``AutoFit AllCols``. You can auto fit a range of columns with ``AutoFit (ColRange(<c1>, <c2>))``.
@@ -877,3 +911,91 @@ open FsExcel
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/DataTypes.PNG?raw=true"
      alt="Data Types example"
      style="width: 200px;" />
+
+---
+## Rendering as HTML
+
+You can render a workbook as a set of HTML tables. You will get one table per worksheet.
+
+This feature is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper method to display the resulting HTML. This can be useful when experimenting with cell layouts, to avoid having to view an Excel file on every iteration.
+
+The styling representation is approximate:
+
+- Bold and italic font emphasis should show correctly. (Note that VS Code does not default to representing `<th>` items in bold)
+- Underlining, where present, will always be be shown as a single underline.
+- Cell borders, where present, will always be a single line. (Note that VS Code does not yet show borders on tables.)
+- Font names, sizes, cell alignment and any kind of color are not currently supported.
+
+The `AsHtml` function takes a function parameter which is called for every cell rendered, with a row and column index (both zero based, originating from the top-left-most occupied cell). When this function returns true, the cell is rendered as `<th>`, otherwise it is rendered as `<td>`.
+
+```fsharp
+open System
+open System.IO
+open FsExcel
+open ClosedXML.Excel
+
+let isHeader r c =
+    r = 0 || c = 0
+
+[
+    Worksheet "Worksheet 1"
+
+    Style [ FontEmphasis Bold ]
+    Cell [ String "Item" ]
+    Cell [ String "Example" ]
+    Style []
+    Go NewRow
+
+    Cell [ String "String"]
+    Cell [ String "string" ]
+    Go NewRow
+
+    Cell [ String "Integer" ]
+    Cell [ Integer 42 ]
+    Go NewRow
+    
+    Cell [ String "Number" ]
+    Cell [ Float Math.PI ]
+    Go NewRow
+    
+    Cell [ String "Boolean" ]
+    Cell [ Boolean false  ]
+    Go NewRow
+
+    Cell [ String "DateTime" ]
+    Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
+    Go NewRow
+
+    Cell [ String "TimeSpan" ]
+    Cell [ 
+        TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
+        FormatCode "hh:mm:ss"
+    ]
+    Go NewRow
+
+    Cell [ String "Bold" ]
+    Cell [
+        String "I am bold"
+        FontEmphasis Bold
+    ]
+    Go NewRow
+
+    Cell [ String "Italic" ]
+    Cell [
+        String "I am Italic"
+        FontEmphasis Italic
+    ]
+    Go NewRow
+
+    Cell [ String "Underlined" ]
+    Cell [
+        String "I am underlined"
+        FontEmphasis (Underline XLFontUnderlineValues.Single)
+    ]
+    Go NewRow
+
+    Worksheet "Worksheet 2"
+    Cell [String "I am another table"]
+]
+|> Render.AsHtml isHeader
+|> HTML

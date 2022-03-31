@@ -447,6 +447,23 @@ module Test18 =
     open System.IO
     open System.Globalization
     open FsExcel
+    
+    [
+        for x in 1..12 do
+            for y in 0..12 do
+                Cell [ Integer (x * y) ]
+            Go NewRow
+    
+        Size (ColWidth 5)
+        Size (RowHeight 20)
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
+    
+module Test19 =
+    
+    open System.IO
+    open System.Globalization
+    open FsExcel
     open ClosedXML.Excel
     
     let headingStyle = 
@@ -474,7 +491,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System
     open System.IO
@@ -538,7 +555,7 @@ module Test19 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test20 =
+module Test21 =
     
     open System
     open System.IO

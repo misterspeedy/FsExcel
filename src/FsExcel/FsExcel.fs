@@ -79,6 +79,10 @@ type AutoFit =
     | AllCols
     | AllRows
 
+type Size =
+    | ColWidth of float
+    | RowHeight of float
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
@@ -87,6 +91,7 @@ type Item =
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
+    | Size of Size
 
 module Render = 
 
@@ -267,6 +272,14 @@ module Render =
                     ws.Columns().AdjustToContents() |> ignore
                 | AllRows ->
                     ws.Rows().AdjustToContents() |> ignore
+            | Size s ->
+                let ws = getCurrentWorksheet()
+
+                match s with
+                | ColWidth width ->
+                    ws.Columns().Width <- width
+                | RowHeight height ->
+                    ws.Rows().Height <- height
             | Style s ->
                 style <- s        
         wb
@@ -292,4 +305,52 @@ module Render =
         items |> AsStream stream
         let bytes = stream.ToArray()
         bytes
+
+    ///  Renders a workbook as a set of HTML tables.
+    ///  This is primarily for use in Dotnet Interactive Notebooks, where you can use the `HTML()` helper
+    ///  method to display the resulting HTML.
+    //
+    // TODO
+    // - Alignment
+    // - Formatting
+    // - Use worksheet tabs for something
+    let private buildStyle (cell : IXLCell) =
+        let fontWeight = if cell.Style.Font.Bold then "bold" else "normal"
+        let fontStyle = if cell.Style.Font.Italic then "italic" else "normal"
+        // TODO could be more faithful here
+        let borderLeft = if cell.Style.Border.LeftBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderTop = if cell.Style.Border.TopBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderRight = if cell.Style.Border.RightBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let borderBottom = if cell.Style.Border.BottomBorder <> XLBorderStyleValues.None then "thin solid" else "none"
+        let textDecoration = if cell.Style.Font.Underline <> XLFontUnderlineValues.None then "underline" else "none"
+        $"\"font-weight: {fontWeight}; font-style: {fontStyle}; text-decoration: {textDecoration}; border-left : {borderLeft}; border-top: {borderTop}; border-right: {borderRight}; border-bottom: {borderBottom};\""
+
+    let AsHtml isHeader (items : Item list) = 
+        items
+        |> AsWorkBook
+        |> fun wb ->
+        [
+            for ws in wb.Worksheets do
+                $"<h3>{ws.Name}</h3>"
+                "<table>"
+                for rowIndex, row in [(ws.FirstRowUsed().RowNumber())..(ws.LastRowUsed().RowNumber())] |> List.indexed do
+                    "<tr>"
+                    for colIndex, col in [(ws.FirstColumnUsed().ColumnNumber())..(ws.LastColumnUsed().ColumnNumber())] |> List.indexed do
+                        let cell = ws.Cell(row, col)
+                        let style = cell |> buildStyle
+                        let isHeader = isHeader rowIndex colIndex
+                        if isHeader then
+                            $"<th style = {style}>"
+                        else
+                            $"<td style = {style}>"
+                        cell.GetFormattedString()
+                        if isHeader then
+                            "</th>"
+                        else
+                            "</td>"
+                    "</tr>"
+                "</table>"
+        ]
+        |> fun strings ->
+            String.Join(Environment.NewLine, strings)
 
