@@ -643,13 +643,14 @@ You can update an existing workbook by using `Workbook ...` as the first item in
 
 Typically, you will want to immediately follow with a `Worksheet ...` to either move to the worksheet you want to update or create a new worksheet.
 
-`Workbook`  requires you to pass in a reference to a valid `ClosedXML.Excel.XLWorkbook` object. 
+`Workbook`  requires you to pass in a reference to a valid `ClosedXML.Excel.XLWorkbook` object. See [Inserting blank rows](#insertingblankrows) below for an example.
 
-### Inserting blank rows
+<a name="insertingblankrows"></a>
+## Inserting blank rows
 
-One common task when working with existing workbooks is inserting rows of data above existing rows. You can use `InsertRowsAbove n` which will insert `n` number of blank rows above the current row. 
+One common task when working with existing workbooks is inserting rows of data above existing rows. You can use `InsertRowsAbove n` which will insert `n` blank rows above the current row. 
 
-`InsertRowsAbove` does not change the current position. However, the row at that position is now the first inserted (blank) row. Note that if a formula refers to a cell that is moved, the formula gets updated by Excel. See the example below.
+`InsertRowsAbove` does not change the current position. However, the row at that position is now the first inserted (blank) row. Note that if a formula refers to a cell that is moved, the formula is automatically updated.
 
 <!-- Test -->
 
