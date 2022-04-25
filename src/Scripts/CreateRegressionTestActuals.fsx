@@ -432,13 +432,19 @@ module Test17 =
     let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
     let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
     let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+    let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "Rainous"; "Windous"; "Buddal"; "Floweral"; "Meadowal"; "Reapidor"; "Heatidor"; "Fruitidor" |]
     
     [
         Workbook workbook  
         Worksheet ukrainianCulture.NativeName
         Go(RC(1,3))
         Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
-        
+        Worksheet britishCulture.NativeName
+        InsertRowsAbove 12 // The cell reference in the  formula above will be updated to B13
+        for m in 0..11 do
+            Cell [ String altMonthNames[m] ]
+            Cell [ Integer altMonthNames[m].Length ]
+            Go NewRow    
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
     

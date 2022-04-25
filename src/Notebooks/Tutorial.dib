@@ -695,6 +695,12 @@ Typically, you will want to immediately follow with a `Worksheet ...` to either 
 
 `Workbook`  requires you to pass in a reference to a valid `ClosedXML.Excel.XLWorkbook` object. 
 
+### Inserting blank rows
+
+One common task when working with existing workbooks is inserting rows of data above existing rows. You can use `InsertRowsAbove n` which will insert `n` number of blank rows above the current row. 
+
+`InsertRowsAbove` does not change the current position. However, the row at that position is now the first inserted (blank) row. Note that if a formula refers to a cell that is moved, the formula gets updated by Excel. See the example below.
+
 <!-- Test -->
 
 #!fsharp
@@ -708,13 +714,19 @@ open FsExcel
 let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
 let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
 let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "Rainous"; "Windous"; "Buddal"; "Floweral"; "Meadowal"; "Reapidor"; "Heatidor"; "Fruitidor" |]
 
 [
     Workbook workbook  
     Worksheet ukrainianCulture.NativeName
     Go(RC(1,3))
     Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
-    
+    Worksheet britishCulture.NativeName
+    InsertRowsAbove 12 // The cell reference in the  formula above will be updated to B13
+    for m in 0..11 do
+        Cell [ String altMonthNames[m] ]
+        Cell [ Integer altMonthNames[m].Length ]
+        Go NewRow    
 ]
 |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
 
@@ -722,6 +734,14 @@ let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Workbook.PNG?raw=true"
      alt="Workbook example"
+     style="width: 350px;" />
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/InsertRowsAbove.PNG?raw=true"
+     alt="InsertRowsAbove example"
+     style="width: 350px;" />
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/UpdatedFormula.PNG?raw=true"
+     alt="InsertRowsAbove Updated Formula example"
      style="width: 350px;" />
 
 #!markdown
