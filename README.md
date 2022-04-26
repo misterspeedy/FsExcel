@@ -681,17 +681,9 @@ let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "
 |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Workbook.PNG?raw=true"
-     alt="Workbook example"
-     style="width: 350px;" />
-
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/InsertRowsAbove.PNG?raw=true"
      alt="InsertRowsAbove example"
-     style="width: 350px;" />
-
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/UpdatedFormula.PNG?raw=true"
-     alt="InsertRowsAbove Updated Formula example"
-     style="width: 350px;" />
+     style="width: 300px;" />
 
 ---
 ## Column Widths and Row Heights
