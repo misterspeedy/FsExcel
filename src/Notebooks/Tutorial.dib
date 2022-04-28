@@ -14,13 +14,14 @@ Welcome to FsExcel, a library for generating Excel spreadsheets using very simpl
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
----
 
 This tutorial is also available as an <a href="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/src/Notebooks/Tutorial.dib" download="Tutorial.dib">interactive notebook</a>. Download it, open in Visual Studio Code, and start generating spreadsheets for real!
 
----
+* *Contributors* - please see [Contributing.md](/Contributing.md) for getting-started information.
 
-Contributors: Please see [Contributing.md](/Contributing.md) for getting-started information.
+* *Usage example* - for an example of FsExcel in action, see http://www.pushbuttonreceivetables.com. Source code on [GitHub](https://github.com/misterspeedy/HtmlExcel).
+
+---
 
 #!markdown
 
@@ -934,6 +935,8 @@ You can use `Render.AsStream <stream> <items>` to render to a pre-existing strea
 `Render.AsStreamBytes` is useful for Fable-based and other web app scenarios. Render to a byte array on the server, and transfer the bytes to the client using Fable Remoting.  On the client use the `SaveFileAs` extension function to start a browser download.  Make sure you have opened the `Fable.Remoting.Client` to get the `SaveFileAs` method of a byte array.
 
 There are few more details here: https://zaid-ajaj.github.io/Fable.Remoting/src/upload-and-download.html
+
+For a working example, see http://www.pushbuttonreceivetables.com/, in particular https://github.com/misterspeedy/HtmlExcel/blob/main/src/Server/Html.fs.
 
 #!fsharp
 
