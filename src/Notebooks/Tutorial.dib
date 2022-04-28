@@ -936,7 +936,7 @@ You can use `Render.AsStream <stream> <items>` to render to a pre-existing strea
 
 There are few more details here: https://zaid-ajaj.github.io/Fable.Remoting/src/upload-and-download.html
 
-For a working example, see http://www.pushbuttonreceivetables.com/, in particular https://github.com/misterspeedy/HtmlExcel/blob/main/src/Server/Html.fs.
+For a working example, see http://www.pushbuttonreceivetables.com/, in particular https://github.com/misterspeedy/HtmlExcel/blob/main/src/Server/Html.fs#L105.
 
 #!fsharp
 
