@@ -41,6 +41,10 @@ type HorizontalAlignment =
     | Center
     | Right
 
+type NameScope =
+    | Worksheet
+    | Workbook
+    
 type CellProp =
     | String of string
     | Float of float
@@ -59,6 +63,7 @@ type CellProp =
     | BackgroundColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
     | FormatCode of string
+    | Name of name: string * scope: NameScope
 
 module CellProps = 
 
@@ -257,6 +262,12 @@ module Render =
                             cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
                     | FormatCode fc ->
                         cell.Style.NumberFormat.Format <- fc
+                    | Name (name, scope) ->
+                        let xlScope =
+                            match scope with
+                            | NameScope.Worksheet -> XLScope.Worksheet
+                            | NameScope.Workbook -> XLScope.Workbook
+                        cell.AddToNamed(name, xlScope) |> ignore
             | AutoFit af ->
                 let ws = getCurrentWorksheet()
 
