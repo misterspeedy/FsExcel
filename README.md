@@ -581,6 +581,25 @@ open FsExcel
      style="width: 150px;" />
 
 ---
+## Named cells
+<!-- Test -->
+
+```fsharp
+#r "nuget: FsExcel"
+
+let savePath = "/temp"
+
+open System.IO
+open FsExcel
+
+[
+    Cell [ 
+        String "Invoice 123"
+        Name ("InvoiceName", NameScope.Worksheet) ]
+]
+|> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
+
+```
 ## Worksheets (Tabs)
 
 By default, all cells are placed into a worksheet (tab) called "Sheet1".  You can override this, and create additional worksheets, using `Worksheet ...`.
