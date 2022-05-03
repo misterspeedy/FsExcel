@@ -1,0 +1,14 @@
+#!fsharp
+
+#r "nuget: ClosedXML"
+#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+let savePath = "/temp"
+
+open System
+open FsExcel
+
+[
+    Cell [String "Hello"]
+    Cell [String "World"]
+] 
+|> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
