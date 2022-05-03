@@ -582,6 +582,20 @@ open FsExcel
 
 ---
 ## Named cells
+
+To create worksheet scoped name use  
+`
+Name "Username"
+`  
+or  
+`
+ScopedName ("Email", NameScope.Worksheet)
+`  
+
+To create workbook scoped name use  
+`
+ScopedName ("Email", NameScope.Workbook)
+`
 <!-- Test -->
 
 ```fsharp
@@ -594,8 +608,11 @@ open FsExcel
 
 [
     Cell [ 
-        String "Invoice 123"
-        Name ("InvoiceName", NameScope.Worksheet) ]
+        String "JohnDoe"
+        Name "Username" ]
+    Cell [ 
+        String "john.doe@company.com"
+        ScopedName ("Email", NameScope.Workbook) ]
 ]
 |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
 
