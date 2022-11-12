@@ -89,6 +89,76 @@ type Size =
     | ColWidth of float
     | RowHeight of float
 
+/// Represents the area of a worksheet to be filtered.
+type AutoFilterRange =
+    /// The entire range used in the worksheet.
+    | RangeUsed
+    // The current region around a spcified cell.
+    | CurrentRegion of string
+    // A specified range.
+    | Range of string
+
+type AutoFilter =
+    | EnableOnly of AutoFilterRange
+    | Clear of AutoFilterRange
+
+    | EqualToString of AutoFilterRange * column : int * value : string
+    | EqualToInt of AutoFilterRange * column : int * value : int
+    | EqualToFloat of AutoFilterRange * column : int * value : float
+    | EqualToDateTime of AutoFilterRange * column : int * value : DateTime
+    | EqualToBool of AutoFilterRange * column : int * value : bool
+
+    | NotEqualToString of AutoFilterRange * column : int * value : string
+    | NotEqualToInt of AutoFilterRange * column : int * value : int
+    | NotEqualToFloat of AutoFilterRange * column : int * value : float
+    | NotEqualToDateTime of AutoFilterRange * column : int * value : DateTime
+    | NotEqualToBool of AutoFilterRange * column : int * value : bool
+
+    | BetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
+    | BetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
+    // BetweenDateTime works, but reapplying the filter (CTRL+Alt+L) clears it
+    // When looking at the filter in Excel both values are: 07/01/1900
+    | BetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+
+    | NotBetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
+    | NotBetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
+    | NotBetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+
+    | ContainsString of AutoFilterRange * column : int * value : string
+    | NotContainsString of AutoFilterRange * column : int * value : string
+
+    | BeginsWithString of AutoFilterRange * column : int * value : string
+    | NotBeginsWithString of AutoFilterRange * column : int * value : string
+
+    | EndsWithString of AutoFilterRange * column : int * value : string
+    | NotEndsWithString of AutoFilterRange * column : int * value : string
+
+    | Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+    | Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+
+    | GreaterThanString of AutoFilterRange * column : int * value : string
+    | GreaterThanInt of AutoFilterRange * column : int * value : int
+    | GreaterThanFloat of AutoFilterRange * column : int * value : float
+    | GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+    | LessThanString of AutoFilterRange * column : int * value : string
+    | LessThanInt of AutoFilterRange * column : int * value : int
+    | LessThanFloat of AutoFilterRange * column : int * value : float
+    | LessThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+    | EqualOrGreaterThanString of AutoFilterRange * column : int * value : string
+    | EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
+    | EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
+    | EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+    | EqualOrLessThanString of AutoFilterRange * column : int * value : string
+    | EqualOrLessThanInt of AutoFilterRange * column : int * value : int
+    | EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
+    | EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+    | AboveAverage of AutoFilterRange * column : int
+    | BelowAverage of AutoFilterRange * column : int
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
@@ -98,6 +168,7 @@ type Item =
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
     | Size of Size
+    | AutoFilter of AutoFilter list
 
 module Render = 
 
@@ -152,6 +223,135 @@ module Render =
                 c <- indent
             | Stay ->
                 ()
+
+        // let processAutoFilter (ws : IXLWorksheet) (item : Item) =
+        let processAutoFilter (ws : IXLWorksheet) (autoFilters : AutoFilter list) =
+
+            let getRange (autoFilterRange : AutoFilterRange) =
+                match autoFilterRange with
+                | RangeUsed ->
+                    ws.RangeUsed()
+                | CurrentRegion c ->
+                    ws.Cell(c).CurrentRegion
+                | Range r ->
+                    ws.Range(r)
+
+            let doIt = function
+                | EnableOnly a ->
+                    (getRange a).SetAutoFilter() |> ignore
+                | Clear a ->
+                    (getRange a).SetAutoFilter().Clear() |> ignore
+
+                | EqualToString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualTo(c) |> ignore
+                | EqualToInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualTo(c) |> ignore
+                | EqualToFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualTo(c) |> ignore
+                | EqualToDateTime (a, b, c) ->
+                    // This is needed for dates
+                    // https://github.com/ClosedXML/ClosedXML/issues/701
+                    // TODO: I'm not sure grouping by seconds would work in all cases.
+                    // TODO: To be on the safe side the grouping would have to be passed in.
+                    // TODO: This would not be nice.
+                    (getRange a).SetAutoFilter().Column(b).AddDateGroupFilter(c, XLDateTimeGrouping.Second) |> ignore
+                | EqualToBool (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualTo((c.ToString())) |> ignore
+
+                | NotEqualToString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
+                | NotEqualToInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
+                | NotEqualToFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
+                | NotEqualToDateTime (a, b, c) ->
+                    // This is needed for dates
+                    // https://github.com/ClosedXML/ClosedXML/issues/701
+                    // TODO: Does not work!
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
+                | NotEqualToBool (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString())) |> ignore
+
+                // | BetweenString (a, b, c, d) ->
+                //     (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
+                | BetweenInt (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
+                | BetweenFloat (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
+                | BetweenDateTime (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
+
+                | NotBetweenInt (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).NotBetween(c, d) |> ignore
+                | NotBetweenFloat (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).NotBetween(c, d) |> ignore
+                | NotBetweenDateTime (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).NotBetween(c, d) |> ignore
+
+                | ContainsString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).Contains(c) |> ignore
+                | NotContainsString (a, b, c) ->
+                    // Works but appears as a Contains filter
+                    (getRange a).SetAutoFilter().Column(b).NotContains(c) |> ignore
+
+                | BeginsWithString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).BeginsWith(c) |> ignore
+                | NotBeginsWithString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotBeginsWith(c) |> ignore
+
+                | EndsWithString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EndsWith(c) |> ignore
+                | NotEndsWithString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).NotEndsWith(c) |> ignore
+
+                // Top does not work with String, DateTime and Boolean
+                | Top (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).Top(c, d) |> ignore
+                | Bottom (a, b, c, d) ->
+                    (getRange a).SetAutoFilter().Column(b).Bottom(c, d) |> ignore
+
+                | GreaterThanString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
+                | GreaterThanInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
+                | GreaterThanFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
+                | GreaterThanDateTime (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
+
+                | LessThanString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
+                | LessThanInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
+                | LessThanFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
+                | LessThanDateTime (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
+
+                | EqualOrGreaterThanString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
+                | EqualOrGreaterThanInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
+                | EqualOrGreaterThanFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
+                | EqualOrGreaterThanDateTime (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
+
+                | EqualOrLessThanString (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
+                | EqualOrLessThanInt (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
+                | EqualOrLessThanFloat (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
+                | EqualOrLessThanDateTime (a, b, c) ->
+                    (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
+
+                | AboveAverage (a, b) ->
+                    (getRange a).SetAutoFilter().Column(b).AboveAverage() |> ignore
+                | BelowAverage (a, b) ->
+                    (getRange a).SetAutoFilter().Column(b).BelowAverage() |> ignore
+
+            autoFilters |> List.iter doIt
 
         for item in items do
 
@@ -295,7 +495,12 @@ module Render =
                 | RowHeight height ->
                     ws.Rows().Height <- height
             | Style s ->
-                style <- s        
+                style <- s
+            | AutoFilter autoFilter ->
+                let ws = getCurrentWorksheet()
+
+                processAutoFilter ws autoFilter
+
         wb
 
     /// Renders the provided items and saves the resulting workbook as a file. The provided path

@@ -383,6 +383,23 @@ module Test15 =
     
 module Test16 =
     
+    
+    
+    open System.IO
+    open FsExcel
+    
+    [
+        Cell [ 
+            String "JohnDoe"
+            Name "Username" ]
+        Cell [ 
+            String "john.doe@company.com"
+            ScopedName ("Email", NameScope.Workbook) ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
+    
+module Test17 =
+    
     open System.IO
     open FsExcel
     open System.Globalization
@@ -422,7 +439,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test17 =
+module Test18 =
     
     open System.IO
     open System.Globalization
@@ -448,7 +465,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
     
-module Test18 =
+module Test19 =
     
     open System.IO
     open System.Globalization
@@ -465,7 +482,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System.IO
     open System.Globalization
@@ -497,7 +514,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test20 =
+module Test21 =
     
     open System
     open System.IO
@@ -561,7 +578,7 @@ module Test20 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test21 =
+module Test22 =
     
     open System
     open System.IO
@@ -585,4 +602,68 @@ module Test21 =
         ]
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
+    
+module Test23 =
+    
+    #r "nuget: ClosedXML"
+    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
+    |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
+    
+module Test24 =
+    
+    #r "nuget: ClosedXML"
+    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; AutoFilter [ GreaterThanInt (RangeUsed, 2, 3); EqualToBool (RangeUsed, 5, true) ] ]
+    |> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
     
