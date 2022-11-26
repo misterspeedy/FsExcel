@@ -33,7 +33,7 @@ type BorderColor =
     | Top of XLColor
     | Right of XLColor
     | Bottom of XLColor
-    | Left of XLColor    
+    | Left of XLColor
     | All of XLColor
 
 type HorizontalAlignment =
@@ -44,7 +44,7 @@ type HorizontalAlignment =
 type NameScope =
     | Worksheet
     | Workbook
-    
+
 type CellProp =
     | String of string
     | Float of float
@@ -66,7 +66,7 @@ type CellProp =
     | Name of string
     | ScopedName of name: string * scope: NameScope
 
-module CellProps = 
+module CellProps =
 
     let hasNext (props : CellProp list) =
         props
@@ -136,22 +136,18 @@ type AutoFilter =
     | Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
     | Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
 
-    | GreaterThanString of AutoFilterRange * column : int * value : string
     | GreaterThanInt of AutoFilterRange * column : int * value : int
     | GreaterThanFloat of AutoFilterRange * column : int * value : float
     | GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
 
-    | LessThanString of AutoFilterRange * column : int * value : string
     | LessThanInt of AutoFilterRange * column : int * value : int
     | LessThanFloat of AutoFilterRange * column : int * value : float
     | LessThanDateTime of AutoFilterRange * column : int * value : DateTime
 
-    | EqualOrGreaterThanString of AutoFilterRange * column : int * value : string
     | EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
     | EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
     | EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
 
-    | EqualOrLessThanString of AutoFilterRange * column : int * value : string
     | EqualOrLessThanInt of AutoFilterRange * column : int * value : int
     | EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
     | EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
@@ -170,7 +166,7 @@ type Item =
     | Size of Size
     | AutoFilter of AutoFilter list
 
-module Render = 
+module Render =
 
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
     let AsWorkBook (items : Item list) =
@@ -184,17 +180,17 @@ module Render =
             indent <- 1
             r <- 1
             c <- 1
-            style <- []    
+            style <- []
 
         let mutable wb = new XLWorkbook()
         let mutable currentWorksheet : IXLWorksheet option = None
 
-        let getCurrentWorksheet() = 
+        let getCurrentWorksheet() =
             currentWorksheet
             |> Option.defaultWith (fun _ ->
                 let newWorksheet = wb.Worksheets.Add("Sheet1")
                 currentWorksheet <- newWorksheet |> Some
-                newWorksheet)  
+                newWorksheet)
 
         let go = function
             | Row row ->
@@ -218,7 +214,7 @@ module Render =
             | IndentBy n ->
                 indent <- indent + n |> max 1
                 c <- indent
-            | NewRow -> 
+            | NewRow ->
                 r <- r + 1
                 c <- indent
             | Stay ->
@@ -272,8 +268,6 @@ module Render =
                 | NotEqualToBool (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString())) |> ignore
 
-                // | BetweenString (a, b, c, d) ->
-                //     (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
                 | BetweenInt (a, b, c, d) ->
                     (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
                 | BetweenFloat (a, b, c, d) ->
@@ -310,8 +304,6 @@ module Render =
                 | Bottom (a, b, c, d) ->
                     (getRange a).SetAutoFilter().Column(b).Bottom(c, d) |> ignore
 
-                | GreaterThanString (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
                 | GreaterThanInt (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
                 | GreaterThanFloat (a, b, c) ->
@@ -319,8 +311,6 @@ module Render =
                 | GreaterThanDateTime (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).GreaterThan(c) |> ignore
 
-                | LessThanString (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
                 | LessThanInt (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
                 | LessThanFloat (a, b, c) ->
@@ -328,8 +318,6 @@ module Render =
                 | LessThanDateTime (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).LessThan(c) |> ignore
 
-                | EqualOrGreaterThanString (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
                 | EqualOrGreaterThanInt (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
                 | EqualOrGreaterThanFloat (a, b, c) ->
@@ -337,8 +325,6 @@ module Render =
                 | EqualOrGreaterThanDateTime (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).EqualOrGreaterThan(c) |> ignore
 
-                | EqualOrLessThanString (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
                 | EqualOrLessThanInt (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).EqualOrLessThan(c) |> ignore
                 | EqualOrLessThanFloat (a, b, c) ->
@@ -358,8 +344,8 @@ module Render =
             match item with
             | Workbook workbook ->
                 if currentWorksheet.IsNone
-                then 
-                    wb <- workbook 
+                then
+                    wb <- workbook
                     currentWorksheet <- workbook.Worksheet(1) |> Some // This is the first worksheet (one-based array)
                     reset()
             | Worksheet name ->
@@ -367,15 +353,15 @@ module Render =
                 then currentWorksheet <- wb.Worksheet(name) |> Some
                 else currentWorksheet <- wb.Worksheets.Add(name) |> Some
                 reset()
-            | InsertRowsAbove rs -> 
-                currentWorksheet.Value.Row(r).InsertRowsAbove(rs)   |> ignore       
+            | InsertRowsAbove rs ->
+                currentWorksheet.Value.Row(r).InsertRowsAbove(rs)   |> ignore
             | Go p ->
                 go p
             | Cell props ->
 
                 let ws = getCurrentWorksheet()
 
-                let props = 
+                let props =
                     if props |> CellProps.hasNext |> not then
                         Next(RightBy 1) :: props
                     else
@@ -384,10 +370,10 @@ module Render =
                     // Ensure Next() props are applied after filling content.
                     |> CellProps.sort
 
-                for prop in props do 
+                for prop in props do
 
                     let cell = ws.Cell(r, c)
-                    
+
                     match prop with
                     | String s ->
                         cell.Value <- s
@@ -405,7 +391,7 @@ module Render =
                         cell.FormulaA1 <- s
                     | Next p ->
                         go p
-                    | FontEmphasis fe -> 
+                    | FontEmphasis fe ->
                         match fe with
                         | FontEmphasis.Bold ->
                             cell.Style.Font.Bold <- true
@@ -517,7 +503,7 @@ module Render =
         |> fun wb ->
             wb.SaveAs(stream)
 
-    /// Renders the provided items and returns the resulting Excel workbook as an array of bytes. This 
+    /// Renders the provided items and returns the resulting Excel workbook as an array of bytes. This
     /// array can be provided as a browser download in Web App scenarios.
     let AsStreamBytes (items : Item list) =
         use stream = new IO.MemoryStream()
@@ -544,7 +530,7 @@ module Render =
         let textDecoration = if cell.Style.Font.Underline <> XLFontUnderlineValues.None then "underline" else "none"
         $"\"font-weight: {fontWeight}; font-style: {fontStyle}; text-decoration: {textDecoration}; border-left : {borderLeft}; border-top: {borderTop}; border-right: {borderRight}; border-bottom: {borderBottom};\""
 
-    let AsHtml isHeader (items : Item list) = 
+    let AsHtml isHeader (items : Item list) =
         items
         |> AsWorkBook
         |> fun wb ->
