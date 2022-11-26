@@ -4,11 +4,17 @@
 #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
 let savePath = "/temp"
 
+// Next steps:
+// Add to tutorial (explain that it doesn't name ranges properly)
+// Add to tests
+
 open System
 open FsExcel
 
 [
-    Cell [String "Hello"]
-    Cell [String "World"]
+    Cell [String "Hello"; Name "name"]
+    Cell [String "Hello2"; Name "name"]
+    Cell [String "World"; ScopedName("scopedname", NameScope.Workbook) ]
+    Cell [String "xxx"; ScopedName("scopedname", NameScope.Worksheet) ]
 ] 
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

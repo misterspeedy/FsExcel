@@ -383,6 +383,23 @@ module Test15 =
     
 module Test16 =
     
+    
+    
+    open System.IO
+    open FsExcel
+    
+    [
+        Cell [ 
+            String "JohnDoe"
+            Name "Username" ]
+        Cell [ 
+            String "john.doe@company.com"
+            ScopedName ("Email", NameScope.Workbook) ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
+    
+module Test17 =
+    
     open System.IO
     open FsExcel
     open System.Globalization
@@ -422,7 +439,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test17 =
+module Test18 =
     
     open System.IO
     open System.Globalization
@@ -448,7 +465,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
     
-module Test18 =
+module Test19 =
     
     open System.IO
     open System.Globalization
@@ -465,7 +482,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System.IO
     open System.Globalization
@@ -497,7 +514,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test20 =
+module Test21 =
     
     open System
     open System.IO
@@ -561,7 +578,7 @@ module Test20 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test21 =
+module Test22 =
     
     open System
     open System.IO
