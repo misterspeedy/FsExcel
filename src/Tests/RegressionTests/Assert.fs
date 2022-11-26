@@ -3,7 +3,7 @@ module Assert
 open Xunit
 open ClosedXML.Excel
 
-module Cell = 
+module Cell =
 
     let Equal (expected : IXLCell, actual : IXLCell) =
         if expected.DataType <> actual.DataType then
@@ -30,7 +30,7 @@ module Cell =
                 let e = expected.GetTimeSpan()
                 let a = actual.GetTimeSpan()
                 Assert.Equal(e, a)
-            | _ -> 
+            | _ ->
                 raise <| System.NotImplementedException()
 
         Assert.Equal(expected.Style.Border.TopBorder, actual.Style.Border.TopBorder)
@@ -50,7 +50,34 @@ module Cell =
         Assert.Equal(expected.Style.Font.FontName, actual.Style.Font.FontName)
         Assert.Equal(expected.Style.Font.FontSize, actual.Style.Font.FontSize)
 
-module Workbook = 
+module Filter =
+    type RowType =
+        | Hidden
+        | Visible
+
+    let Equal (worksheet1 : IXLWorksheet) (worksheet2 : IXLWorksheet) =
+        let getRows (rowType : RowType) (worksheet : IXLWorksheet) =
+            let rows =
+                match rowType with
+                | Hidden -> worksheet.AutoFilter.HiddenRows
+                | Visible -> worksheet.AutoFilter.VisibleRows
+
+            rows
+            |> Seq.map (fun r -> r.RangeAddress.ToString())
+            |> Seq.toList
+
+        // No filters means no filter issues
+        if worksheet1.AutoFilter.IsEnabled = false && worksheet1.AutoFilter.IsEnabled = false then
+            ()
+        elif worksheet1.AutoFilter.IsEnabled = false then
+            raise <| System.Exception($"worksheet1 does not have a filter.")
+        elif worksheet2.AutoFilter.IsEnabled = false then
+            raise <| System.Exception($"worksheet2 does not have a filter.")
+        else
+            Assert.Equal(true, (getRows Hidden worksheet1) = (getRows Hidden worksheet2))
+            Assert.Equal(true, (getRows Visible worksheet1) = (getRows Visible worksheet2))
+
+module Workbook =
 
     let Equal (expected : IXLWorkbook, actual : IXLWorkbook) =
 
@@ -71,5 +98,8 @@ module Workbook =
                     let ec = ews.Cell(address)
                     let ac = aws.Cell(address)
                     Cell.Equal(ec, ac)
+
+                // Filter.Equal (expected.Worksheet(ews.Name)) (actual.Worksheet(ews.Name))
+                Filter.Equal ews aws
             | false, _ ->
-                raise <| System.Exception($"Could not open sheet {ews.Name}")     
+                raise <| System.Exception($"Could not open sheet {ews.Name}")

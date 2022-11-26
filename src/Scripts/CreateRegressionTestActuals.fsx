@@ -603,3 +603,67 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
+module Test23 =
+    
+    #r "nuget: ClosedXML"
+    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
+    |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
+    
+module Test24 =
+    
+    #r "nuget: ClosedXML"
+    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; AutoFilter [ GreaterThanInt (RangeUsed, 2, 3); EqualToBool (RangeUsed, 5, true) ] ]
+    |> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
+    
