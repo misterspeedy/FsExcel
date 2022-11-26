@@ -1185,7 +1185,7 @@ headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterEnableOnly.PNG?raw=true"
      alt="AutoFilter Enable Only example"
-     style="width: 200px;" />
+     style="width: 500px;" />
 
 ---
 ### Apply AutoFilter
@@ -1236,10 +1236,10 @@ No AutoFilter:
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterBefore.PNG?raw=true"
      alt="AutoFilter Enable Only example"
-     style="width: 200px;" />
+     style="width: 500px;" />
 
 AutoFilter applied:
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterAfter.PNG?raw=true"
      alt="AutoFilter example"
-     style="width: 200px;" />
+     style="width: 500px;" />
