@@ -1121,3 +1121,202 @@ let isHeader r c =
 ]
 |> Render.AsHtml isHeader
 |> HTML
+
+#!markdown
+
+## AutoFilter
+
+You can add filters to a WorkSheet.
+
+* Enable Only: Enables but does not apply an AutoFilter.
+* Apply filter: Enables and applies an AutoFilter.
+* Clear filter: Clears an AutoFilter.
+
+### AutoFilterRange
+
+There can be multiple `AutoFilters` on a given worksheet. This means that the area to be filtered has to be specified when defining the filter. This is done with `AutoFilterRange`.
+
+* `RangeUsed`: The entire range used in the worksheet.
+* `CurrentRegion` of string: The current region around a spcified cell.
+* `Range` of string: A specified range.
+
+Examples:
+
+```F#
+AutoFilter [ EnableOnly RangeUsed ]
+
+AutoFilter [ EnableOnly CurrentRegion ]
+
+AutoFilter [ GreaterThanInt ("A1:E6", 2, 3) ]
+```
+
+### List of available filters
+
+```F#
+EnableOnly of AutoFilterRange
+Clear of AutoFilterRange
+
+EqualToString of AutoFilterRange * column : int * value : string
+EqualToInt of AutoFilterRange * column : int * value : int
+EqualToFloat of AutoFilterRange * column : int * value : float
+EqualToDateTime of AutoFilterRange * column : int * value : DateTime
+EqualToBool of AutoFilterRange * column : int * value : bool
+
+NotEqualToString of AutoFilterRange * column : int * value : string
+NotEqualToInt of AutoFilterRange * column : int * value : int
+NotEqualToFloat of AutoFilterRange * column : int * value : float
+NotEqualToDateTime of AutoFilterRange * column : int * value : DateTime
+NotEqualToBool of AutoFilterRange * column : int * value : bool
+
+BetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
+BetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
+// BetweenDateTime works, but reapplying the filter (CTRL+Alt+L) clears it
+// When looking at the filter in Excel both values are: 07/01/1900
+BetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+
+NotBetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
+NotBetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
+NotBetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+
+ContainsString of AutoFilterRange * column : int * value : string
+NotContainsString of AutoFilterRange * column : int * value : string
+
+BeginsWithString of AutoFilterRange * column : int * value : string
+NotBeginsWithString of AutoFilterRange * column : int * value : string
+
+EndsWithString of AutoFilterRange * column : int * value : string
+NotEndsWithString of AutoFilterRange * column : int * value : string
+
+Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+
+GreaterThanString of AutoFilterRange * column : int * value : string
+GreaterThanInt of AutoFilterRange * column : int * value : int
+GreaterThanFloat of AutoFilterRange * column : int * value : float
+GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+LessThanString of AutoFilterRange * column : int * value : string
+LessThanInt of AutoFilterRange * column : int * value : int
+LessThanFloat of AutoFilterRange * column : int * value : float
+LessThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+EqualOrGreaterThanString of AutoFilterRange * column : int * value : string
+EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
+EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
+EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+EqualOrLessThanString of AutoFilterRange * column : int * value : string
+EqualOrLessThanInt of AutoFilterRange * column : int * value : int
+EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
+EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
+
+AboveAverage of AutoFilterRange * column : int
+BelowAverage of AutoFilterRange * column : int
+```
+
+#!markdown
+
+### Enable Only
+
+In the example below and `AutoFilter` is enabled for the `RangeUsed`, but no filter is applied.
+
+<!-- Test -->
+
+#!fsharp
+
+#r "nuget: ClosedXML"
+#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+let savePath = "/temp"
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
+|> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterEnableOnly.PNG?raw=true"
+     alt="AutoFilter Enable Only example"
+     style="width: 200px;" />
+
+#!markdown
+
+### Apply AutoFilter
+
+In the example below `AutoFilter` is enabled (this is automatic if you create a filter).
+
+The following compound filter is created:
+
+* `RangeUsed`, column 2 is filtered for greater than 3
+* and `RangeUsed`, column 5 is filtered to equal `true`
+
+<!-- Test -->
+
+#!fsharp
+
+#r "nuget: ClosedXML"
+#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+let savePath = "/temp"
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; AutoFilter [ GreaterThanInt (RangeUsed, 2, 3); EqualToBool (RangeUsed, 5, true) ] ]
+|> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
+
+#!markdown
+
+No AutoFilter:
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterBefore.PNG?raw=true"
+     alt="AutoFilter Enable Only example"
+     style="width: 200px;" />
+
+AutoFilter applied:
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterAfter.PNG?raw=true"
+     alt="AutoFilter example"
+     style="width: 200px;" />
