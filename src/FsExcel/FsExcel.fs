@@ -223,8 +223,8 @@ module Render =
         // let processAutoFilter (ws : IXLWorksheet) (item : Item) =
         let processAutoFilter (ws : IXLWorksheet) (autoFilters : AutoFilter list) =
 
-            let getRange (autoFilterRange : AutoFilterRange) =
-                match autoFilterRange with
+            let getRange (range : AutoFilterRange) =
+                match range with
                 | RangeUsed ->
                     ws.RangeUsed()
                 | CurrentRegion c ->
@@ -232,7 +232,7 @@ module Render =
                 | Range r ->
                     ws.Range(r)
 
-            let doIt = function
+            let setFilter = function
                 | EnableOnly a ->
                     (getRange a).SetAutoFilter() |> ignore
                 | Clear a ->
@@ -337,7 +337,7 @@ module Render =
                 | BelowAverage (a, b) ->
                     (getRange a).SetAutoFilter().Column(b).BelowAverage() |> ignore
 
-            autoFilters |> List.iter doIt
+            autoFilters |> List.iter setFilter
 
         for item in items do
 
