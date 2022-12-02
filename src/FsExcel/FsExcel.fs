@@ -252,7 +252,7 @@ module Render =
                     // TODO: This would not be nice.
                     (getRange a).SetAutoFilter().Column(b).AddDateGroupFilter(c, XLDateTimeGrouping.Second) |> ignore
                 | EqualToBool (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).EqualTo((c.ToString())) |> ignore
+                    (getRange a).SetAutoFilter().Column(b).EqualTo((c.ToString().ToUpper())) |> ignore
 
                 | NotEqualToString (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
@@ -266,7 +266,7 @@ module Render =
                     // TODO: Does not work!
                     (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
                 | NotEqualToBool (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString())) |> ignore
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString().ToUpper())) |> ignore
 
                 | BetweenInt (a, b, c, d) ->
                     (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
