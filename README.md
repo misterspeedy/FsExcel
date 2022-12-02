@@ -1151,10 +1151,6 @@ In the example below and `AutoFilter` is enabled for the `RangeUsed`, but no fil
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
@@ -1200,10 +1196,6 @@ The following compound filter is created:
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
