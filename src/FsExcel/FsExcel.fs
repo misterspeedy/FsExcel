@@ -41,9 +41,19 @@ type HorizontalAlignment =
     | Center
     | Right
 
+type VerticalAlignment =
+    | Base
+    | Centre
+    | TopMost
+
 type NameScope =
     | Worksheet
     | Workbook
+
+// EG moved this to here instead of after CellProp
+type Size =
+    | ColWidth of float
+    | RowHeight of float
 
 type CellProp =
     | String of string
@@ -62,9 +72,12 @@ type CellProp =
     | BorderColor of BorderColor
     | BackgroundColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
+    | VerticalAlignment of VerticalAlignment
     | FormatCode of string
     | Name of string
     | ScopedName of name: string * scope: NameScope
+    | CellSize of Size  // EG added this
+
 
 module CellProps =
 
@@ -78,16 +91,17 @@ module CellProps =
             | Next _ -> 1
             | _ -> 0)
 
+type CellLabel = | CellLabel of Col:string * Row:int
+// no need to specify RowMerge (span vertically), ColumnMerge (span horizontally), RowColumnMerge (box)
+// Merge() + range takes care of it, no seperare definitions needed
+type Merge = | Merge of Start:CellLabel * End:CellLabel  
+
 type AutoFit =
     | All
     | ColRange of int * int
     | RowRange of int * int
     | AllCols
     | AllRows
-
-type Size =
-    | ColWidth of float
-    | RowHeight of float
 
 /// Represents the area of a worksheet to be filtered.
 type AutoFilterRange =
@@ -163,7 +177,8 @@ type Item =
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
-    | Size of Size
+    | SizeAll of Size // no longer applies to all cells in item list
+    | MergeCells of Merge
     | AutoFilter of AutoFilter list
 
 module Render =
@@ -442,11 +457,19 @@ module Render =
                     | HorizontalAlignment h ->
                         match h with
                         | Left ->
-                            cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Left
-                        | Center ->
+                            cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Left                        
+                        | Center -> 
                             cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Center
                         | Right ->
                             cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
+                    | VerticalAlignment v ->
+                         match v with
+                         | Base ->
+                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Bottom
+                         | Centre ->
+                            cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Center
+                         | TopMost ->
+                            cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Top
                     | FormatCode fc ->
                         cell.Style.NumberFormat.Format <- fc
                     | Name name ->
@@ -457,6 +480,18 @@ module Render =
                             | NameScope.Worksheet -> XLScope.Worksheet
                             | NameScope.Workbook -> XLScope.Workbook
                         cell.AddToNamed(name, xlScope) |> ignore
+                    | CellSize s ->
+                        match s with
+                        | ColWidth width ->
+                            cell.WorksheetColumn().Width <- width
+                        | RowHeight height ->
+                            cell.WorksheetRow().Height <- height
+            | MergeCells m ->
+                let ws = getCurrentWorksheet()
+                match m with
+                | Merge (CellLabel (cSt, rSt), CellLabel (cE, rE)) -> 
+                        let range = cSt + string(rSt) + ":" + cE + string(rE)
+                        ws.Range(range).Merge() |> ignore       
             | AutoFit af ->
                 let ws = getCurrentWorksheet()
 
@@ -472,7 +507,7 @@ module Render =
                     ws.Columns().AdjustToContents() |> ignore
                 | AllRows ->
                     ws.Rows().AdjustToContents() |> ignore
-            | Size s ->
+            | SizeAll s ->
                 let ws = getCurrentWorksheet()
 
                 match s with

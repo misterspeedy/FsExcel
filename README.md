@@ -1,3 +1,8 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[],"languageName":null},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[],"languageName":null},{"name":"webview","aliases":[]}]}}
+
+---
 <img src="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png"
      alt="FsExcel Logo"
      style="width: 150px;" />
@@ -723,11 +728,11 @@ let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "
      style="width: 300px;" />
 
 ---
-## Column Widths and Row Heights
+## Column Widths and Row Heights for All Cells
 
-You can set a specific width for all columns and a specific height for all rows with `Size (ColWidth x)` and `Size (RowHeight x)`.
+You can set a specific width for *all* columns and a specific height for *all* rows with `SizeAll (ColWidth x)` and `SizeAll (RowHeight x)`.
 
-Excel and ClosedXml documentation is not clear on what units are used, but they are definitely different for width versus height. The width unit appears to be, roughly, average character width.
+Excel and ClosedXml documentation is not clear on what units are used. The width unit correlates with ~10% of the width given number of pixels. For example, if you need a cell to be ~50 pixels wide, then you would set the ColWidth to ~5. The width unit appears to be, roughly, average character width. The height unit is 60% of the pixel height. For example, if you want the height to be 45 pixels, then you would set the RowHeight to 27.
 <!-- Test -->
 
 ```fsharp
@@ -741,8 +746,8 @@ open FsExcel
             Cell [ Integer (x * y) ]
         Go NewRow
 
-    Size (ColWidth 5)
-    Size (RowHeight 20)
+    SizeAll (ColWidth 5)
+    SizeAll (RowHeight 20)
 ]
 |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
 
@@ -750,6 +755,46 @@ open FsExcel
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ColumnWidthRowHeight.PNG?raw=true"
      alt="Column Width and Row Height example"
      style="width: 350px;" />
+
+---
+## Individual Cell Sizing
+
+To size individual cells within an Item list (e.g. `[ Cell [....]; Go NewRow; Cell [...]; Go NewRow etc.`]`)`, use `CellSize (ColWidth 10)` and `CellSize (RowHeight 10)` as part of a Cell's list of properties.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open System
+open ClosedXML.Excel
+open FsExcel
+
+[   Go NewRow
+    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+        Cell [
+            String heading
+            FontEmphasis Bold
+            FontName "Calibri"
+            FontSize 11
+            HorizontalAlignment Center
+            FontColor (XLColor.FromArgb(0, 255, 255, 255))
+            BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+            Border(Border.All XLBorderStyleValues.Thin)
+            CellSize (ColWidth colWidth)
+        ]
+    Go NewRow
+    Cell [  Integer 1
+            HorizontalAlignment Center] 
+    Cell [  String "Ford Fiesta"]
+    Cell [  String "Car Technical Details..."] 
+    Cell [  String "AB12 CDE" 
+            HorizontalAlignment Center]
+]
+|> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSizeExample.PNG?raw=true"
+     alt="Individual Cell Size example"
+     style="width: 200px;" />
 
 ---
 ## Autofitting
@@ -797,6 +842,67 @@ let headingStyle =
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutosizeColumns.PNG?raw=true"
      alt="Autosize Columns example"
+     style="width: 200px;" />
+
+---
+## Merging Cells and Vertical Alignment
+You can merge cells by using ` MergeCells (Merge (CellLabel ("<column letter>", <row number>), CellLabel ("<column letter>", <row number>)))`.
+
+Cells can be merged before or after placing text in them, however, as per Excel cell naming convention with merged cells, the following rules must be observed:
+
+* **Merging cells vertically** - text must be assigned to the *top-most cell label* of the merged cell. For example, if there is a vertically merged cell spanning from cell A3 to A6, any text within the range A3 to A6 must be assigned to cell A3.
+* **Merging cells horizontally** - text must be assigned to the *left-most cell label* of the merged cell. For example, if there is a horizontally merged cell spanning from cell A2 to E2, any text within the range A2 to E2 must be assigned to cell A2.
+* **Merging cells horizontally & vertically** - text must be assigned to the *top-left cell label* of the merged cell. For example, if there is a merged cell spanning from cell A2 to E10, any text within the range A2 to E2 must be assigned to cell A2.
+
+**Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Centre, TopMost]`. Please note the British English spelling of `Centre` when used with `Vertical Alignment`!
+<!-- Test -->
+
+```fsharp
+open System.IO
+open System
+open ClosedXML.Excel
+open FsExcel
+
+[   Go NewRow
+    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+        Cell [
+            String heading
+            FontEmphasis Bold
+            FontName "Calibri"
+            FontSize 11
+            HorizontalAlignment Center
+            FontColor (XLColor.FromArgb(0, 255, 255, 255))
+            BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+            Border(Border.All XLBorderStyleValues.Thin)
+            CellSize (ColWidth colWidth)
+        ]
+    Go NewRow
+    Cell [  Integer 1
+            HorizontalAlignment Left
+            VerticalAlignment TopMost ] 
+    Cell [  String "Ford Fiesta"
+            HorizontalAlignment Center
+            VerticalAlignment Centre ] 
+    Cell [  String "Car Technical Details:"
+            Next (DownBy 1) ]
+    Cell [  String "Technical Detail 1"
+            Next (DownBy 1) ]
+    Cell [  String "Technical Detail 2"
+            Next (DownBy 1)]
+    Cell [  String "Technical Detail 3" ]
+    Go (RC (3, 4))
+    Cell [  String "AB12 CDE" 
+            HorizontalAlignment Right
+            VerticalAlignment Base ]        
+    MergeCells (Merge (CellLabel ("A", 3), CellLabel ("A", 6)))
+    MergeCells (Merge (CellLabel ("B", 3), CellLabel ("B", 6)))
+    MergeCells (Merge (CellLabel ("D", 3), CellLabel ("D", 6)))
+]
+|> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MergedCell+VerticalAlignment.PNG?raw=true"
+     alt="Merged Cell with Vertical Alignment example"
      style="width: 200px;" />
 
 ---

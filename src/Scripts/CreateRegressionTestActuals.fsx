@@ -477,12 +477,42 @@ module Test19 =
                 Cell [ Integer (x * y) ]
             Go NewRow
     
-        Size (ColWidth 5)
-        Size (RowHeight 20)
+        SizeAll (ColWidth 5)
+        SizeAll (RowHeight 20)
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
 module Test20 =
+    
+    open System.IO
+    open System
+    open ClosedXML.Excel
+    open FsExcel
+    
+    [   Go NewRow
+        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+            Cell [
+                String heading
+                FontEmphasis Bold
+                FontName "Calibri"
+                FontSize 11
+                HorizontalAlignment Center
+                FontColor (XLColor.FromArgb(0, 255, 255, 255))
+                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+                Border(Border.All XLBorderStyleValues.Thin)
+                CellSize (ColWidth colWidth)
+            ]
+        Go NewRow
+        Cell [  Integer 1
+                HorizontalAlignment Center] 
+        Cell [  String "Ford Fiesta"]
+        Cell [  String "Car Technical Details..."] 
+        Cell [  String "AB12 CDE" 
+                HorizontalAlignment Center]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
+    
+module Test21 =
     
     open System.IO
     open System.Globalization
@@ -514,7 +544,51 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test21 =
+module Test22 =
+    
+    open System.IO
+    open System
+    open ClosedXML.Excel
+    open FsExcel
+    
+    [   Go NewRow
+        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+            Cell [
+                String heading
+                FontEmphasis Bold
+                FontName "Calibri"
+                FontSize 11
+                HorizontalAlignment Center
+                FontColor (XLColor.FromArgb(0, 255, 255, 255))
+                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+                Border(Border.All XLBorderStyleValues.Thin)
+                CellSize (ColWidth colWidth)
+            ]
+        Go NewRow
+        Cell [  Integer 1
+                HorizontalAlignment Left
+                VerticalAlignment TopMost ] 
+        Cell [  String "Ford Fiesta"
+                HorizontalAlignment Center
+                VerticalAlignment Centre ] 
+        Cell [  String "Car Technical Details:"
+                Next (DownBy 1) ]
+        Cell [  String "Technical Detail 1"
+                Next (DownBy 1) ]
+        Cell [  String "Technical Detail 2"
+                Next (DownBy 1)]
+        Cell [  String "Technical Detail 3" ]
+        Go (RC (3, 4))
+        Cell [  String "AB12 CDE" 
+                HorizontalAlignment Right
+                VerticalAlignment Base ]        
+        MergeCells (Merge (CellLabel ("A", 3), CellLabel ("A", 6)))
+        MergeCells (Merge (CellLabel ("B", 3), CellLabel ("B", 6)))
+        MergeCells (Merge (CellLabel ("D", 3), CellLabel ("D", 6)))
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
+    
+module Test23 =
     
     open System
     open System.IO
@@ -578,7 +652,7 @@ module Test21 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test22 =
+module Test24 =
     
     open System
     open System.IO
@@ -603,7 +677,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
-module Test23 =
+module Test25 =
     
     #r "nuget: ClosedXML"
     #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
@@ -635,7 +709,7 @@ module Test23 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test24 =
+module Test26 =
     
     #r "nuget: ClosedXML"
     #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"

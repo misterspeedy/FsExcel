@@ -1,3 +1,7 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":"sql","languageName":"SQL","aliases":[]}]}}
+
 #!fsharp
 
 #r "nuget: ClosedXML"
