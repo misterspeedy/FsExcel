@@ -759,7 +759,7 @@ open FsExcel
 ---
 ## Individual Cell Sizing
 
-To size individual cells within an Item list (e.g. `[ Cell [....]; Go NewRow; Cell [...]; Go NewRow etc.`]`)`, use `CellSize (ColWidth 10)` and `CellSize (RowHeight 10)` as part of a Cell's list of properties.
+To size individual cells within an Item list (e.g. `[ Cell [....]; Go NewRow; Cell [...]; Go NewRow etc.`]`)`, use `CellSize (ColWidth 10)` and `CellSize (RowHeight 10)` as part of a Cell's list of properties. 
 <!-- Test -->
 
 ```fsharp
