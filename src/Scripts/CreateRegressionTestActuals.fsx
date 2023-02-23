@@ -605,9 +605,6 @@ module Test22 =
     
 module Test23 =
     
-    #r "nuget: ClosedXML"
-    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-    
     open System
     open System.IO
     open FsExcel
@@ -636,9 +633,6 @@ module Test23 =
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
 module Test24 =
-    
-    #r "nuget: ClosedXML"
-    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
     
     open System
     open System.IO

@@ -1085,63 +1085,100 @@ AutoFilter [ GreaterThanInt ("A1:E6", 2, 3) ]
 EnableOnly of AutoFilterRange
 Clear of AutoFilterRange
 
-EqualToString of AutoFilterRange * column : int * value : string
-EqualToInt of AutoFilterRange * column : int * value : int
-EqualToFloat of AutoFilterRange * column : int * value : float
-EqualToDateTime of AutoFilterRange * column : int * value : DateTime
-EqualToBool of AutoFilterRange * column : int * value : bool
+EqualToString of range : AutoFilterRange * column : int * value : string
+EqualToInt of range : AutoFilterRange * column : int * value : int
+EqualToFloat of range : AutoFilterRange * column : int * value : float
+EqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+EqualToBool of range : AutoFilterRange * column : int * value : bool
 
-NotEqualToString of AutoFilterRange * column : int * value : string
-NotEqualToInt of AutoFilterRange * column : int * value : int
-NotEqualToFloat of AutoFilterRange * column : int * value : float
-NotEqualToDateTime of AutoFilterRange * column : int * value : DateTime
-NotEqualToBool of AutoFilterRange * column : int * value : bool
+NotEqualToString of range : AutoFilterRange * column : int * value : string
+NotEqualToInt of range : AutoFilterRange * column : int * value : int
+NotEqualToFloat of range : AutoFilterRange * column : int * value : float
+NotEqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+NotEqualToBool of range : AutoFilterRange * column : int * value : bool
 
-BetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-BetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
-// BetweenDateTime works, but reapplying the filter (CTRL+Alt+L) clears it
-// When looking at the filter in Excel both values are: 07/01/1900
-BetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+BetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+BetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
+BetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-NotBetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-NotBetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
-NotBetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+NotBetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+NotBetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
+NotBetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-ContainsString of AutoFilterRange * column : int * value : string
-NotContainsString of AutoFilterRange * column : int * value : string
+ContainsString of range : AutoFilterRange * column : int * value : string
+NotContainsString of range : AutoFilterRange * column : int * value : string
 
-BeginsWithString of AutoFilterRange * column : int * value : string
-NotBeginsWithString of AutoFilterRange * column : int * value : string
+BeginsWithString of range : AutoFilterRange * column : int * value : string
+NotBeginsWithString of range : AutoFilterRange * column : int * value : string
 
-EndsWithString of AutoFilterRange * column : int * value : string
-NotEndsWithString of AutoFilterRange * column : int * value : string
+EndsWithString of range : AutoFilterRange * column : int * value : string
+NotEndsWithString of range : AutoFilterRange * column : int * value : string
 
-Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
-Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+Top of range : AutoFilterRange * column : int * value : int * topType : XLTopBottomType
+Bottom of range : AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
 
-GreaterThanString of AutoFilterRange * column : int * value : string
-GreaterThanInt of AutoFilterRange * column : int * value : int
-GreaterThanFloat of AutoFilterRange * column : int * value : float
-GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+GreaterThanInt of range : AutoFilterRange * column : int * value : int
+GreaterThanFloat of range : AutoFilterRange * column : int * value : float
+GreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-LessThanString of AutoFilterRange * column : int * value : string
-LessThanInt of AutoFilterRange * column : int * value : int
-LessThanFloat of AutoFilterRange * column : int * value : float
-LessThanDateTime of AutoFilterRange * column : int * value : DateTime
+LessThanInt of range : AutoFilterRange * column : int * value : int
+LessThanFloat of range : AutoFilterRange * column : int * value : float
+LessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-EqualOrGreaterThanString of AutoFilterRange * column : int * value : string
-EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
-EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
-EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+EqualOrGreaterThanInt of range : AutoFilterRange * column : int * value : int
+EqualOrGreaterThanFloat of range : AutoFilterRange * column : int * value : float
+EqualOrGreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-EqualOrLessThanString of AutoFilterRange * column : int * value : string
-EqualOrLessThanInt of AutoFilterRange * column : int * value : int
-EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
-EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
+EqualOrLessThanInt of range : AutoFilterRange * column : int * value : int
+EqualOrLessThanFloat of range : AutoFilterRange * column : int * value : float
+EqualOrLessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-AboveAverage of AutoFilterRange * column : int
-BelowAverage of AutoFilterRange * column : int
+AboveAverage of range : AutoFilterRange * column : int
+BelowAverage of range : AutoFilterRange * column : int
 ```
+
+### Known Issues
+
+EqualToDateTime:
+> Works but, both Equals and Custom Filter are blank.
+
+NotEqualToDateTime:
+> Does not work. Does contains. Should be not contains.
+
+BetweenDateTime
+> Does not work. Excel filter shows 07/01/1900. Reapply hides all rows.
+
+NotBetweenDateTime
+
+> Works but, shows as a Custom filter with 07/01/1900 in Excel.
+
+NotContains
+
+> Works but, shows as a Contains filter in Excel. Reapply does Contains.
+
+GreaterThanDateTime
+
+> Works but, filter name is After and shows 07/01/1900.
+
+LessThanDateTime
+
+> Works but, filter name is Before and shows 07/01/1900.
+
+EqualOrGreaterThanDateTime
+
+> Works but, filter name is Custom Filter and shows 07/01/1900.
+
+EqualOrLessThanDateTime
+
+> Works but, filter name is Custom Filter and shows 07/01/1900.
+
+<br />
+
+Some of the above issues may be related to one of these:
+
+* [Setting AutoFilter EqualTo on Date Column Doesn't Display Values When Spreadsheet Is Opened Until Filters Are Reapplied #701](https://github.com/ClosedXML/ClosedXML/issues/701)
+
+* [Text to number coercion doesn't work correctly #1891](https://github.com/ClosedXML/ClosedXML/issues/1891)
 
 ---
 ### Enable Only
@@ -1151,10 +1188,6 @@ In the example below and `AutoFilter` is enabled for the `RangeUsed`, but no fil
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
@@ -1200,10 +1233,6 @@ The following compound filter is created:
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
