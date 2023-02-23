@@ -631,37 +631,53 @@ If you use `Worksheet` with the name of a worksheet that already exists, that wo
 ```fsharp
 open System.IO
 open FsExcel
-open System.Globalization
+
+let britishCultureNativeName = "English (United Kingdom)"
+let ukrainianCultureNativeName = "українська"
+
+let britishCultureDateTimeFormatGetMonthName =
+    [ "January"; "February"; "March"; "April"; "May"; "June"; "July";
+       "August"; "September"; "October"; "November"; "December" ]
+
+let britishCultureDateTimeFormatAbbreviatedMonthNames =
+    [ "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct";
+      "Nov"; "Dec" ]
+
+let ukrainianCultureDateTimeFormatGetMonthName =
+    [ "січень"; "лютий"; "березень"; "квітень"; "травень"; "червень";
+      "липень"; "серпень"; "вересень"; "жовтень"; "листопад"; "грудень" ]
+
+let ukrainianCultureDateTimeFormatAbbreviatedMonthNames =
+    [ "січ"; "лют"; "бер"; "кві"; "тра"; "чер"; "лип"; "сер"; "вер"; "жов";
+      "лис"; "гру" ]
 
 [
-    let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
-    Worksheet britishCulture.NativeName
-    for m in 1..12 do
-        let monthName = britishCulture.DateTimeFormat.GetMonthName(m)
+    Worksheet britishCultureNativeName
+    for m in 0..11 do
+        let monthName = britishCultureDateTimeFormatGetMonthName.[m]
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-    Worksheet ukrainianCulture.NativeName
-    for m in 1..12 do
-        let monthName = ukrainianCulture.DateTimeFormat.GetMonthName(m)
+    Worksheet ukrainianCultureNativeName
+    for m in 0..11 do
+        let monthName = ukrainianCultureDateTimeFormatGetMonthName.[m]
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    Worksheet britishCulture.NativeName // Switch back to the first worksheet
+    Worksheet britishCultureNativeName // Switch back to the first worksheet
     Go (RC(13, 1))
-    for m in 0..11 do 
-        let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+    for m in 0..11 do
+        let monthAbbreviation = britishCultureDateTimeFormatAbbreviatedMonthNames.[m]
         Cell [ String monthAbbreviation ]
         Cell [ Integer monthAbbreviation.Length ]
         Go NewRow
 
-    Worksheet ukrainianCulture.NativeName // Switch back to the second worksheet 
+    Worksheet ukrainianCultureNativeName // Switch back to the second worksheet
     Go (RC(13, 1))
-    for m in 0..11 do 
-        let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+    for m in 0..11 do
+        let monthAbbreviation = ukrainianCultureDateTimeFormatAbbreviatedMonthNames.[m]
         Cell [ String monthAbbreviation ]
         Cell [ Integer monthAbbreviation.Length ]
         Go NewRow
@@ -693,27 +709,28 @@ One common task when working with existing workbooks is inserting rows of data a
 
 ```fsharp
 open System.IO
-open System.Globalization
 open ClosedXML.Excel
 open FsExcel
 
 // Open Worksheets.xlsx created in the previous snippet:
 let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
-let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+
+let britishCultureNativeName = "English (United Kingdom)"
+let ukrainianCultureNativeName = "українська"
+
 let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "Rainous"; "Windous"; "Buddal"; "Floweral"; "Meadowal"; "Reapidor"; "Heatidor"; "Fruitidor" |]
 
 [
-    Workbook workbook  
-    Worksheet ukrainianCulture.NativeName
+    Workbook workbook
+    Worksheet ukrainianCultureNativeName
     Go(RC(1,3))
-    Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
-    Worksheet britishCulture.NativeName
+    Cell [FormulaA1 $"='{britishCultureNativeName}'!B1*2" ]
+    Worksheet britishCultureNativeName
     InsertRowsAbove 12 // The cell reference in the  formula above will be updated to B13
     for m in 0..11 do
         Cell [ String altMonthNames[m] ]
         Cell [ Integer altMonthNames[m].Length ]
-        Go NewRow    
+        Go NewRow
 ]
 |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
 
