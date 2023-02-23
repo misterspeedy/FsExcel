@@ -1314,7 +1314,7 @@ open System.IO
 open FsExcel
 
 let headings =
-    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
       Cell [ String "IntCol"; HorizontalAlignment Center ]
       Cell [ String "FloatCol"; HorizontalAlignment Center ]
       Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
@@ -1359,7 +1359,7 @@ open System.IO
 open FsExcel
 
 let headings =
-    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
       Cell [ String "IntCol"; HorizontalAlignment Center ]
       Cell [ String "FloatCol"; HorizontalAlignment Center ]
       Cell [ String "DateTimeCol"; HorizontalAlignment Center ]

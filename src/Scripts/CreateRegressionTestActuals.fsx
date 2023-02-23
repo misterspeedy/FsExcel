@@ -701,7 +701,7 @@ module Test25 =
     open FsExcel
     
     let headings =
-        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
           Cell [ String "IntCol"; HorizontalAlignment Center ]
           Cell [ String "FloatCol"; HorizontalAlignment Center ]
           Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
@@ -730,7 +730,7 @@ module Test26 =
     open FsExcel
     
     let headings =
-        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
           Cell [ String "IntCol"; HorizontalAlignment Center ]
           Cell [ String "FloatCol"; HorizontalAlignment Center ]
           Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
