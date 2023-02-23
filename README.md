@@ -1031,8 +1031,6 @@ You can use `Render.AsStream <stream> <items>` to render to a pre-existing strea
 
 `Render.AsStreamBytes` is useful for Fable-based and other web app scenarios. Render to a byte array on the server, and transfer the bytes to the client using Fable Remoting.  On the client use the `SaveFileAs` extension function to start a browser download.  Make sure you have opened the `Fable.Remoting.Client` to get the `SaveFileAs` method of a byte array.
 
-There are few more details here: https://zaid-ajaj.github.io/Fable.Remoting/src/upload-and-download.html
-
 For a working example, see http://www.pushbuttonreceivetables.com/, in particular https://github.com/misterspeedy/HtmlExcel/blob/main/src/Server/Html.fs#L105.
 
 ```fsharp
