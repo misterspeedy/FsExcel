@@ -1,8 +1,3 @@
-#!meta
-
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":[]}]}}
-
----
 <img src="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png"
      alt="FsExcel Logo"
      style="width: 150px;" />
