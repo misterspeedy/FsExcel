@@ -20,8 +20,6 @@ This tutorial is also available as an <a href="https://raw.githubusercontent.com
 * *Usage example* - for an example of FsExcel in action, see http://www.pushbuttonreceivetables.com. Source code on [GitHub](https://github.com/misterspeedy/HtmlExcel).
 
 ---
-
----
 ## Hello World
 
 Here's the complete code to generate a spreadsheet with a single cell containing a string.
