@@ -5,52 +5,62 @@ open ClosedXML.Excel
 
 module Cell =
 
-    let Equal (expected : IXLCell, actual : IXLCell) =
-        if expected.DataType <> actual.DataType then
-            raise (Xunit.Sdk.NotEqualException($"{expected.DataType}", $"{actual.DataType}"))
-        else
-            match expected.DataType with
-            | XLDataType.Text ->
-                let e = expected.GetString()
-                let a = actual.GetString()
-                Assert.Equal(e, a)
-            | XLDataType.Number ->
-                let e = expected.GetDouble()
-                let a = actual.GetDouble()
-                Assert.Equal(e, a)
-            | XLDataType.Boolean ->
-                let e = expected.GetBoolean()
-                let a = actual.GetBoolean()
-                Assert.Equal(e, a)
-            | XLDataType.DateTime ->
-                let e = expected.GetDateTime()
-                let a = actual.GetDateTime()
-                Assert.Equal(e, a)
-            | XLDataType.TimeSpan ->
-                let e = expected.GetTimeSpan()
-                let a = actual.GetTimeSpan()
-                Assert.Equal(e, a)
-            | _ ->
-                raise <| System.NotImplementedException()
+    open Xunit.Abstractions
 
-        Assert.Equal(expected.Style.Border.TopBorder, actual.Style.Border.TopBorder)
-        Assert.Equal(expected.Style.Border.RightBorder, actual.Style.Border.RightBorder)
-        Assert.Equal(expected.Style.Border.BottomBorder, actual.Style.Border.BottomBorder)
-        Assert.Equal(expected.Style.Border.LeftBorder, actual.Style.Border.LeftBorder)
+    let Equal (expected : IXLCell, actual : IXLCell, filename : string, output : ITestOutputHelper) =
+        try
+            if expected.DataType <> actual.DataType then
+                raise (Xunit.Sdk.NotEqualException($"{expected.DataType}", $"{actual.DataType}"))
+            else
+                match expected.DataType with
+                | XLDataType.Text ->
+                    let e = expected.GetString()
+                    let a = actual.GetString()
+                    Assert.Equal(e, a)
+                | XLDataType.Number ->
+                    let e = expected.GetDouble()
+                    let a = actual.GetDouble()
+                    Assert.Equal(e, a)
+                | XLDataType.Boolean ->
+                    let e = expected.GetBoolean()
+                    let a = actual.GetBoolean()
+                    Assert.Equal(e, a)
+                | XLDataType.DateTime ->
+                    let e = expected.GetDateTime()
+                    let a = actual.GetDateTime()
+                    Assert.Equal(e, a)
+                | XLDataType.TimeSpan ->
+                    let e = expected.GetTimeSpan()
+                    let a = actual.GetTimeSpan()
+                    Assert.Equal(e, a)
+                | XLDataType.Blank ->
+                    ()
+                | _ as t ->
+                    raise <| System.NotImplementedException($"Unsuppored type {t}")
 
-        Assert.Equal(expected.Style.Font.Bold, actual.Style.Font.Bold)
-        Assert.Equal(expected.Style.Font.Italic, actual.Style.Font.Italic)
-        Assert.Equal(expected.Style.Font.Underline, actual.Style.Font.Underline)
-        // TODO There seems to be a bug (in ClosedXml or Excel) which means if a spreadsheet
-        // is opened and then saved without any changes, and there is any strikethrough, this
-        // test will start failing.  Need to look at CloseXml source - may be reading the
-        // Strikethrough property incorrectly?
-        Assert.Equal(expected.Style.Font.Strikethrough, actual.Style.Font.Strikethrough)
+            Assert.Equal(expected.Style.Border.TopBorder, actual.Style.Border.TopBorder)
+            Assert.Equal(expected.Style.Border.RightBorder, actual.Style.Border.RightBorder)
+            Assert.Equal(expected.Style.Border.BottomBorder, actual.Style.Border.BottomBorder)
+            Assert.Equal(expected.Style.Border.LeftBorder, actual.Style.Border.LeftBorder)
 
-        Assert.Equal(expected.Style.Font.FontName, actual.Style.Font.FontName)
-        Assert.Equal(expected.Style.Font.FontSize, actual.Style.Font.FontSize)
+            Assert.Equal(expected.Style.Font.Bold, actual.Style.Font.Bold)
+            Assert.Equal(expected.Style.Font.Italic, actual.Style.Font.Italic)
+            Assert.Equal(expected.Style.Font.Underline, actual.Style.Font.Underline)
+            // TODO There seems to be a bug (in ClosedXml or Excel) which means if a spreadsheet
+            // is opened and then saved without any changes, and there is any strikethrough, this
+            // test will start failing.  Need to look at ClosedXml source - may be reading the
+            // Strikethrough property incorrectly?
+            Assert.Equal(expected.Style.Font.Strikethrough, actual.Style.Font.Strikethrough)
+
+            Assert.Equal(expected.Style.Font.FontName, actual.Style.Font.FontName)
+            Assert.Equal(expected.Style.Font.FontSize, actual.Style.Font.FontSize)
+        with
+        | e ->
+            output.WriteLine $"Error is in {filename}, cell {expected.Address}, expected content '{expected.Value}', actual content '{actual.Value}'"
+            raise e
 
 module Filter =
+
     type RowType =
         | Hidden
         | Visible
@@ -79,7 +89,9 @@ module Filter =
 
 module Workbook =
 
-    let Equal (expected : IXLWorkbook, actual : IXLWorkbook) =
+    open Xunit.Abstractions
+
+    let Equal (expected : IXLWorkbook, actual : IXLWorkbook, filename : string, output : ITestOutputHelper) =
 
         // TODO should explicitly compare worksheet names first
 
@@ -97,7 +109,7 @@ module Workbook =
                 for address in allPopulatedAddresses do
                     let ec = ews.Cell(address)
                     let ac = aws.Cell(address)
-                    Cell.Equal(ec, ac)
+                    Cell.Equal(ec, ac, filename, output)
 
                 // Filter.Equal (expected.Worksheet(ews.Name)) (actual.Worksheet(ews.Name))
                 Filter.Equal ews aws

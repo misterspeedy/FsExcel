@@ -730,7 +730,7 @@ let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "
         Cell [ Integer altMonthNames[m].Length ]
         Go NewRow
 ]
-|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
+|> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/InsertRowsAbove.PNG?raw=true"

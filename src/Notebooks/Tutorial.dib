@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":[]},{"name":"vscode","languageName":null,"aliases":["frontend"]}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":["c#","C#"],"languageName":"C#"},{"name":"vscode","aliases":["frontend"],"languageName":null}]}}
 
 #!markdown
 
@@ -787,7 +787,7 @@ let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "
         Cell [ Integer altMonthNames[m].Length ]
         Go NewRow
 ]
-|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
+|> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
 
 #!markdown
 

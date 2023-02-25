@@ -480,7 +480,7 @@ module Test18 =
             Cell [ Integer altMonthNames[m].Length ]
             Go NewRow
     ]
-    |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
+    |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
 module Test19 =
     
