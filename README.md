@@ -804,7 +804,7 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSize.PNG?raw=true"
      alt="Individual Cell Size example"
-     style="width: 200px;" />
+     style="width: 400px;" />
 
 ---
 ## Autofitting
