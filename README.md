@@ -802,7 +802,7 @@ open FsExcel
 |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSizeExample.PNG?raw=true"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSize.PNG?raw=true"
      alt="Individual Cell Size example"
      style="width: 200px;" />
 

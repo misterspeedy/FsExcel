@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":["c#","C#"],"languageName":"C#"},{"name":"vscode","aliases":["frontend"],"languageName":null}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null}]}}
 
 #!markdown
 
@@ -866,7 +866,7 @@ open FsExcel
 
 #!markdown
 
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSizeExample.PNG?raw=true"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSize.PNG?raw=true"
      alt="Individual Cell Size example"
      style="width: 200px;" />
 
