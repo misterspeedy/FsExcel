@@ -280,8 +280,15 @@ open System.Globalization
 open FsExcel
 open ClosedXML.Excel
 
+// ClosedXml currently depends SixLabors.Fonts - 
+// we use that to enumerate fonts so this code works cross-platform:
+let fontNames = 
+    SixLabors.Fonts.SystemFonts.Collection.Families
+    |> Seq.map (fun font -> font.Name)
+    |> Seq.truncate 10
+
 [
-    for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
+    for i, fontName in fontNames |> Seq.indexed do
         Cell [
             String fontName
             FontName fontName

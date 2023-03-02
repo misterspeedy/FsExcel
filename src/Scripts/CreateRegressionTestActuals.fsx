@@ -158,8 +158,13 @@ module Test9 =
     open FsExcel
     open ClosedXML.Excel
     
+    let fontNames = 
+        SixLabors.Fonts.SystemFonts.Collection.Families
+        |> Seq.map (fun font -> font.Name)
+        |> Seq.truncate 10
+    
     [
-        for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
+        for i, fontName in fontNames |> Seq.indexed do
             Cell [
                 String fontName
                 FontName fontName
