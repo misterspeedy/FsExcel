@@ -280,7 +280,7 @@ open System.Globalization
 open FsExcel
 open ClosedXML.Excel
 
-// ClosedXml currently depends SixLabors.Fonts - 
+// ClosedXml currently depends on SixLabors.Fonts - 
 // we use that to enumerate fonts so this code works cross-platform:
 let fontNames = 
     SixLabors.Fonts.SystemFonts.Collection.Families
