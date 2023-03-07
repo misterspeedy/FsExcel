@@ -567,7 +567,8 @@ module Test22 =
         Go NewRow
         Cell [  Integer 1
                 HorizontalAlignment Left
-                VerticalAlignment TopMost ] 
+                VerticalAlignment TopMost
+                Name "ID" ] 
         Cell [  String "Ford Fiesta"
                 HorizontalAlignment Center
                 VerticalAlignment Centre ] 
@@ -577,14 +578,74 @@ module Test22 =
                 Next (DownBy 1) ]
         Cell [  String "Technical Detail 2"
                 Next (DownBy 1)]
-        Cell [  String "Technical Detail 3" ]
+        Cell [  String "Technical Detail 3"
+                Name "LastL" ]
         Go (RC (3, 4))
         Cell [  String "AB12 CDE" 
                 HorizontalAlignment Right
-                VerticalAlignment Base ]        
-        MergeCells (Merge (CellLabel ("A", 3), CellLabel ("A", 6)))
-        MergeCells (Merge (CellLabel ("B", 3), CellLabel ("B", 6)))
-        MergeCells (Merge (CellLabel ("D", 3), CellLabel ("D", 6)))
+                VerticalAlignment Base
+                Name "Reg" ]
+        Go (RC (6, 4))
+        Cell [Name "RegEnd"]
+        Go (RC (7, 3))
+        Cell [  String "Another Technical Detail"
+                FontEmphasis Italic
+                VerticalAlignment Centre
+                Name "TD" 
+                Next Stay]
+        Go (DownBy 1)
+        Cell [ Name "info"]
+    
+        MergeCells (Merge (ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
+        MergeCells (Merge (NamedCell "ID", ColRowLabel ("A", 6)))
+        MergeCells (Merge (ColRowLabel ("C", 7), NamedCell "info")) 
+        MergeCells (Merge (NamedCell "Reg", NamedCell "RegEnd")) 
+        
+    
+        Go (RC (10, 1))
+        Cell [  String "Merging from a starting cell given a depth and span"
+                BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
+                FontEmphasis Bold
+                HorizontalAlignment Center ] 
+        MergeCells (Merge (ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
+    
+    
+        Go (RC (12, 2))
+        Cell [  String "The components that make up a car are: "
+                Name "components" 
+                HorizontalAlignment Left
+                VerticalAlignment TopMost
+                Border(Border.All XLBorderStyleValues.MediumDashDot)]
+        Go (RC (12, 4))
+        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
+        Go (RC (14, 4))
+        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
+    
+        Go (RC (15, 2))
+        Cell [  String "Road Tax"
+                HorizontalAlignment Center
+                VerticalAlignment Centre
+                Border(Border.All XLBorderStyleValues.SlantDashDot)]
+        Go (RC (16, 2))
+        Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
+    
+        MergeCells (Merge (NamedCell "components", SpanDepth (3, 3)))
+        MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2))) 
+    
+        Go (RC (17, 4))
+        Cell [  String "Insurance"
+                Name "insurance"    // NamedCells cannot begin with a number
+                Border(Border.All XLBorderStyleValues.Dashed) ]
+        Go (RC (17, 3))
+        Cell [ Border(Border.All XLBorderStyleValues.Dashed)]
+        Go (RC (17, 2))
+        Cell [ Border(Border.All XLBorderStyleValues.Dashed)] 
+       
+        Go (RC (16, 4))
+        Cell [  String "Signature"]
+    
+        MergeCells (Merge (SpanDepth (3, 1), NamedCell "insurance")) 
+        MergeCells (Merge (SpanDepth (2, 2), ColRowLabel ("D", 16))) 
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     

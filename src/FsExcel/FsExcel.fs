@@ -91,10 +91,13 @@ module CellProps =
             | Next _ -> 1
             | _ -> 0)
 
-type CellLabel = | CellLabel of Col:string * Row:int
+type CellLabel = 
+| ColRowLabel of Col:string * Row:int
+| NamedCell of string
+| SpanDepth of ColSpan:int * RowDepth: int
 // no need to specify RowMerge (span vertically), ColumnMerge (span horizontally), RowColumnMerge (box)
-// Merge() + range takes care of it, no seperare definitions needed
-type Merge = | Merge of Start:CellLabel * End:CellLabel  
+// Merge() + range takes care of it, no seperate definitions needed
+type Merge = | Merge of Start:CellLabel * End:CellLabel 
 
 type AutoFit =
     | All
@@ -177,12 +180,49 @@ type Item =
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
-    | SizeAll of Size // no longer applies to all cells in item list
+    | SizeAll of Size 
     | MergeCells of Merge
     | AutoFilter of AutoFilter list
 
-module Render =
+module CellInfo = 
+    /// Returns the column letter and row number of a named cell given the named cell
+    let namedCellToCR (cellName : string) (worksheet : IXLWorksheet) = 
+        (worksheet.Cell(cellName).WorksheetColumn().ColumnLetter(),worksheet.Cell(cellName).WorksheetRow().RowNumber())
 
+    let alphabet = List.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYZ" |> List.map (fun alphChar -> string(alphChar))
+    let extendedColAlph =   (List.empty, alphabet) 
+                            ||> List.fold   (fun outputList currentLetter -> 
+                                            let dualAlphList =  (List.empty, alphabet) 
+                                                                ||> List.fold (fun dualAplh letter -> dualAplh @ [currentLetter + letter])                                               
+                                            outputList @ dualAlphList)
+    let colIndexLetters =   alphabet @ extendedColAlph
+                            |> List.indexed
+                            |> List.map (fun (index, letters) -> (index + 1, letters))
+
+    let colIndexLettersMap = colIndexLetters |> Map.ofList
+    
+    let colLettersToIndexMap =  colIndexLetters
+                                |> List.map (fun (index, letters) -> (letters, index))
+                                |> Map.ofList
+
+    /// Returns the column letter and row number of the cell to which to merge to given the starting named or specific cell. Span and depth are integers of minimum value = 1.
+    let cellSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 
+        (colIndexLettersMap.[colLettersToIndexMap.[cell |> fst] + span - 1], (cell|> snd) + depth - 1)
+
+    /// Returns the column letter and row number of the sarting cell to which to merge to given the ending named cell. Span and depth are integers of minimum value = 1.
+    let cellReverseSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 
+        let colLetter = 
+                match colIndexLettersMap.TryFind (colLettersToIndexMap.[cell |> fst] - (span - 1)) with
+                | Some letter -> letter 
+                | None -> "A" // if user tries to reverse merge beyond column A, they will only be able to reverse merge until column A
+            
+        let rowNum = if ((cell |> snd) - (depth - 1)) > 0 then
+                        ((cell |> snd) - (depth - 1))
+                     else
+                        1 // if user tries to reverse merge beyond row 1, they will only be able to reverse merge until row 1
+        (colLetter, rowNum)
+
+module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
     let AsWorkBook (items : Item list) =
 
@@ -488,10 +528,38 @@ module Render =
                             cell.WorksheetRow().Height <- height
             | MergeCells m ->
                 let ws = getCurrentWorksheet()
+                let crToStr (c : string, r : int) = c + string(r)            
                 match m with
-                | Merge (CellLabel (cSt, rSt), CellLabel (cE, rE)) -> 
-                        let range = cSt + string(rSt) + ":" + cE + string(rE)
-                        ws.Range(range).Merge() |> ignore       
+                | Merge (ColRowLabel (cSt, rSt), ColRowLabel (cE, rE)) -> 
+                        let range = crToStr (cSt, rSt) + ":" + crToStr (cE, rE)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (ColRowLabel (cSt, rSt), NamedCell cell2) -> 
+                        let range = crToStr (cSt, rSt) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (NamedCell cell1, ColRowLabel (cE, rE)) -> 
+                        let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (cE, rE)
+                        ws.Range(range).Merge() |> ignore 
+                | Merge (NamedCell cell1, NamedCell cell2) ->
+                        let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (NamedCell cell1, SpanDepth (colSpan, rowDepth)) ->
+                        let cell = (CellInfo.namedCellToCR cell1 ws)
+                        let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (CellInfo.cellSpanDepthToCR cell colSpan rowDepth)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (ColRowLabel (cSt, rSt), SpanDepth (colSpan, rowDepth)) ->
+                        let range = crToStr (cSt, rSt) + ":" + crToStr (CellInfo.cellSpanDepthToCR (cSt, rSt) colSpan rowDepth)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (SpanDepth (colSpan, rowDepth), NamedCell cell2) ->
+                        let cell = (CellInfo.namedCellToCR cell2 ws)
+                        let range = crToStr (CellInfo.cellReverseSpanDepthToCR cell colSpan rowDepth) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (SpanDepth (colSpan, rowDepth), ColRowLabel (cE, rE)) ->
+                        let range = crToStr (CellInfo.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
+                        ws.Range(range).Merge() |> ignore
+                | Merge (SpanDepth (span, depth), SpanDepth (colSpan, rowDepth)) ->
+                        ws |> ignore // ignore this case: cannot merge between two arbitary 
+                // TODO: ideally, want to ignore the incomplete pattern match altogether to prevent user trying this option
+
             | AutoFit af ->
                 let ws = getCurrentWorksheet()
 
@@ -509,7 +577,6 @@ module Render =
                     ws.Rows().AdjustToContents() |> ignore
             | SizeAll s ->
                 let ws = getCurrentWorksheet()
-
                 match s with
                 | ColWidth width ->
                     ws.Columns().Width <- width
