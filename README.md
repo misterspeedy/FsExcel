@@ -20,8 +20,6 @@ This tutorial is also available as an <a href="https://raw.githubusercontent.com
 * *Usage example* - for an example of FsExcel in action, see http://www.pushbuttonreceivetables.com. Source code on [GitHub](https://github.com/misterspeedy/HtmlExcel).
 
 ---
-
----
 ## Hello World
 
 Here's the complete code to generate a spreadsheet with a single cell containing a string.
@@ -282,8 +280,15 @@ open System.Globalization
 open FsExcel
 open ClosedXML.Excel
 
+// ClosedXml currently depends on SixLabors.Fonts - 
+// we use that to enumerate fonts so this code works cross-platform:
+let fontNames = 
+    SixLabors.Fonts.SystemFonts.Collection.Families
+    |> Seq.map (fun font -> font.Name)
+    |> Seq.truncate 10
+
 [
-    for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
+    for i, fontName in fontNames |> Seq.indexed do
         Cell [
             String fontName
             FontName fontName
@@ -631,37 +636,53 @@ If you use `Worksheet` with the name of a worksheet that already exists, that wo
 ```fsharp
 open System.IO
 open FsExcel
-open System.Globalization
+
+let britishCultureNativeName = "English (United Kingdom)"
+let ukrainianCultureNativeName = "українська"
+
+let britishCultureDateTimeFormatGetMonthName =
+    [ "January"; "February"; "March"; "April"; "May"; "June"; "July";
+       "August"; "September"; "October"; "November"; "December" ]
+
+let britishCultureDateTimeFormatAbbreviatedMonthNames =
+    [ "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct";
+      "Nov"; "Dec" ]
+
+let ukrainianCultureDateTimeFormatGetMonthName =
+    [ "січень"; "лютий"; "березень"; "квітень"; "травень"; "червень";
+      "липень"; "серпень"; "вересень"; "жовтень"; "листопад"; "грудень" ]
+
+let ukrainianCultureDateTimeFormatAbbreviatedMonthNames =
+    [ "січ"; "лют"; "бер"; "кві"; "тра"; "чер"; "лип"; "сер"; "вер"; "жов";
+      "лис"; "гру" ]
 
 [
-    let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
-    Worksheet britishCulture.NativeName
-    for m in 1..12 do
-        let monthName = britishCulture.DateTimeFormat.GetMonthName(m)
+    Worksheet britishCultureNativeName
+    for m in 0..11 do
+        let monthName = britishCultureDateTimeFormatGetMonthName.[m]
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-    Worksheet ukrainianCulture.NativeName
-    for m in 1..12 do
-        let monthName = ukrainianCulture.DateTimeFormat.GetMonthName(m)
+    Worksheet ukrainianCultureNativeName
+    for m in 0..11 do
+        let monthName = ukrainianCultureDateTimeFormatGetMonthName.[m]
         Cell [ String monthName ]
         Cell [ Integer monthName.Length ]
         Go NewRow
 
-    Worksheet britishCulture.NativeName // Switch back to the first worksheet
+    Worksheet britishCultureNativeName // Switch back to the first worksheet
     Go (RC(13, 1))
-    for m in 0..11 do 
-        let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+    for m in 0..11 do
+        let monthAbbreviation = britishCultureDateTimeFormatAbbreviatedMonthNames.[m]
         Cell [ String monthAbbreviation ]
         Cell [ Integer monthAbbreviation.Length ]
         Go NewRow
 
-    Worksheet ukrainianCulture.NativeName // Switch back to the second worksheet 
+    Worksheet ukrainianCultureNativeName // Switch back to the second worksheet
     Go (RC(13, 1))
-    for m in 0..11 do 
-        let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+    for m in 0..11 do
+        let monthAbbreviation = ukrainianCultureDateTimeFormatAbbreviatedMonthNames.[m]
         Cell [ String monthAbbreviation ]
         Cell [ Integer monthAbbreviation.Length ]
         Go NewRow
@@ -693,29 +714,30 @@ One common task when working with existing workbooks is inserting rows of data a
 
 ```fsharp
 open System.IO
-open System.Globalization
 open ClosedXML.Excel
 open FsExcel
 
 // Open Worksheets.xlsx created in the previous snippet:
 let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
-let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+
+let britishCultureNativeName = "English (United Kingdom)"
+let ukrainianCultureNativeName = "українська"
+
 let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "Rainous"; "Windous"; "Buddal"; "Floweral"; "Meadowal"; "Reapidor"; "Heatidor"; "Fruitidor" |]
 
 [
-    Workbook workbook  
-    Worksheet ukrainianCulture.NativeName
+    Workbook workbook
+    Worksheet ukrainianCultureNativeName
     Go(RC(1,3))
-    Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
-    Worksheet britishCulture.NativeName
+    Cell [FormulaA1 $"='{britishCultureNativeName}'!B1*2" ]
+    Worksheet britishCultureNativeName
     InsertRowsAbove 12 // The cell reference in the  formula above will be updated to B13
     for m in 0..11 do
         Cell [ String altMonthNames[m] ]
         Cell [ Integer altMonthNames[m].Length ]
-        Go NewRow    
+        Go NewRow
 ]
-|> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
+|> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
 
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/InsertRowsAbove.PNG?raw=true"
@@ -764,7 +786,7 @@ open ClosedXML.Excel
 open FsExcel
 
 [   Go NewRow
-    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
         Cell [
             String heading
             FontEmphasis Bold
@@ -787,9 +809,9 @@ open FsExcel
 |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSizeExample.PNG?raw=true"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/IndividualCellSize.PNG?raw=true"
      alt="Individual Cell Size example"
-     style="width: 200px;" />
+     style="width: 400px;" />
 
 ---
 ## Autofitting
@@ -870,7 +892,7 @@ open ClosedXML.Excel
 open FsExcel
 
 [   Go NewRow
-    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
         Cell [
             String heading
             FontEmphasis Bold
@@ -976,7 +998,7 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/MergedCellWithVerticalAlignment.PNG?raw=true"
      alt="Merged Cell with Vertical Alignment example"
-     style="width: 200px;" />
+     style="width: 800px;" />
 
 ---
 ## Tables from Types
@@ -1086,8 +1108,6 @@ records
 You can use `Render.AsStream <stream> <items>` to render to a pre-existing stream, or `Render.AsStreamBytes <items>` to render as a byte array. 
 
 `Render.AsStreamBytes` is useful for Fable-based and other web app scenarios. Render to a byte array on the server, and transfer the bytes to the client using Fable Remoting.  On the client use the `SaveFileAs` extension function to start a browser download.  Make sure you have opened the `Fable.Remoting.Client` to get the `SaveFileAs` method of a byte array.
-
-There are few more details here: https://zaid-ajaj.github.io/Fable.Remoting/src/upload-and-download.html
 
 For a working example, see http://www.pushbuttonreceivetables.com/, in particular https://github.com/misterspeedy/HtmlExcel/blob/main/src/Server/Html.fs#L105.
 
@@ -1264,63 +1284,100 @@ AutoFilter [ GreaterThanInt ("A1:E6", 2, 3) ]
 EnableOnly of AutoFilterRange
 Clear of AutoFilterRange
 
-EqualToString of AutoFilterRange * column : int * value : string
-EqualToInt of AutoFilterRange * column : int * value : int
-EqualToFloat of AutoFilterRange * column : int * value : float
-EqualToDateTime of AutoFilterRange * column : int * value : DateTime
-EqualToBool of AutoFilterRange * column : int * value : bool
+EqualToString of range : AutoFilterRange * column : int * value : string
+EqualToInt of range : AutoFilterRange * column : int * value : int
+EqualToFloat of range : AutoFilterRange * column : int * value : float
+EqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+EqualToBool of range : AutoFilterRange * column : int * value : bool
 
-NotEqualToString of AutoFilterRange * column : int * value : string
-NotEqualToInt of AutoFilterRange * column : int * value : int
-NotEqualToFloat of AutoFilterRange * column : int * value : float
-NotEqualToDateTime of AutoFilterRange * column : int * value : DateTime
-NotEqualToBool of AutoFilterRange * column : int * value : bool
+NotEqualToString of range : AutoFilterRange * column : int * value : string
+NotEqualToInt of range : AutoFilterRange * column : int * value : int
+NotEqualToFloat of range : AutoFilterRange * column : int * value : float
+NotEqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+NotEqualToBool of range : AutoFilterRange * column : int * value : bool
 
-BetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-BetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
-// BetweenDateTime works, but reapplying the filter (CTRL+Alt+L) clears it
-// When looking at the filter in Excel both values are: 07/01/1900
-BetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+BetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+BetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
+BetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-NotBetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-NotBetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
-NotBetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+NotBetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+NotBetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
+NotBetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-ContainsString of AutoFilterRange * column : int * value : string
-NotContainsString of AutoFilterRange * column : int * value : string
+ContainsString of range : AutoFilterRange * column : int * value : string
+NotContainsString of range : AutoFilterRange * column : int * value : string
 
-BeginsWithString of AutoFilterRange * column : int * value : string
-NotBeginsWithString of AutoFilterRange * column : int * value : string
+BeginsWithString of range : AutoFilterRange * column : int * value : string
+NotBeginsWithString of range : AutoFilterRange * column : int * value : string
 
-EndsWithString of AutoFilterRange * column : int * value : string
-NotEndsWithString of AutoFilterRange * column : int * value : string
+EndsWithString of range : AutoFilterRange * column : int * value : string
+NotEndsWithString of range : AutoFilterRange * column : int * value : string
 
-Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
-Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+Top of range : AutoFilterRange * column : int * value : int * topType : XLTopBottomType
+Bottom of range : AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
 
-GreaterThanString of AutoFilterRange * column : int * value : string
-GreaterThanInt of AutoFilterRange * column : int * value : int
-GreaterThanFloat of AutoFilterRange * column : int * value : float
-GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+GreaterThanInt of range : AutoFilterRange * column : int * value : int
+GreaterThanFloat of range : AutoFilterRange * column : int * value : float
+GreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-LessThanString of AutoFilterRange * column : int * value : string
-LessThanInt of AutoFilterRange * column : int * value : int
-LessThanFloat of AutoFilterRange * column : int * value : float
-LessThanDateTime of AutoFilterRange * column : int * value : DateTime
+LessThanInt of range : AutoFilterRange * column : int * value : int
+LessThanFloat of range : AutoFilterRange * column : int * value : float
+LessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-EqualOrGreaterThanString of AutoFilterRange * column : int * value : string
-EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
-EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
-EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+EqualOrGreaterThanInt of range : AutoFilterRange * column : int * value : int
+EqualOrGreaterThanFloat of range : AutoFilterRange * column : int * value : float
+EqualOrGreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-EqualOrLessThanString of AutoFilterRange * column : int * value : string
-EqualOrLessThanInt of AutoFilterRange * column : int * value : int
-EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
-EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
+EqualOrLessThanInt of range : AutoFilterRange * column : int * value : int
+EqualOrLessThanFloat of range : AutoFilterRange * column : int * value : float
+EqualOrLessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-AboveAverage of AutoFilterRange * column : int
-BelowAverage of AutoFilterRange * column : int
+AboveAverage of range : AutoFilterRange * column : int
+BelowAverage of range : AutoFilterRange * column : int
 ```
+
+### Known Issues
+
+EqualToDateTime:
+> Works but, both Equals and Custom Filter are blank.
+
+NotEqualToDateTime:
+> Does not work. Does contains. Should be not contains.
+
+BetweenDateTime
+> Does not work. Excel filter shows 07/01/1900. Reapply hides all rows.
+
+NotBetweenDateTime
+
+> Works but, shows as a Custom filter with 07/01/1900 in Excel.
+
+NotContains
+
+> Works but, shows as a Contains filter in Excel. Reapply does Contains.
+
+GreaterThanDateTime
+
+> Works but, filter name is After and shows 07/01/1900.
+
+LessThanDateTime
+
+> Works but, filter name is Before and shows 07/01/1900.
+
+EqualOrGreaterThanDateTime
+
+> Works but, filter name is Custom Filter and shows 07/01/1900.
+
+EqualOrLessThanDateTime
+
+> Works but, filter name is Custom Filter and shows 07/01/1900.
+
+<br />
+
+Some of the above issues may be related to one of these:
+
+* [Setting AutoFilter EqualTo on Date Column Doesn't Display Values When Spreadsheet Is Opened Until Filters Are Reapplied #701](https://github.com/ClosedXML/ClosedXML/issues/701)
+
+* [Text to number coercion doesn't work correctly #1891](https://github.com/ClosedXML/ClosedXML/issues/1891)
 
 ---
 ### Enable Only
@@ -1330,16 +1387,12 @@ In the example below and `AutoFilter` is enabled for the `RangeUsed`, but no fil
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
 
 let headings =
-    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
       Cell [ String "IntCol"; HorizontalAlignment Center ]
       Cell [ String "FloatCol"; HorizontalAlignment Center ]
       Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
@@ -1379,16 +1432,12 @@ The following compound filter is created:
 <!-- Test -->
 
 ```fsharp
-#r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
-
 open System
 open System.IO
 open FsExcel
 
 let headings =
-    [ Cell [String "StringCol"; HorizontalAlignment Center ]
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
       Cell [ String "IntCol"; HorizontalAlignment Center ]
       Cell [ String "FloatCol"; HorizontalAlignment Center ]
       Cell [ String "DateTimeCol"; HorizontalAlignment Center ]

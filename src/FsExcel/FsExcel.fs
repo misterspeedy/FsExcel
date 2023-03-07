@@ -110,67 +110,468 @@ type AutoFit =
 type AutoFilterRange =
     /// The entire range used in the worksheet.
     | RangeUsed
-    // The current region around a spcified cell.
+    /// The current region around a spcified cell.
     | CurrentRegion of string
-    // A specified range.
+    /// A specified range.
     | Range of string
 
+/// The filters available to be used with AutoFilter.
 type AutoFilter =
+    /// Enable AutoFilter but do not apply any filters.
     | EnableOnly of AutoFilterRange
+    /// Clear an existing AutoFilter.
     | Clear of AutoFilterRange
 
-    | EqualToString of AutoFilterRange * column : int * value : string
-    | EqualToInt of AutoFilterRange * column : int * value : int
-    | EqualToFloat of AutoFilterRange * column : int * value : float
-    | EqualToDateTime of AutoFilterRange * column : int * value : DateTime
-    | EqualToBool of AutoFilterRange * column : int * value : bool
+    /// <summary>
+    /// Filter the range by the column being equal to the string value.
+    ///
+    /// Example:
+    ///
+    /// EqualToString (RangeUsed, 1, "String3")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string used to filter the range.</param>
+    | EqualToString of range : AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column being equal to the integer value.
+    ///
+    /// Example:
+    ///
+    /// EqualToInt (CurrentRegion, 2, 42)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer used to filter the range.</param>
+    | EqualToInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being equal to the float value.
+    ///
+    /// Example:
+    ///
+    /// EqualToFloat ("A1:E6", 3, 4.2)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float used to filter the range.</param>
+    | EqualToFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being equal to the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// EqualToDateTime (RangeUsed, 4, DateTime.Parse("15-July-2017 05:34:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime used to filter the range.</param>
+    | EqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being equal to the boolean value.
+    ///
+    /// Example:
+    ///
+    /// EqualToBool (CurrentRegion, 5, true)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A boolean value used to filter the range.</param>
+    | EqualToBool of range : AutoFilterRange * column : int * value : bool
 
-    | NotEqualToString of AutoFilterRange * column : int * value : string
-    | NotEqualToInt of AutoFilterRange * column : int * value : int
-    | NotEqualToFloat of AutoFilterRange * column : int * value : float
-    | NotEqualToDateTime of AutoFilterRange * column : int * value : DateTime
-    | NotEqualToBool of AutoFilterRange * column : int * value : bool
+    /// <summary>
+    /// Filter the range by the column being not equal to the string value.
+    ///
+    /// Example:
+    ///
+    /// NotEqualToString ("A1:E6", 1, "String3")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | NotEqualToString of range : AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column being not equal to the integer value.
+    ///
+    /// Example:
+    ///
+    /// NotEqualToInt (RangeUsed, 2, 42)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer value used to filter the range.</param>
+    | NotEqualToInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being not equal to the float value.
+    ///
+    /// Example:
+    ///
+    /// NotEqualToFloat (CurrentRegion, 3, 4.2)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float value used to filter the range.</param>
+    | NotEqualToFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being not equal to the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// NotEqualToDateTime ("A1:E6", 4, DateTime.Parse("15-July-2017 05:34:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime value used to filter the range.</param>
+    | NotEqualToDateTime of range : AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being not equal to the boolean value.
+    ///
+    /// Example:
+    ///
+    /// NotEqualToBool (RangeUsed, 5, true)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A boolean value used to filter the range.</param>
+    | NotEqualToBool of range : AutoFilterRange * column : int * value : bool
 
-    | BetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-    | BetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
+    /// <summary>
+    /// Filter the range by the column being between the integer values.
+    ///
+    /// Example:
+    ///
+    /// BetweenInt (CurrentRegion, 2, 5, 10)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">An integer value used to filter the range.</param>
+    /// <param name="max">An integer value used to filter the range.</param>
+    | BetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+    /// <summary>
+    /// Filter the range by the column being between the float values.
+    ///
+    /// Example:
+    ///
+    /// BetweenFloat ("A1:E6", 3, 1.5, 6.3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">A float value used to filter the range.</param>
+    /// <param name="max">A float value used to filter the range.</param>
+    | BetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
     // BetweenDateTime works, but reapplying the filter (CTRL+Alt+L) clears it
     // When looking at the filter in Excel both values are: 07/01/1900
-    | BetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+    /// <summary>
+    /// Filter the range by the column being between the DateTime values.
+    ///
+    /// Example:
+    ///
+    /// let dtFrom = DateTime.Parse("15-July-2017")
+    ///
+    /// let dtTo = DateTime.Parse("14-July-2018")
+    ///
+    /// BetweenDateTime ("A1:E6", 5, dtFrom, dtTo)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">A DateTime value used to filter the range.</param>
+    /// <param name="max">A DateTime value used to filter the range.</param>
+    | BetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-    | NotBetweenInt of AutoFilterRange * column : int * value1 : int * value2 : int
-    | NotBetweenFloat of AutoFilterRange * column : int * value1 : float * value2 : float
-    | NotBetweenDateTime of AutoFilterRange * column : int * value1 : DateTime * value2 : DateTime
+    /// <summary>
+    /// Filter the range by the column being not between the integer values.
+    ///
+    /// Example:
+    ///
+    /// NotBetweenInt (RangeUsed, 2, 5, 10)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">An integer value used to filter the range.</param>
+    /// <param name="max">An integer value used to filter the range.</param>
+    | NotBetweenInt of range : AutoFilterRange * column : int * min : int * max : int
+    /// <summary>
+    /// Filter the range by the column being not between the float values.
+    ///
+    /// Example:
+    ///
+    /// NotBetweenFloat (CurrentRegion, 3, 1.5, 6.3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">A float value used to filter the range.</param>
+    /// <param name="max">A float value used to filter the range.</param>
+    | NotBetweenFloat of range : AutoFilterRange * column : int * min : float * max : float
+    /// <summary>
+    /// Filter the range by the column being not between the DateTime values.
+    ///
+    /// Example:
+    ///
+    /// let dtFrom = DateTime.Parse("15-July-2017")
+    ///
+    /// let dtTo = DateTime.Parse("14-July-2018")
+    ///
+    /// NotBetweenDateTime ("A1:E6", 5, dtFrom, dtTo)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="min">A DateTime value used to filter the range.</param>
+    /// <param name="max">A DateTime value used to filter the range.</param>
+    | NotBetweenDateTime of range : AutoFilterRange * column : int * min : DateTime * max : DateTime
 
-    | ContainsString of AutoFilterRange * column : int * value : string
-    | NotContainsString of AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column containing the string value.
+    ///
+    /// Example:
+    ///
+    /// ContainsString (RangeUsed, 1, "and")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | ContainsString of range : AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column not containing the string value.
+    ///
+    /// Example:
+    ///
+    /// NotContainsString (RangeUsed, 1, "and")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | NotContainsString of range : AutoFilterRange * column : int * value : string
 
-    | BeginsWithString of AutoFilterRange * column : int * value : string
-    | NotBeginsWithString of AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column beginning with the string value.
+    ///
+    /// Example:
+    ///
+    /// BeginsWithString (CurrentRegion, 1, "Start")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | BeginsWithString of range : AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column not beginning with the string value.
+    ///
+    /// Example:
+    ///
+    /// NotBeginsWithString ("A1:E6", 1, "Start")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | NotBeginsWithString of range : AutoFilterRange * column : int * value : string
 
-    | EndsWithString of AutoFilterRange * column : int * value : string
-    | NotEndsWithString of AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column ending with the string value.
+    ///
+    /// Example:
+    ///
+    /// EndsWithString (RangeUsed, 1, "ending")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | EndsWithString of range : AutoFilterRange * column : int * value : string
+    /// <summary>
+    /// Filter the range by the column not ending with the string value.
+    ///
+    /// Example:
+    ///
+    /// NotEndsWithString (CurrentRegion, 1, "ending")
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A string value used to filter the range.</param>
+    | NotEndsWithString of range : AutoFilterRange * column : int * value : string
 
-    | Top of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
-    | Bottom of AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
+    /// <summary>
+    /// Filter the range by the columns top n values.
+    ///
+    /// Examples:
+    ///
+    /// Top ("A1:E6", 2, 5, XLTopBottomType.Items)
+    ///
+    /// Top ("A1:E6", 2, 20, XLTopBottomType.Percent)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer representing the number/percent of rows.</param>
+    /// <param name="topType">An XLTopBottomType value used to filter the range.</param>
+    | Top of range : AutoFilterRange * column : int * value : int * topType : XLTopBottomType
+    /// <summary>
+    /// Filter the range by the columns bottom n values.
+    ///
+    /// Examples:
+    ///
+    /// Bottom (RangeUsed, 2, 5, XLTopBottomType.Items)
+    ///
+    /// Bottom (RangeUsed, 2, 20, XLTopBottomType.Percent)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer representing the number/percent of rows.</param>
+    /// <param name="bottomType">An XLTopBottomType value used to filter the range.</param>
+    | Bottom of range : AutoFilterRange * column : int * value : int * bottomType : XLTopBottomType
 
-    | GreaterThanInt of AutoFilterRange * column : int * value : int
-    | GreaterThanFloat of AutoFilterRange * column : int * value : float
-    | GreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being greater than the integer value.
+    ///
+    /// Example:
+    ///
+    /// GreaterThanInt (CurrentRegion, 2, 3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer value used to filter the range.</param>
+    | GreaterThanInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being greater than the float value.
+    ///
+    /// Example:
+    ///
+    /// GreaterThanFloat (CurrentRegion, 3, 3.5)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float value used to filter the range.</param>
+    | GreaterThanFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being greater than the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// GreaterThanDateTime ("A1:E6", 4, DateTime.Parse("15-July-2017 05:36:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime value used to filter the range.</param>
+    | GreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-    | LessThanInt of AutoFilterRange * column : int * value : int
-    | LessThanFloat of AutoFilterRange * column : int * value : float
-    | LessThanDateTime of AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being less than the integer value.
+    ///
+    /// Example:
+    ///
+    /// LessThanInt (CurrentRegion, 2, 3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer value used to filter the range.</param>
+    | LessThanInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being less than the float value.
+    ///
+    /// Example:
+    ///
+    /// LessThanFloat (CurrentRegion, 3, 3.5)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float value used to filter the range.</param>
+    | LessThanFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being less than the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// LessThanDateTime ("A1:E6", 4, DateTime.Parse("15-July-2017 05:36:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime value used to filter the range.</param>
+    | LessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-    | EqualOrGreaterThanInt of AutoFilterRange * column : int * value : int
-    | EqualOrGreaterThanFloat of AutoFilterRange * column : int * value : float
-    | EqualOrGreaterThanDateTime of AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being greater than or equal to the integer value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrGreaterThanInt (CurrentRegion, 2, 3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer value used to filter the range.</param>
+    | EqualOrGreaterThanInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being greater than or equal to the float value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrGreaterThanFloat (CurrentRegion, 3, 3.5)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float value used to filter the range.</param>
+    | EqualOrGreaterThanFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being greater than or equal to the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrGreaterThanDateTime ("A1:E6", 4, DateTime.Parse("15-July-2017 05:36:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime value used to filter the range.</param>
+    | EqualOrGreaterThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-    | EqualOrLessThanInt of AutoFilterRange * column : int * value : int
-    | EqualOrLessThanFloat of AutoFilterRange * column : int * value : float
-    | EqualOrLessThanDateTime of AutoFilterRange * column : int * value : DateTime
+    /// <summary>
+    /// Filter the range by the column being less than or equal to the integer value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrLessThanInt (CurrentRegion, 2, 3)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">An integer value used to filter the range.</param>
+    | EqualOrLessThanInt of range : AutoFilterRange * column : int * value : int
+    /// <summary>
+    /// Filter the range by the column being less than or equal to the float value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrLessThanFloat (CurrentRegion, 3, 3.5)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A float value used to filter the range.</param>
+    | EqualOrLessThanFloat of range : AutoFilterRange * column : int * value : float
+    /// <summary>
+    /// Filter the range by the column being less than or equal to the DateTime value.
+    ///
+    /// Example:
+    ///
+    /// EqualOrLessThanDateTime ("A1:E6", 4, DateTime.Parse("15-July-2017 05:36:00"))
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    /// <param name="value">A DateTime value used to filter the range.</param>
+    | EqualOrLessThanDateTime of range : AutoFilterRange * column : int * value : DateTime
 
-    | AboveAverage of AutoFilterRange * column : int
-    | BelowAverage of AutoFilterRange * column : int
+    /// <summary>
+    /// Filter the range by the column being above the average of the integer/float values.
+    ///
+    /// Example:
+    ///
+    /// AboveAverage (RangeUsed, 2)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    | AboveAverage of range : AutoFilterRange * column : int
+    /// <summary>
+    /// Filter the range by the column being below the average of the integer/float values.
+    ///
+    /// Example:
+    ///
+    /// BelowAverage (RangeUsed, 2)
+    /// </summary>
+    /// <param name="range">The range to be filtered.</param>
+    /// <param name="column">The column number within the range to be filtered.</param>
+    | BelowAverage of range : AutoFilterRange * column : int
 
 type Item =
     | Cell of props : CellProp list
@@ -278,8 +679,8 @@ module Render =
         // let processAutoFilter (ws : IXLWorksheet) (item : Item) =
         let processAutoFilter (ws : IXLWorksheet) (autoFilters : AutoFilter list) =
 
-            let getRange (autoFilterRange : AutoFilterRange) =
-                match autoFilterRange with
+            let getRange (range : AutoFilterRange) =
+                match range with
                 | RangeUsed ->
                     ws.RangeUsed()
                 | CurrentRegion c ->
@@ -287,7 +688,7 @@ module Render =
                 | Range r ->
                     ws.Range(r)
 
-            let doIt = function
+            let setFilter = function
                 | EnableOnly a ->
                     (getRange a).SetAutoFilter() |> ignore
                 | Clear a ->
@@ -307,7 +708,7 @@ module Render =
                     // TODO: This would not be nice.
                     (getRange a).SetAutoFilter().Column(b).AddDateGroupFilter(c, XLDateTimeGrouping.Second) |> ignore
                 | EqualToBool (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).EqualTo((c.ToString())) |> ignore
+                    (getRange a).SetAutoFilter().Column(b).EqualTo((c.ToString().ToUpper())) |> ignore
 
                 | NotEqualToString (a, b, c) ->
                     (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
@@ -321,7 +722,7 @@ module Render =
                     // TODO: Does not work!
                     (getRange a).SetAutoFilter().Column(b).NotEqualTo(c) |> ignore
                 | NotEqualToBool (a, b, c) ->
-                    (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString())) |> ignore
+                    (getRange a).SetAutoFilter().Column(b).NotEqualTo((c.ToString().ToUpper())) |> ignore
 
                 | BetweenInt (a, b, c, d) ->
                     (getRange a).SetAutoFilter().Column(b).Between(c, d) |> ignore
@@ -392,7 +793,7 @@ module Render =
                 | BelowAverage (a, b) ->
                     (getRange a).SetAutoFilter().Column(b).BelowAverage() |> ignore
 
-            autoFilters |> List.iter doIt
+            autoFilters |> List.iter setFilter
 
         for item in items do
 

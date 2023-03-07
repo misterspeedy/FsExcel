@@ -158,8 +158,13 @@ module Test9 =
     open FsExcel
     open ClosedXML.Excel
     
+    let fontNames = 
+        SixLabors.Fonts.SystemFonts.Collection.Families
+        |> Seq.map (fun font -> font.Name)
+        |> Seq.truncate 10
+    
     [
-        for i, fontName in ["Arial"; "Bahnschrift"; "Calibri"; "Cambria"; "Comic Sans MS"; "Consolas"; "Constantia"] |> List.indexed do
+        for i, fontName in fontNames |> Seq.indexed do
             Cell [
                 String fontName
                 FontName fontName
@@ -402,37 +407,53 @@ module Test17 =
     
     open System.IO
     open FsExcel
-    open System.Globalization
+    
+    let britishCultureNativeName = "English (United Kingdom)"
+    let ukrainianCultureNativeName = "українська"
+    
+    let britishCultureDateTimeFormatGetMonthName =
+        [ "January"; "February"; "March"; "April"; "May"; "June"; "July";
+           "August"; "September"; "October"; "November"; "December" ]
+    
+    let britishCultureDateTimeFormatAbbreviatedMonthNames =
+        [ "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct";
+          "Nov"; "Dec" ]
+    
+    let ukrainianCultureDateTimeFormatGetMonthName =
+        [ "січень"; "лютий"; "березень"; "квітень"; "травень"; "червень";
+          "липень"; "серпень"; "вересень"; "жовтень"; "листопад"; "грудень" ]
+    
+    let ukrainianCultureDateTimeFormatAbbreviatedMonthNames =
+        [ "січ"; "лют"; "бер"; "кві"; "тра"; "чер"; "лип"; "сер"; "вер"; "жов";
+          "лис"; "гру" ]
     
     [
-        let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
-        Worksheet britishCulture.NativeName
-        for m in 1..12 do
-            let monthName = britishCulture.DateTimeFormat.GetMonthName(m)
+        Worksheet britishCultureNativeName
+        for m in 0..11 do
+            let monthName = britishCultureDateTimeFormatGetMonthName.[m]
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
     
-        let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-        Worksheet ukrainianCulture.NativeName
-        for m in 1..12 do
-            let monthName = ukrainianCulture.DateTimeFormat.GetMonthName(m)
+        Worksheet ukrainianCultureNativeName
+        for m in 0..11 do
+            let monthName = ukrainianCultureDateTimeFormatGetMonthName.[m]
             Cell [ String monthName ]
             Cell [ Integer monthName.Length ]
             Go NewRow
     
-        Worksheet britishCulture.NativeName // Switch back to the first worksheet
+        Worksheet britishCultureNativeName // Switch back to the first worksheet
         Go (RC(13, 1))
-        for m in 0..11 do 
-            let monthAbbreviation = britishCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+        for m in 0..11 do
+            let monthAbbreviation = britishCultureDateTimeFormatAbbreviatedMonthNames.[m]
             Cell [ String monthAbbreviation ]
             Cell [ Integer monthAbbreviation.Length ]
             Go NewRow
     
-        Worksheet ukrainianCulture.NativeName // Switch back to the second worksheet 
+        Worksheet ukrainianCultureNativeName // Switch back to the second worksheet
         Go (RC(13, 1))
-        for m in 0..11 do 
-            let monthAbbreviation = ukrainianCulture.DateTimeFormat.AbbreviatedMonthNames.[m]
+        for m in 0..11 do
+            let monthAbbreviation = ukrainianCultureDateTimeFormatAbbreviatedMonthNames.[m]
             Cell [ String monthAbbreviation ]
             Cell [ Integer monthAbbreviation.Length ]
             Go NewRow
@@ -442,28 +463,29 @@ module Test17 =
 module Test18 =
     
     open System.IO
-    open System.Globalization
     open ClosedXML.Excel
     open FsExcel
     
     let workbook = new XLWorkbook(Path.Combine(savePath, "Worksheets.xlsx"))
-    let ukrainianCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("uk")
-    let britishCulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB")
+    
+    let britishCultureNativeName = "English (United Kingdom)"
+    let ukrainianCultureNativeName = "українська"
+    
     let altMonthNames = [| "Vintagearious"; "Fogarious"; "Frostarious"; "Snowous"; "Rainous"; "Windous"; "Buddal"; "Floweral"; "Meadowal"; "Reapidor"; "Heatidor"; "Fruitidor" |]
     
     [
-        Workbook workbook  
-        Worksheet ukrainianCulture.NativeName
+        Workbook workbook
+        Worksheet ukrainianCultureNativeName
         Go(RC(1,3))
-        Cell [FormulaA1 $"='{britishCulture.NativeName}'!B1*2" ]
-        Worksheet britishCulture.NativeName
+        Cell [FormulaA1 $"='{britishCultureNativeName}'!B1*2" ]
+        Worksheet britishCultureNativeName
         InsertRowsAbove 12 // The cell reference in the  formula above will be updated to B13
         for m in 0..11 do
             Cell [ String altMonthNames[m] ]
             Cell [ Integer altMonthNames[m].Length ]
-            Go NewRow    
+            Go NewRow
     ]
-    |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx")) // Typically, you would save to a different file.
+    |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
 module Test19 =
     
@@ -490,7 +512,7 @@ module Test20 =
     open FsExcel
     
     [   Go NewRow
-        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
             Cell [
                 String heading
                 FontEmphasis Bold
@@ -552,7 +574,7 @@ module Test22 =
     open FsExcel
     
     [   Go NewRow
-        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
             Cell [
                 String heading
                 FontEmphasis Bold
@@ -740,15 +762,12 @@ module Test24 =
     
 module Test25 =
     
-    #r "nuget: ClosedXML"
-    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-    
     open System
     open System.IO
     open FsExcel
     
     let headings =
-        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
           Cell [ String "IntCol"; HorizontalAlignment Center ]
           Cell [ String "FloatCol"; HorizontalAlignment Center ]
           Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
@@ -772,15 +791,12 @@ module Test25 =
     
 module Test26 =
     
-    #r "nuget: ClosedXML"
-    #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-    
     open System
     open System.IO
     open FsExcel
     
     let headings =
-        [ Cell [String "StringCol"; HorizontalAlignment Center ]
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
           Cell [ String "IntCol"; HorizontalAlignment Center ]
           Cell [ String "FloatCol"; HorizontalAlignment Center ]
           Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
