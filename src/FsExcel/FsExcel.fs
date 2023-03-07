@@ -91,12 +91,19 @@ module CellProps =
             | Next _ -> 1
             | _ -> 0)
 
+/// There are three ways to reference a cell. By its label e.g A12 or name e.g. "apple" (if the cell has been previously named) or by a cell's span and depth
 type CellLabel = 
+/// Column and Row label
 | ColRowLabel of Col:string * Row:int
+/// This is used for referencing named cells
 | NamedCell of string
+/// This identifies the column span (e.g. 2 columns wide) and row depth (e.g. 3 rows deep) of a merged cell
 | SpanDepth of ColSpan:int * RowDepth: int
+
 // no need to specify RowMerge (span vertically), ColumnMerge (span horizontally), RowColumnMerge (box)
 // Merge() + range takes care of it, no seperate definitions needed
+
+/// This identifies between which two individual cells to conduct the merge
 type Merge = | Merge of Start:CellLabel * End:CellLabel 
 
 type AutoFit =
@@ -586,7 +593,7 @@ type Item =
     | AutoFilter of AutoFilter list
 
 module CellInfo = 
-    /// Returns the column letter and row number of a named cell given the named cell
+    /// Returns the column letter and row number of a named cell given a named cell
     let namedCellToCR (cellName : string) (worksheet : IXLWorksheet) = 
         (worksheet.Cell(cellName).WorksheetColumn().ColumnLetter(),worksheet.Cell(cellName).WorksheetRow().RowNumber())
 
