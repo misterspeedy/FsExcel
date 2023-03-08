@@ -593,7 +593,7 @@ module Test22 =
                 Name "ID" ] 
         Cell [  String "Ford Fiesta"
                 HorizontalAlignment Center
-                VerticalAlignment Centre ] 
+                VerticalAlignment Middle ] 
         Cell [  String "Car Technical Details:"
                 Next (DownBy 1) ]
         Cell [  String "Technical Detail 1"
@@ -612,7 +612,7 @@ module Test22 =
         Go (RC (7, 3))
         Cell [  String "Another Technical Detail"
                 FontEmphasis Italic
-                VerticalAlignment Centre
+                VerticalAlignment Middle
                 Name "TD" 
                 Next Stay]
         Go (DownBy 1)
@@ -646,7 +646,7 @@ module Test22 =
         Go (RC (15, 2))
         Cell [  String "Road Tax"
                 HorizontalAlignment Center
-                VerticalAlignment Centre
+                VerticalAlignment Middle
                 Border(Border.All XLBorderStyleValues.SlantDashDot)]
         Go (RC (16, 2))
         Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]

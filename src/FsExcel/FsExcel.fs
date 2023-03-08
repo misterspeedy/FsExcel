@@ -43,14 +43,13 @@ type HorizontalAlignment =
 
 type VerticalAlignment =
     | Base
-    | Centre
+    | Middle
     | TopMost
 
 type NameScope =
     | Worksheet
     | Workbook
 
-// EG moved this to here instead of after CellProp
 type Size =
     | ColWidth of float
     | RowHeight of float
@@ -76,7 +75,7 @@ type CellProp =
     | FormatCode of string
     | Name of string
     | ScopedName of name: string * scope: NameScope
-    | CellSize of Size  // EG added this
+    | CellSize of Size
 
 
 module CellProps =
@@ -914,7 +913,7 @@ module Render =
                          match v with
                          | Base ->
                              cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Bottom
-                         | Centre ->
+                         | Middle ->
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Center
                          | TopMost ->
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Top
