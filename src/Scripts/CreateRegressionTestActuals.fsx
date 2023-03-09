@@ -539,6 +539,10 @@ module Test21 =
     open FsExcel
     open ClosedXML.Excel
     
+    open System.Runtime.InteropServices
+    if not (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) then
+        LoadOptions.DefaultGraphicEngine <- new ClosedXML.Graphics.DefaultGraphicEngine("Liberation Sans") 
+    
     let headingStyle = 
         [
             Border(Border.Bottom XLBorderStyleValues.Medium)

@@ -827,6 +827,14 @@ open System.Globalization
 open FsExcel
 open ClosedXML.Excel
 
+// For non-Windows runtime environments you will have to add these lines to use AutoFit.
+// This is because ClosedXML needs a font to work with when computing sizes. You may have
+// to use a different font name if Liberation Sans is not installed on the target system.
+open System.Runtime.InteropServices
+if not (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) then
+    LoadOptions.DefaultGraphicEngine <- new ClosedXML.Graphics.DefaultGraphicEngine("Liberation Sans") 
+//
+
 let headingStyle = 
     [
         Border(Border.Bottom XLBorderStyleValues.Medium)
