@@ -604,10 +604,6 @@ ScopedName ("Email", NameScope.Workbook)
 <!-- Test -->
 
 ```fsharp
-#r "nuget: FsExcel"
-
-let savePath = "/temp"
-
 open System.IO
 open FsExcel
 

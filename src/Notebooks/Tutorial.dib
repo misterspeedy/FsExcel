@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"webview","aliases":[]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","languageName":null,"aliases":[]}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"javascript","aliases":["js"],"languageName":"JavaScript"},{"name":"webview","aliases":[]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[]}]}}
 
 #!markdown
 
@@ -655,10 +655,6 @@ ScopedName ("Email", NameScope.Workbook)
 <!-- Test -->
 
 #!fsharp
-
-#r "nuget: FsExcel"
-
-let savePath = "/temp"
 
 open System.IO
 open FsExcel
