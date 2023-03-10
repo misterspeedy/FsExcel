@@ -161,7 +161,8 @@ module Test9 =
     let fontNames = 
         SixLabors.Fonts.SystemFonts.Collection.Families
         |> Seq.map (fun font -> font.Name)
-        |> Seq.truncate 10
+        |> Seq.sort
+        |> Seq.truncate 20
     
     [
         for i, fontName in fontNames |> Seq.indexed do
