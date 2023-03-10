@@ -815,6 +815,8 @@ module Render =
                 then currentWorksheet <- wb.Worksheet(name) |> Some
                 else currentWorksheet <- wb.Worksheets.Add(name) |> Some
                 reset()
+            | Style s ->
+                style <- s
             | InsertRowsAbove rs ->
                 currentWorksheet.Value.Row(r).InsertRowsAbove(rs)   |> ignore
             | Go p ->
@@ -823,16 +825,16 @@ module Render =
 
                 let ws = getCurrentWorksheet()
 
-                let props =
-                    if props |> CellProps.hasNext |> not then
+                let propsWithStyle = style @ props
+                let propsWithNext = 
+                    if propsWithStyle |> CellProps.hasNext |> not then
                         Next(RightBy 1) :: props
                     else
-                        props
-                    |> fun ps -> style @ ps
+                        propsWithStyle
                     // Ensure Next() props are applied after filling content.
                     |> CellProps.sort
-
-                for prop in props do
+               
+                for prop in propsWithNext do
 
                     let cell = ws.Cell(r, c)
 
@@ -989,8 +991,6 @@ module Render =
                     ws.Columns().Width <- width
                 | RowHeight height ->
                     ws.Rows().Height <- height
-            | Style s ->
-                style <- s
             | AutoFilter autoFilter ->
                 let ws = getCurrentWorksheet()
 
