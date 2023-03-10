@@ -681,7 +681,7 @@ module Test23 =
     open ClosedXML.Excel
     open FsExcel
     
-    type JoiningInfo =  {
+    type JoiningInfo = {
         Name : string
         Age : int
         Fees : decimal

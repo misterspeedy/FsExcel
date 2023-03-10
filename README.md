@@ -1006,9 +1006,9 @@ open FsExcel
      style="width: 800px;" />
 
 ---
-## Tables from Types
+## Tables from Records
 
-You can create a table of cells from an instance or a sequence of any type having serializable fields - for example a record type.
+You can create a table of cells from an F# record or a sequence of F# records.
 
 Use `Table.fromInstance` or `Table.fromSeq` and provide
 
@@ -1031,7 +1031,7 @@ open System.IO
 open ClosedXML.Excel
 open FsExcel
 
-type JoiningInfo =  {
+type JoiningInfo = {
     Name : string
     Age : int
     Fees : decimal
