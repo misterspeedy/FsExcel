@@ -161,7 +161,8 @@ module Test9 =
     let fontNames = 
         SixLabors.Fonts.SystemFonts.Collection.Families
         |> Seq.map (fun font -> font.Name)
-        |> Seq.truncate 10
+        |> Seq.sort
+        |> Seq.truncate 20
     
     [
         for i, fontName in fontNames |> Seq.indexed do
@@ -414,8 +415,6 @@ module Test16 =
     
 module Test17 =
     
-    
-    
     open System.IO
     open FsExcel
     
@@ -567,6 +566,10 @@ module Test22 =
     open FsExcel
     open ClosedXML.Excel
     
+    open System.Runtime.InteropServices
+    if not (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) then
+        LoadOptions.DefaultGraphicEngine <- new ClosedXML.Graphics.DefaultGraphicEngine("Liberation Sans") 
+    
     let headingStyle = 
         [
             Border(Border.Bottom XLBorderStyleValues.Medium)
@@ -594,12 +597,117 @@ module Test22 =
     
 module Test23 =
     
+    open System.IO
+    open System
+    open ClosedXML.Excel
+    open FsExcel
+    
+    [   Go NewRow
+        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
+            Cell [
+                String heading
+                FontEmphasis Bold
+                FontName "Calibri"
+                FontSize 11
+                HorizontalAlignment Center
+                FontColor (XLColor.FromArgb(0, 255, 255, 255))
+                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+                Border(Border.All XLBorderStyleValues.Thin)
+                CellSize (ColWidth colWidth)
+            ]
+        Go NewRow
+        Cell [  Integer 1
+                HorizontalAlignment Left
+                VerticalAlignment TopMost
+                Name "ID" ] 
+        Cell [  String "Ford Fiesta"
+                HorizontalAlignment Center
+                VerticalAlignment Middle ] 
+        Cell [  String "Car Technical Details:"
+                Next (DownBy 1) ]
+        Cell [  String "Technical Detail 1"
+                Next (DownBy 1) ]
+        Cell [  String "Technical Detail 2"
+                Next (DownBy 1)]
+        Cell [  String "Technical Detail 3"
+                Name "LastL" ]
+        Go (RC (3, 4))
+        Cell [  String "AB12 CDE" 
+                HorizontalAlignment Right
+                VerticalAlignment Base
+                Name "Reg" ]
+        Go (RC (6, 4))
+        Cell [Name "RegEnd"]
+        Go (RC (7, 3))
+        Cell [  String "Another Technical Detail"
+                FontEmphasis Italic
+                VerticalAlignment Middle
+                Name "TD" 
+                Next Stay]
+        Go (DownBy 1)
+        Cell [ Name "info"]
+    
+        MergeCells (Merge (ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
+        MergeCells (Merge (NamedCell "ID", ColRowLabel ("A", 6)))
+        MergeCells (Merge (ColRowLabel ("C", 7), NamedCell "info")) 
+        MergeCells (Merge (NamedCell "Reg", NamedCell "RegEnd")) 
+        
+    
+        Go (RC (10, 1))
+        Cell [  String "Merging from a starting cell given a depth and span"
+                BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
+                FontEmphasis Bold
+                HorizontalAlignment Center ] 
+        MergeCells (Merge (ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
+    
+    
+        Go (RC (12, 2))
+        Cell [  String "The components that make up a car are: "
+                Name "components" 
+                HorizontalAlignment Left
+                VerticalAlignment TopMost
+                Border(Border.All XLBorderStyleValues.MediumDashDot)]
+        Go (RC (12, 4))
+        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
+        Go (RC (14, 4))
+        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
+    
+        Go (RC (15, 2))
+        Cell [  String "Road Tax"
+                HorizontalAlignment Center
+                VerticalAlignment Middle
+                Border(Border.All XLBorderStyleValues.SlantDashDot)]
+        Go (RC (16, 2))
+        Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
+    
+        MergeCells (Merge (NamedCell "components", SpanDepth (3, 3)))
+        MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2))) 
+    
+        Go (RC (17, 4))
+        Cell [  String "Insurance"
+                Name "insurance"    // NamedCells cannot begin with a number
+                Border(Border.All XLBorderStyleValues.Dashed) ]
+        Go (RC (17, 3))
+        Cell [ Border(Border.All XLBorderStyleValues.Dashed)]
+        Go (RC (17, 2))
+        Cell [ Border(Border.All XLBorderStyleValues.Dashed)] 
+       
+        Go (RC (16, 4))
+        Cell [  String "Signature"]
+    
+        MergeCells (Merge (SpanDepth (3, 1), NamedCell "insurance")) 
+        MergeCells (Merge (SpanDepth (2, 2), ColRowLabel ("D", 16))) 
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
+    
+module Test24 =
+    
     open System
     open System.IO
     open ClosedXML.Excel
     open FsExcel
     
-    type JoiningInfo =  {
+    type JoiningInfo = {
         Name : string
         Age : int
         Fees : decimal
@@ -656,7 +764,7 @@ module Test23 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test24 =
+module Test25 =
     
     open System
     open System.IO
@@ -681,7 +789,7 @@ module Test24 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
-module Test25 =
+module Test26 =
     
     open System
     open System.IO
@@ -710,7 +818,7 @@ module Test25 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test26 =
+module Test27 =
     
     open System
     open System.IO

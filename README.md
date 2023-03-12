@@ -285,7 +285,8 @@ open ClosedXML.Excel
 let fontNames = 
     SixLabors.Fonts.SystemFonts.Collection.Families
     |> Seq.map (fun font -> font.Name)
-    |> Seq.truncate 10
+    |> Seq.sort
+    |> Seq.truncate 20
 
 [
     for i, fontName in fontNames |> Seq.indexed do
@@ -641,10 +642,6 @@ ScopedName ("Email", NameScope.Workbook)
 <!-- Test -->
 
 ```fsharp
-#r "nuget: FsExcel"
-
-let savePath = "/temp"
-
 open System.IO
 open FsExcel
 
@@ -868,6 +865,14 @@ open System.Globalization
 open FsExcel
 open ClosedXML.Excel
 
+// For non-Windows runtime environments you will have to add these lines to use AutoFit.
+// This is because ClosedXML needs a font to work with when computing sizes. You may have
+// to use a different font name if Liberation Sans is not installed on the target system.
+open System.Runtime.InteropServices
+if not (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) then
+    LoadOptions.DefaultGraphicEngine <- new ClosedXML.Graphics.DefaultGraphicEngine("Liberation Sans") 
+//
+
 let headingStyle = 
     [
         Border(Border.Bottom XLBorderStyleValues.Medium)
@@ -911,7 +916,7 @@ Cells can be merged before or after placing text in them, however, as per Excel 
 * **Merging cells horizontally** - text must be assigned to the *left-most cell label* of the merged cell. For example, if there is a horizontally merged cell spanning from cell A2 to E2, any text within the range A2 to E2 must be assigned to cell A2.
 * **Merging cells horizontally & vertically** - text must be assigned to the *top-left cell label* of the merged cell. For example, if there is a merged cell spanning from cell A2 to E10, any text within the range A2 to E2 must be assigned to cell A2.
 
-A SpanDepth of e.g. (1, 3) creates a merged cell spanning one column and a depth of three rows. The column span and row depth of a merged cell from a starting cell can be specified in two ways:
+A `SpanDepth` of e.g. (1, 3) creates a merged cell spanning one column and a depth of three rows. The column span and row depth of a merged cell from a starting cell can be specified in two ways:
 * **Forward Merging** i.e. merging from top left to bottom right with the starting cell being in the top left hand corner of the merged cell. This method retains cell name, cell contents, cell shading & the top left hand corner of the original starting cell border. This is achieved by having SpanDepth as the second item in the Merge tuple:
     *    `MergeCells (Merge (NamedCell "CellName", SpanDepth (3, 3)))`
     *    `MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2)))`
@@ -920,6 +925,7 @@ A SpanDepth of e.g. (1, 3) creates a merged cell spanning one column and a depth
     *    `MergeCells (Merge (SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
 
 **Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Middle, TopMost]`.
+<!-- Test -->
 
 ```fsharp
 open System.IO
@@ -1037,9 +1043,9 @@ open FsExcel
      style="width: 800px;" />
 
 ---
-## Tables from Types
+## Tables from Records
 
-You can create a table of cells from an instance or a sequence of any type having serializable fields - for example a record type.
+You can create a table of cells from an F# record or a sequence of F# records.
 
 Use `Table.fromInstance` or `Table.fromSeq` and provide
 
@@ -1062,7 +1068,7 @@ open System.IO
 open ClosedXML.Excel
 open FsExcel
 
-type JoiningInfo =  {
+type JoiningInfo = {
     Name : string
     Age : int
     Fees : decimal
