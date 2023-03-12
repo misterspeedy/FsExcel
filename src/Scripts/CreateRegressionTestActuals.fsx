@@ -176,6 +176,32 @@ module Test9 =
     
 module Test10 =
     
+    open System.IO
+    open FsExcel
+    open ClosedXML.Excel
+    
+    [
+        Cell [ String "Without wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle ]
+        Go NewRow
+        Cell [ String "With wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle 
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               WrapText true ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
+    
+module Test11 =
+    
     open System
     open System.IO
     open FsExcel
@@ -223,7 +249,7 @@ module Test10 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
     
-module Test11 =
+module Test12 =
     
     open System
     open System.IO
@@ -276,7 +302,7 @@ module Test11 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
     
-module Test12 =
+module Test13 =
     
     open System.IO
     open FsExcel
@@ -309,7 +335,7 @@ module Test12 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
     
-module Test13 =
+module Test14 =
     
     open System
     open System.IO
@@ -354,7 +380,7 @@ module Test13 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
     
-module Test14 =
+module Test15 =
     
     open System.IO
     open FsExcel
@@ -371,7 +397,7 @@ module Test14 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     
-module Test15 =
+module Test16 =
     
     open System.IO
     open FsExcel
@@ -386,7 +412,7 @@ module Test15 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
     
-module Test16 =
+module Test17 =
     
     
     
@@ -403,7 +429,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
     
-module Test17 =
+module Test18 =
     
     open System.IO
     open FsExcel
@@ -460,7 +486,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test18 =
+module Test19 =
     
     open System.IO
     open ClosedXML.Excel
@@ -487,7 +513,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System.IO
     open System.Globalization
@@ -504,7 +530,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test20 =
+module Test21 =
     
     open System.IO
     open System
@@ -534,7 +560,7 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test21 =
+module Test22 =
     
     open System.IO
     open System.Globalization
@@ -565,111 +591,6 @@ module Test21 =
         AutoFit AllCols
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
-    
-module Test22 =
-    
-    open System.IO
-    open System
-    open ClosedXML.Excel
-    open FsExcel
-    
-    [   Go NewRow
-        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
-            Cell [
-                String heading
-                FontEmphasis Bold
-                FontName "Calibri"
-                FontSize 11
-                HorizontalAlignment Center
-                FontColor (XLColor.FromArgb(0, 255, 255, 255))
-                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
-                Border(Border.All XLBorderStyleValues.Thin)
-                CellSize (ColWidth colWidth)
-            ]
-        Go NewRow
-        Cell [  Integer 1
-                HorizontalAlignment Left
-                VerticalAlignment TopMost
-                Name "ID" ] 
-        Cell [  String "Ford Fiesta"
-                HorizontalAlignment Center
-                VerticalAlignment Centre ] 
-        Cell [  String "Car Technical Details:"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 1"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 2"
-                Next (DownBy 1)]
-        Cell [  String "Technical Detail 3"
-                Name "LastL" ]
-        Go (RC (3, 4))
-        Cell [  String "AB12 CDE" 
-                HorizontalAlignment Right
-                VerticalAlignment Base
-                Name "Reg" ]
-        Go (RC (6, 4))
-        Cell [Name "RegEnd"]
-        Go (RC (7, 3))
-        Cell [  String "Another Technical Detail"
-                FontEmphasis Italic
-                VerticalAlignment Centre
-                Name "TD" 
-                Next Stay]
-        Go (DownBy 1)
-        Cell [ Name "info"]
-    
-        MergeCells (Merge (ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
-        MergeCells (Merge (NamedCell "ID", ColRowLabel ("A", 6)))
-        MergeCells (Merge (ColRowLabel ("C", 7), NamedCell "info")) 
-        MergeCells (Merge (NamedCell "Reg", NamedCell "RegEnd")) 
-        
-    
-        Go (RC (10, 1))
-        Cell [  String "Merging from a starting cell given a depth and span"
-                BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
-                FontEmphasis Bold
-                HorizontalAlignment Center ] 
-        MergeCells (Merge (ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
-    
-    
-        Go (RC (12, 2))
-        Cell [  String "The components that make up a car are: "
-                Name "components" 
-                HorizontalAlignment Left
-                VerticalAlignment TopMost
-                Border(Border.All XLBorderStyleValues.MediumDashDot)]
-        Go (RC (12, 4))
-        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
-        Go (RC (14, 4))
-        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
-    
-        Go (RC (15, 2))
-        Cell [  String "Road Tax"
-                HorizontalAlignment Center
-                VerticalAlignment Centre
-                Border(Border.All XLBorderStyleValues.SlantDashDot)]
-        Go (RC (16, 2))
-        Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
-    
-        MergeCells (Merge (NamedCell "components", SpanDepth (3, 3)))
-        MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2))) 
-    
-        Go (RC (17, 4))
-        Cell [  String "Insurance"
-                Name "insurance"    // NamedCells cannot begin with a number
-                Border(Border.All XLBorderStyleValues.Dashed) ]
-        Go (RC (17, 3))
-        Cell [ Border(Border.All XLBorderStyleValues.Dashed)]
-        Go (RC (17, 2))
-        Cell [ Border(Border.All XLBorderStyleValues.Dashed)] 
-       
-        Go (RC (16, 4))
-        Cell [  String "Signature"]
-    
-        MergeCells (Merge (SpanDepth (3, 1), NamedCell "insurance")) 
-        MergeCells (Merge (SpanDepth (2, 2), ColRowLabel ("D", 16))) 
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     
 module Test23 =
     

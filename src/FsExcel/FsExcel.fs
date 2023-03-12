@@ -43,7 +43,7 @@ type HorizontalAlignment =
 
 type VerticalAlignment =
     | Base
-    | Centre
+    | Middle
     | TopMost
 
 type NameScope =
@@ -73,6 +73,7 @@ type CellProp =
     | BackgroundColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
     | VerticalAlignment of VerticalAlignment
+    | WrapText of bool
     | FormatCode of string
     | Name of string
     | ScopedName of name: string * scope: NameScope
@@ -914,10 +915,12 @@ module Render =
                          match v with
                          | Base ->
                              cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Bottom
-                         | Centre ->
+                         | Middle ->
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Center
                          | TopMost ->
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Top
+                    | WrapText wt->
+                        cell.Style.Alignment.WrapText <- wt
                     | FormatCode fc ->
                         cell.Style.NumberFormat.Format <- fc
                     | Name name ->

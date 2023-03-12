@@ -304,6 +304,43 @@ let fontNames =
      style="width: 250px;" />
 
 ---
+## Wrap Text
+
+You can wrap text in cells with long sentences/many words using `WrapText true`:
+
+<!-- Test -->
+
+```fsharp
+open System.IO
+open FsExcel
+open ClosedXML.Excel
+
+[
+    Cell [ String "Without wrap text:"
+           HorizontalAlignment Center
+           VerticalAlignment Middle
+           CellSize (ColWidth 16) ]
+    Cell [ String "The quick brown fox jumps over the lazy dog."
+           HorizontalAlignment Center
+           VerticalAlignment Middle ]
+    Go NewRow
+    Cell [ String "With wrap text:"
+           HorizontalAlignment Center
+           VerticalAlignment Middle 
+           CellSize (ColWidth 16) ]
+    Cell [ String "The quick brown fox jumps over the lazy dog."
+           HorizontalAlignment Center
+           VerticalAlignment Middle
+           WrapText true ]
+]
+|> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/WrapText.PNG?raw=true"
+     alt="Wrap Text Example"
+     style="width: 250px;" />
+
+---
 ## Number Formatting and Alignment
 
 Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
@@ -882,8 +919,7 @@ A SpanDepth of e.g. (1, 3) creates a merged cell spanning one column and a depth
     *    `MergeCells (Merge (SpanDepth (3, 3)), NamedCell "CellName")`
     *    `MergeCells (Merge (SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
 
-**Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Centre, TopMost]`. Please note the British English spelling of `Centre` when used with `Vertical Alignment`!
-<!-- Test -->
+**Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Middle, TopMost]`.
 
 ```fsharp
 open System.IO
@@ -911,7 +947,7 @@ open FsExcel
             Name "ID" ] 
     Cell [  String "Ford Fiesta"
             HorizontalAlignment Center
-            VerticalAlignment Centre ] 
+            VerticalAlignment Middle ] 
     Cell [  String "Car Technical Details:"
             Next (DownBy 1) ]
     Cell [  String "Technical Detail 1"
@@ -930,7 +966,7 @@ open FsExcel
     Go (RC (7, 3))
     Cell [  String "Another Technical Detail"
             FontEmphasis Italic
-            VerticalAlignment Centre
+            VerticalAlignment Middle
             Name "TD" 
             Next Stay]
     Go (DownBy 1)
@@ -967,7 +1003,7 @@ open FsExcel
     Go (RC (15, 2))
     Cell [  String "Road Tax"
             HorizontalAlignment Center
-            VerticalAlignment Centre
+            VerticalAlignment Middle
             Border(Border.All XLBorderStyleValues.SlantDashDot)]
     Go (RC (16, 2))
     Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
