@@ -177,6 +177,32 @@ module Test9 =
     
 module Test10 =
     
+    open System.IO
+    open FsExcel
+    open ClosedXML.Excel
+    
+    [
+        Cell [ String "Without wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle ]
+        Go NewRow
+        Cell [ String "With wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle 
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               WrapText true ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
+    
+module Test11 =
+    
     open System
     open System.IO
     open FsExcel
@@ -224,7 +250,7 @@ module Test10 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
     
-module Test11 =
+module Test12 =
     
     open System
     open System.IO
@@ -277,7 +303,7 @@ module Test11 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
     
-module Test12 =
+module Test13 =
     
     open System.IO
     open FsExcel
@@ -310,7 +336,7 @@ module Test12 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
     
-module Test13 =
+module Test14 =
     
     open System
     open System.IO
@@ -355,7 +381,7 @@ module Test13 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
     
-module Test14 =
+module Test15 =
     
     open System.IO
     open FsExcel
@@ -372,7 +398,7 @@ module Test14 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     
-module Test15 =
+module Test16 =
     
     open System.IO
     open FsExcel
@@ -387,7 +413,7 @@ module Test15 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
     
-module Test16 =
+module Test17 =
     
     open System.IO
     open FsExcel
@@ -402,7 +428,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
     
-module Test17 =
+module Test18 =
     
     open System.IO
     open FsExcel
@@ -459,7 +485,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test18 =
+module Test19 =
     
     open System.IO
     open ClosedXML.Excel
@@ -486,7 +512,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System.IO
     open System.Globalization
@@ -503,7 +529,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test20 =
+module Test21 =
     
     open System.IO
     open System
@@ -533,7 +559,7 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test21 =
+module Test22 =
     
     open System.IO
     open System.Globalization
@@ -569,7 +595,7 @@ module Test21 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test22 =
+module Test23 =
     
     open System.IO
     open System
@@ -674,7 +700,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     
-module Test23 =
+module Test24 =
     
     open System
     open System.IO
@@ -738,7 +764,7 @@ module Test23 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test24 =
+module Test25 =
     
     open System
     open System.IO
@@ -763,7 +789,7 @@ module Test24 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
-module Test25 =
+module Test26 =
     
     open System
     open System.IO
@@ -792,7 +818,7 @@ module Test25 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test26 =
+module Test27 =
     
     open System
     open System.IO
