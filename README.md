@@ -888,6 +888,18 @@ A `SpanDepth` of e.g. (1, 3) creates a merged cell spanning one column and a dep
     *    `MergeCells (Merge (SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
 
 **Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Middle, TopMost]`.
+
+Note that when using two `NamedCell` references in a `MergeCells ()` call, the cell names must differ between the first and second cell.  For example the following construct will not result in merged cells (though it does not cause an error):
+
+```fsharp
+[
+    Cell [String "Hello"; Name "name"]
+    Cell [String "Hello2"; Name "name"]
+    MergeCells (Merge (NamedCell "name", NamedCell "name"))
+] 
+```
+
+
 <!-- Test -->
 
 ```fsharp
