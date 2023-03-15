@@ -339,7 +339,7 @@ open ClosedXML.Excel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/WrapText.PNG?raw=true"
      alt="Wrap Text Example"
-     style="width: 250px;" />
+     style="width: 350px;" />
 
 ---
 ## Number Formatting and Alignment

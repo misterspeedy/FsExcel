@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":[]},{"name":"javascript","aliases":["js"],"languageName":"JavaScript"},{"name":"webview","aliases":[]},{"name":"vscode","aliases":["frontend"],"languageName":null}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"},{"aliases":["js"],"languageName":"JavaScript","name":"javascript"},{"aliases":["frontend"],"name":"vscode"},{"aliases":[],"name":"webview"}]}}
 
 #!markdown
 
@@ -374,7 +374,7 @@ open ClosedXML.Excel
 
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/WrapText.PNG?raw=true"
      alt="Wrap Text Example"
-     style="width: 250px;" />
+     style="width: 350px;" />
 
 #!markdown
 
