@@ -594,18 +594,35 @@ module CellInfo =
     let namedCellToCR (cellName : string) (worksheet : IXLWorksheet) = 
         (worksheet.Cell(cellName).WorksheetColumn().ColumnLetter(),worksheet.Cell(cellName).WorksheetRow().RowNumber())
 
-    let alphabet = ['A'..'Z'] |> List.map string
+    // TODO: There are probably more efficient ways to map between alphabetic column headings and numeric indices, using simple calculations.
+    let alphabet = ['A'..'Z'] 
 
-    let extendedColAlph =
-        (List.empty, alphabet) 
-        ||> List.fold (fun outputList currentLetter -> 
-            let dualAlphList =
-                (List.empty, alphabet) 
-                ||> List.fold (fun dualAplh letter -> dualAplh @ [currentLetter + letter])
-            outputList @ dualAlphList)
+    let doubleAlphabet = 
+        List.allPairs alphabet alphabet
+        |> List.map (fun (a1, a2) -> sprintf "%c%c" a1 a2)
+
+    // One past the largest alphabetic column ref Excel supports - XFD:
+    let tripleAlphabetLimit = "XFE"
+    let tripleAlphabet =
+        seq {
+            for c1 in alphabet do
+                for c2 in alphabet do
+                    for c3 in alphabet do
+                        sprintf "%c%c%c" c1 c2 c3
+        }
+        |> Seq.takeWhile ((<>) tripleAlphabetLimit)
+        |> List.ofSeq
+
+    let colHeadings = 
+        List.concat
+            [
+                alphabet |> List.map string
+                doubleAlphabet
+                tripleAlphabet
+            ]
 
     let colIndexLetters =
-        alphabet @ extendedColAlph
+        colHeadings
         |> List.indexed
         |> List.map (fun (index, letters) -> (index + 1, letters))
 

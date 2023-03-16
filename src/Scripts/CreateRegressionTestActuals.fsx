@@ -652,14 +652,12 @@ module Test23 =
         MergeCells ((ColRowLabel ("C", 7), NamedCell "info")) 
         MergeCells ((NamedCell "Reg", NamedCell "RegEnd")) 
         
-    
         Go (RC (10, 1))
         Cell [  String "Merging from a starting cell given a depth and span"
                 BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
                 FontEmphasis Bold
                 HorizontalAlignment Center ] 
         MergeCells ((ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
-    
     
         Go (RC (12, 2))
         Cell [  String "The components that make up a car are: "
@@ -685,7 +683,7 @@ module Test23 =
     
         Go (RC (17, 4))
         Cell [  String "Insurance"
-                Name "insurance"    // NamedCells cannot begin with a number
+                Name "insurance" // NamedCells cannot begin with a number
                 Border(Border.All XLBorderStyleValues.Dashed) ]
         Go (RC (17, 3))
         Cell [ Border(Border.All XLBorderStyleValues.Dashed)]
