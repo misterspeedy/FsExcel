@@ -647,10 +647,10 @@ module Test23 =
         Go (DownBy 1)
         Cell [ Name "info"]
     
-        MergeCells (Merge (ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
-        MergeCells (Merge (NamedCell "ID", ColRowLabel ("A", 6)))
-        MergeCells (Merge (ColRowLabel ("C", 7), NamedCell "info")) 
-        MergeCells (Merge (NamedCell "Reg", NamedCell "RegEnd")) 
+        MergeCells ((ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
+        MergeCells ((NamedCell "ID", ColRowLabel ("A", 6)))
+        MergeCells ((ColRowLabel ("C", 7), NamedCell "info")) 
+        MergeCells ((NamedCell "Reg", NamedCell "RegEnd")) 
         
     
         Go (RC (10, 1))
@@ -658,7 +658,7 @@ module Test23 =
                 BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
                 FontEmphasis Bold
                 HorizontalAlignment Center ] 
-        MergeCells (Merge (ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
+        MergeCells ((ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
     
     
         Go (RC (12, 2))
@@ -680,8 +680,8 @@ module Test23 =
         Go (RC (16, 2))
         Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
     
-        MergeCells (Merge (NamedCell "components", SpanDepth (3, 3)))
-        MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2))) 
+        MergeCells ((NamedCell "components", SpanDepth (3, 3)))
+        MergeCells ((ColRowLabel ("B", 15), SpanDepth (1, 2))) 
     
         Go (RC (17, 4))
         Cell [  String "Insurance"
@@ -695,8 +695,8 @@ module Test23 =
         Go (RC (16, 4))
         Cell [  String "Signature"]
     
-        MergeCells (Merge (SpanDepth (3, 1), NamedCell "insurance")) 
-        MergeCells (Merge (SpanDepth (2, 2), ColRowLabel ("D", 16))) 
+        MergeCells ((SpanDepth (3, 1), NamedCell "insurance")) 
+        MergeCells ((SpanDepth (2, 2), ColRowLabel ("D", 16))) 
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     

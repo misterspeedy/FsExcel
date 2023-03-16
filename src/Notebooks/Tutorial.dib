@@ -976,10 +976,10 @@ let headingStyle =
 #!markdown
 
 ## Merging Cells and Vertical Alignment
-You can merge cells by using `MergeCells (Merge CellLabel , CellLabel)` where a `CellLabel` can be a:
-* specific cell -  `ColRowLabel ("<column letter>", <row number>)`
-* named cell -  `NamedCell "CellName"`
-* specified depth and span -  `SpanDepth (<column span>, <row depth>)`
+You can merge cells by using `MergeCells (CellLabel , CellLabel)` where a `CellLabel` can be a:
+* specific cell - `ColRowLabel ("<column letter>", <row number>)`
+* named cell - `NamedCell "CellName"`
+* specified depth and span - `SpanDepth (<column span>, <row depth>)`
 
 Cells can be merged before or after placing text in them, however, as per Excel cell naming convention with merged cells, the following rules must be observed:
 
@@ -989,11 +989,11 @@ Cells can be merged before or after placing text in them, however, as per Excel 
 
 A `SpanDepth` of e.g. (1, 3) creates a merged cell spanning one column and a depth of three rows. The column span and row depth of a merged cell from a starting cell can be specified in two ways:
 * **Forward Merging** i.e. merging from top left to bottom right with the starting cell being in the top left hand corner of the merged cell. This method retains cell name, cell contents, cell shading & the top left hand corner of the original starting cell border. This is achieved by having SpanDepth as the second item in the Merge tuple:
-    *    `MergeCells (Merge (NamedCell "CellName", SpanDepth (3, 3)))`
-    *    `MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2)))`
+    *    `MergeCells ((NamedCell "CellName", SpanDepth (3, 3)))`
+    *    `MergeCells ((ColRowLabel ("B", 15), SpanDepth (1, 2)))`
 * **Reverse Merging** i.e. merging from bottom right to top left with the starting cell being in the bottom right hand corner of the merged cell. This method loses the cell name, cell contents, cell shading of the original starting cell. However, the bottom right hand corner of the original starting cell border is retained. In the case of starting with e.g cell B2 and requesting a reverse merge SpanDepth of (5, 5), i.e. merging to beyond the excel sheet boundaries, the cell to merge to will be defaulted to cell A1. The Reverse Merging is achieved by having SpanDepth as the first item in the Merge tuple:
-    *    `MergeCells (Merge (SpanDepth (3, 3)), NamedCell "CellName")`
-    *    `MergeCells (Merge (SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
+    *    `MergeCells ((SpanDepth (3, 3)), NamedCell "CellName")`
+    *    `MergeCells ((SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
 
 **Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Middle, TopMost]`.
 
@@ -1003,10 +1003,9 @@ Note that when using two `NamedCell` references in a `MergeCells ()` call, the c
 [
     Cell [String "Hello"; Name "name"]
     Cell [String "Hello2"; Name "name"]
-    MergeCells (Merge (NamedCell "name", NamedCell "name"))
+    MergeCells ((NamedCell "name", NamedCell "name"))
 ] 
 ```
-
 
 <!-- Test -->
 
@@ -1063,10 +1062,10 @@ open FsExcel
     Cell [ Name "info"]
 
     // Merging between named and specific cells
-    MergeCells (Merge (ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
-    MergeCells (Merge (NamedCell "ID", ColRowLabel ("A", 6)))
-    MergeCells (Merge (ColRowLabel ("C", 7), NamedCell "info")) 
-    MergeCells (Merge (NamedCell "Reg", NamedCell "RegEnd")) 
+    MergeCells ((ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
+    MergeCells ((NamedCell "ID", ColRowLabel ("A", 6)))
+    MergeCells ((ColRowLabel ("C", 7), NamedCell "info")) 
+    MergeCells ((NamedCell "Reg", NamedCell "RegEnd")) 
     
 
     Go (RC (10, 1))
@@ -1074,7 +1073,7 @@ open FsExcel
             BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
             FontEmphasis Bold
             HorizontalAlignment Center ] 
-    MergeCells (Merge (ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
+    MergeCells ((ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
 
 
     Go (RC (12, 2))
@@ -1099,8 +1098,8 @@ open FsExcel
     Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
 
     // Forward merging - cell name, cell contents, shading & top LH corner of border are retained
-    MergeCells (Merge (NamedCell "components", SpanDepth (3, 3)))
-    MergeCells (Merge (ColRowLabel ("B", 15), SpanDepth (1, 2))) 
+    MergeCells ((NamedCell "components", SpanDepth (3, 3)))
+    MergeCells ((ColRowLabel ("B", 15), SpanDepth (1, 2))) 
 
     Go (RC (17, 4))
     Cell [  String "Insurance"
@@ -1116,8 +1115,8 @@ open FsExcel
 
     // Reverse Merging - original cell contents, cell name and cell shading are lost
     // Only bottom RH corner of the border is retained
-    MergeCells (Merge (SpanDepth (3, 1), NamedCell "insurance")) 
-    MergeCells (Merge (SpanDepth (2, 2), ColRowLabel ("D", 16))) 
+    MergeCells ((SpanDepth (3, 1), NamedCell "insurance")) 
+    MergeCells ((SpanDepth (2, 2), ColRowLabel ("D", 16))) 
 ]
 |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
 
