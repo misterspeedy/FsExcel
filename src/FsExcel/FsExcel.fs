@@ -93,12 +93,12 @@ module CellProps =
 
 /// There are three ways to reference a cell. By its label e.g A12 or name e.g. "apple" (if the cell has been previously named) or by a cell's span and depth
 type CellLabel = 
-/// Column and Row label
-| ColRowLabel of Col:string * Row:int
-/// This is used for referencing named cells
-| NamedCell of string
-/// This identifies the column span (e.g. 2 columns wide) and row depth (e.g. 3 rows deep) of a merged cell
-| SpanDepth of ColSpan:int * RowDepth: int
+    /// Column and Row label
+    | ColRowLabel of Col:string * Row:int
+    /// This is used for referencing named cells
+    | NamedCell of string
+    /// This identifies the column span (e.g. 2 columns wide) and row depth (e.g. 3 rows deep) of a merged cell
+    | SpanDepth of ColSpan:int * RowDepth: int
 
 // no need to specify RowMerge (span vertically), ColumnMerge (span horizontally), RowColumnMerge (box)
 // Merge() + range takes care of it, no seperate definitions needed
@@ -589,66 +589,7 @@ type Item =
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
 
-module CellInfo = 
-    /// Returns the column letter and row number of a named cell given a named cell
-    let namedCellToCR (cellName : string) (worksheet : IXLWorksheet) = 
-        (worksheet.Cell(cellName).WorksheetColumn().ColumnLetter(),worksheet.Cell(cellName).WorksheetRow().RowNumber())
 
-    // TODO: There are probably more efficient ways to map between alphabetic column headings and numeric indices, using simple calculations.
-    let alphabet = ['A'..'Z'] 
-
-    let doubleAlphabet = 
-        List.allPairs alphabet alphabet
-        |> List.map (fun (a1, a2) -> sprintf "%c%c" a1 a2)
-
-    // One past the largest alphabetic column ref Excel supports - XFD:
-    let tripleAlphabetLimit = "XFE"
-    let tripleAlphabet =
-        seq {
-            for c1 in alphabet do
-                for c2 in alphabet do
-                    for c3 in alphabet do
-                        sprintf "%c%c%c" c1 c2 c3
-        }
-        |> Seq.takeWhile ((<>) tripleAlphabetLimit)
-        |> List.ofSeq
-
-    let colHeadings = 
-        List.concat
-            [
-                alphabet |> List.map string
-                doubleAlphabet
-                tripleAlphabet
-            ]
-
-    let colIndexLetters =
-        colHeadings
-        |> List.indexed
-        |> List.map (fun (index, letters) -> (index + 1, letters))
-
-    let colIndexLettersMap = colIndexLetters |> Map.ofList
-    
-    let colLettersToIndexMap =
-        colIndexLetters
-        |> List.map (fun (index, letters) -> (letters, index))
-        |> Map.ofList
-
-    /// Returns the column letter and row number of the cell to which to merge to given the starting named or specific cell. Span and depth are integers of minimum value = 1.
-    let cellSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 
-        (colIndexLettersMap.[colLettersToIndexMap.[cell |> fst] + span - 1], (cell|> snd) + depth - 1)
-
-    /// Returns the column letter and row number of the sarting cell to which to merge to given the ending named cell. Span and depth are integers of minimum value = 1.
-    let cellReverseSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 
-        let colLetter = 
-            colIndexLettersMap.TryFind (colLettersToIndexMap.[cell |> fst] - (span - 1))
-            |> Option.defaultValue "A" // if user tries to reverse merge beyond column A, they will only be able to reverse merge until column A
-            
-        let rowNum = 
-            if ((cell |> snd) - (depth - 1)) > 0 then
-                ((cell |> snd) - (depth - 1))
-            else
-                1 // if user tries to reverse merge beyond row 1, they will only be able to reverse merge until row 1
-        (colLetter, rowNum)
 
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
@@ -964,27 +905,27 @@ module Render =
                     let range = crToStr (cSt, rSt) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore
                 | (ColRowLabel (cSt, rSt), NamedCell cell2) -> 
-                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
                     ws.Range(range).Merge() |> ignore
                 | (NamedCell cell1, ColRowLabel (cE, rE)) -> 
-                    let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (cE, rE)
+                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore 
                 | (NamedCell cell1, NamedCell cell2) ->
-                    let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
                     ws.Range(range).Merge() |> ignore
                 | (NamedCell cell1, SpanDepth (colSpan, rowDepth)) ->
-                    let cell = (CellInfo.namedCellToCR cell1 ws)
-                    let range = crToStr (CellInfo.namedCellToCR cell1 ws) + ":" + crToStr (CellInfo.cellSpanDepthToCR cell colSpan rowDepth)
+                    let cell = (CellReference.namedCellToCR cell1 ws)
+                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (CellReference.spanDepthToCellReference cell colSpan rowDepth)
                     ws.Range(range).Merge() |> ignore
                 | (ColRowLabel (cSt, rSt), SpanDepth (colSpan, rowDepth)) ->
-                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellInfo.cellSpanDepthToCR (cSt, rSt) colSpan rowDepth)
+                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellReference.spanDepthToCellReference (cSt, rSt) colSpan rowDepth)
                     ws.Range(range).Merge() |> ignore
                 | (SpanDepth (colSpan, rowDepth), NamedCell cell2) ->
-                    let cell = (CellInfo.namedCellToCR cell2 ws)
-                    let range = crToStr (CellInfo.cellReverseSpanDepthToCR cell colSpan rowDepth) + ":" + crToStr (CellInfo.namedCellToCR cell2 ws)
+                    let cell = (CellReference.namedCellToCR cell2 ws)
+                    let range = crToStr (CellReference.cellReverseSpanDepthToCR cell colSpan rowDepth) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
                     ws.Range(range).Merge() |> ignore
                 | (SpanDepth (colSpan, rowDepth), ColRowLabel (cE, rE)) ->
-                    let range = crToStr (CellInfo.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
+                    let range = crToStr (CellReference.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore
                 | (SpanDepth (span, depth), SpanDepth (colSpan, rowDepth)) ->
                     ws |> ignore // ignore this case: cannot merge between two arbitary 

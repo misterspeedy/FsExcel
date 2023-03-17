@@ -16,6 +16,7 @@
     <LicenseExpression>MIT</LicenseExpression>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CellReference.fs" />
     <Compile Include="FsExcel.fs" />
     <Compile Include="Table.fs" />
     <None Include="..\..\assets\logo.png" Pack="true" PackagePath="" />
