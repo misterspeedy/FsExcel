@@ -47,9 +47,27 @@ module CellReference =
         |> List.map (fun (index, letters) -> (letters, index))
         |> Map.ofList
 
+    let private tryColLettersToColIndex colLabel =
+        colLettersToIndexMap |> Map.tryFind colLabel
+
+    let private tryColIndexToColLetters colIndex =
+        colIndexLettersMap |> Map.tryFind colIndex
+
     /// Returns the column letter and row number of the cell to which to merge to given the starting named or specific cell. Span and depth are integers of minimum value = 1.
-    let spanDepthToCellReference (cell : (string * int)) (span : int) (depth : int) = 
-        (colIndexLettersMap.[colLettersToIndexMap.[cell |> fst] + span - 1], (cell |> snd) + depth - 1)
+    let spanDepthToCellReference (cellReference : (string * int)) (span : int) (depth : int) = 
+        let colLabel, row = cellReference
+        colLabel 
+        |> tryColLettersToColIndex
+        |> Option.map (fun colIndex ->
+            let newColIndex = colIndex + span - 1
+            newColIndex 
+            |> tryColIndexToColLetters
+            |> Option.map (fun newColLabel ->
+                (colIndexLettersMap.[newColIndex], row + depth - 1))
+            |> Option.defaultWith (fun _ ->
+                raise <| System.ArgumentException($"Span would lead to invalid column reference")))
+        |> Option.defaultWith (fun _ ->
+            raise <| System.ArgumentException($"Invalid column reference: {colLabel}"))
 
     /// Returns the column letter and row number of the sarting cell to which to merge to given the ending named cell. Span and depth are integers of minimum value = 1.
     let cellReverseSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 

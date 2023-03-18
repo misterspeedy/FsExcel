@@ -936,6 +936,8 @@ Note that when using two `NamedCell` references in a `MergeCells ()` call, the c
 ] 
 ```
 
+Merges which lead to a column reference beyond the maximum supported by Excel ("XFD") will result in an `ArgumentException`.
+
 <!-- Test -->
 
 ```fsharp
