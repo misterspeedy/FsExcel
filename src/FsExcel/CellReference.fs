@@ -60,16 +60,20 @@ module CellReference =
         |> tryColLettersToColIndex
         |> Option.map (fun colIndex ->
             let newColIndex = colIndex + span - 1
-            newColIndex 
-            |> tryColIndexToColLetters
-            |> Option.map (fun newColLabel ->
-                (colIndexLettersMap.[newColIndex], row + depth - 1))
-            |> Option.defaultWith (fun _ ->
-                raise <| System.ArgumentException($"Span would lead to invalid column reference")))
+            let newRowIndex = row + depth - 1
+            if newRowIndex > 1_048_576 then
+                raise <| System.ArgumentException($"Depth would lead to an out of range row index")
+            else
+                newColIndex 
+                |> tryColIndexToColLetters
+                |> Option.map (fun _ ->
+                    (colIndexLettersMap.[newColIndex], newRowIndex))
+                |> Option.defaultWith (fun _ ->
+                    raise <| System.ArgumentException($"Span would lead to an out of range reference")))
         |> Option.defaultWith (fun _ ->
-            raise <| System.ArgumentException($"Invalid column reference: {colLabel}"))
+            raise <| System.ArgumentException($"Out of range column reference: {colLabel}"))
 
-    /// Returns the column letter and row number of the sarting cell to which to merge to given the ending named cell. Span and depth are integers of minimum value = 1.
+    /// Returns the column letter and row number of the starting cell to which to merge to given the ending named cell. Span and depth are integers of minimum value = 1.
     let cellReverseSpanDepthToCR (cell : (string * int)) (span : int) (depth : int) = 
         let colLetter = 
             colIndexLettersMap.TryFind (colLettersToIndexMap.[cell |> fst] - (span - 1))

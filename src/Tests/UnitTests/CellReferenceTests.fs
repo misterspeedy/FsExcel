@@ -28,3 +28,11 @@ let ``Can translate from a span depth to a cell reference`` (startCol, startRow,
 let ``Spans beyond right limit of spreadsheet lead to an exception``(startCol, startRow, span, depth) =
     Assert.Throws<ArgumentException>(fun _ ->
         CellReference.spanDepthToCellReference (startCol, startRow) span depth |> ignore)
+
+[<Theory>]
+[<InlineData("A", 1, 1, 1_048_577)>]
+[<InlineData("A", 1_048_577, 1, 2)>]
+let ``Depths beyond bottom limit of spreadsheet lead to an exception``(startCol, startRow, span, depth) =
+    Assert.Throws<ArgumentException>(fun _ ->
+        CellReference.spanDepthToCellReference (startCol, startRow) span depth |> ignore)
+
