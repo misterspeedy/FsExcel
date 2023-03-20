@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":["C#","c#"],"languageName":"C#","name":"csharp"},{"aliases":[],"languageName":"Mermaid","name":"mermaid"},{"aliases":[],"languageName":"SQL","name":"sql"},{"aliases":["frontend"],"name":"vscode"}]}}
 
 #!fsharp
 
@@ -8,17 +8,10 @@
 #r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
 let savePath = "/temp"
 
-// Next steps:
-// Add to tutorial (explain that it doesn't name ranges properly)
-// Add to tests
-
 open System
 open FsExcel
 
 [
-    Cell [String "Hello"; Name "name"]
-    Cell [String "Hello2"; Name "name"]
-    Cell [String "World"; ScopedName("scopedname", NameScope.Workbook) ]
-    Cell [String "xxx"; ScopedName("scopedname", NameScope.Worksheet) ]
-] 
+    Cell [String "Hello World!"]
+]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

@@ -72,6 +72,7 @@ type CellProp =
     | BackgroundColor of XLColor
     | HorizontalAlignment of HorizontalAlignment
     | VerticalAlignment of VerticalAlignment
+    | TextRotation of degrees:int
     | WrapText of bool
     | FormatCode of string
     | Name of string
@@ -879,6 +880,11 @@ module Render =
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Center
                          | TopMost ->
                             cell.Style.Alignment.Vertical <- XLAlignmentVerticalValues.Top
+                    | TextRotation degrees ->
+                        if degrees >= -90 && degrees <= 90 then
+                            cell.Style.Alignment.TextRotation <- degrees
+                        else
+                            raise <| ArgumentException $"Invalid TextRotation: {degrees}"
                     | WrapText wt->
                         cell.Style.Alignment.WrapText <- wt
                     | FormatCode fc ->

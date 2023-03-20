@@ -204,6 +204,44 @@ module Test10 =
 module Test11 =
     
     open System
+    open FsExcel
+    
+    let getPerformance (categoryIndex : int) (supplierIndex : int) =
+        let p, m, g = "⏺", "◑", "⭘"
+        let performances = 
+            [|
+                [| p; m; g; g; p;  p; g; p; p; g |]
+                [| g; m; g; m; g;  p; g; p; p; g |]
+                [| g; m; m; g; g;  p; g; g; p; g |]
+                [| m; m; m; p; p;  p; g; m; p; g |]
+            
+                [| p; p; p; p; g;  g; m; m; p; g |]
+                [| p; g; p; g; g;  g; p; g; m; m |]
+                [| g; p; g; p; m;  p; m; p; p; g |]
+                [| p; p; m; g; p;  p; p; m; p; m |]
+            |]
+        performances[supplierIndex-1][categoryIndex-1]
+    
+    [
+        Go (RC(1, 2))
+        for category in 1..10 do
+            Cell [String $"Category {category}"; TextRotation 45; CellSize (RowHeight 45)]
+        Go NewRow
+        for supplier in 1..8 do
+            Cell [String $"Supplier {supplier}"; CellSize (ColWidth 10)]
+            Go NewRow
+        Go (RC(2, 2))
+        Go (Indent 2)
+        for supplier in 1..8 do
+            for category in 1..10 do
+                Cell [ String (getPerformance category supplier); HorizontalAlignment Center]
+            Go NewRow
+    ]
+    |> Render.AsFile (System.IO.Path.Combine(savePath, "TextRotation.xlsx"))
+    
+module Test12 =
+    
+    open System
     open System.IO
     open FsExcel
     open ClosedXML.Excel
@@ -250,7 +288,7 @@ module Test11 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
     
-module Test12 =
+module Test13 =
     
     open System
     open System.IO
@@ -303,7 +341,7 @@ module Test12 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
     
-module Test13 =
+module Test14 =
     
     open System.IO
     open FsExcel
@@ -336,7 +374,7 @@ module Test13 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
     
-module Test14 =
+module Test15 =
     
     open System
     open System.IO
@@ -381,7 +419,7 @@ module Test14 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
     
-module Test15 =
+module Test16 =
     
     open System.IO
     open FsExcel
@@ -398,7 +436,7 @@ module Test15 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     
-module Test16 =
+module Test17 =
     
     open System.IO
     open FsExcel
@@ -413,7 +451,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
     
-module Test17 =
+module Test18 =
     
     open System.IO
     open FsExcel
@@ -428,7 +466,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
     
-module Test18 =
+module Test19 =
     
     open System.IO
     open FsExcel
@@ -485,7 +523,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test19 =
+module Test20 =
     
     open System.IO
     open ClosedXML.Excel
@@ -512,7 +550,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test20 =
+module Test21 =
     
     open System.IO
     open System.Globalization
@@ -529,7 +567,7 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test21 =
+module Test22 =
     
     open System.IO
     open System
@@ -559,7 +597,7 @@ module Test21 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test22 =
+module Test23 =
     
     open System.IO
     open System.Globalization
@@ -595,7 +633,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test23 =
+module Test24 =
     
     open System.IO
     open System
@@ -698,7 +736,7 @@ module Test23 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     
-module Test24 =
+module Test25 =
     
     open System
     open System.IO
@@ -762,7 +800,7 @@ module Test24 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test25 =
+module Test26 =
     
     open System
     open System.IO
@@ -787,7 +825,7 @@ module Test25 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
-module Test26 =
+module Test27 =
     
     open System
     open System.IO
@@ -816,7 +854,7 @@ module Test26 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test27 =
+module Test28 =
     
     open System
     open System.IO
