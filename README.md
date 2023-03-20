@@ -337,9 +337,16 @@ open ClosedXML.Excel
 |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
 
 ```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/WrapText.PNG?raw=true"
+     alt="Wrap Text Example"
+     style="width: 350px;" />
+
+---
 ## Text Rotation
 
-You can rotate text between -90 and +90 with `TextRotation n`.
+You can rotate text between -90° and +90° with `TextRotation n`.
+
+> Note that due to [this ClosedXML issue](https://github.com/ClosedXML/ClosedXML/issues/2033), cells with rotations in the range -90 to -1 will not be shown with the correct rotation in Excel - and their content may even not be visible at all.
 
 <!-- Test -->
 
@@ -381,9 +388,9 @@ let getPerformance (categoryIndex : int) (supplierIndex : int) =
 |> Render.AsFile (System.IO.Path.Combine(savePath, "TextRotation.xlsx"))
 
 ```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/WrapText.PNG?raw=true"
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/TextRotation.PNG?raw=true"
      alt="Wrap Text Example"
-     style="width: 350px;" />
+     style="width: 500px;" />
 
 ---
 ## Number Formatting and Alignment
