@@ -354,20 +354,21 @@ You can rotate text between -90° and +90° with `TextRotation n`.
 open System
 open FsExcel
 
+let p, m, g = "⏺", "◑", "⭘"
+let performances = 
+    [|
+        [| p; m; g; g; p;  p; g; p; p; g |]
+        [| g; m; g; m; g;  p; g; p; p; g |]
+        [| g; m; m; g; g;  p; g; g; p; g |]
+        [| m; m; m; p; p;  p; g; m; p; g |]
+    
+        [| p; p; p; p; g;  g; m; m; p; g |]
+        [| p; g; p; g; g;  g; p; g; m; m |]
+        [| g; p; g; p; m;  p; m; p; p; g |]
+        [| p; p; m; g; p;  p; p; m; p; m |]
+    |]
+
 let getPerformance (categoryIndex : int) (supplierIndex : int) =
-    let p, m, g = "⏺", "◑", "⭘"
-    let performances = 
-        [|
-            [| p; m; g; g; p;  p; g; p; p; g |]
-            [| g; m; g; m; g;  p; g; p; p; g |]
-            [| g; m; m; g; g;  p; g; g; p; g |]
-            [| m; m; m; p; p;  p; g; m; p; g |]
-        
-            [| p; p; p; p; g;  g; m; m; p; g |]
-            [| p; g; p; g; g;  g; p; g; m; m |]
-            [| g; p; g; p; m;  p; m; p; p; g |]
-            [| p; p; m; g; p;  p; p; m; p; m |]
-        |]
     performances[supplierIndex-1][categoryIndex-1]
 
 [
