@@ -346,7 +346,7 @@ open ClosedXML.Excel
 
 You can rotate text between -90° and +90° with `TextRotation n`.
 
-> Note that due to [this ClosedXML issue](https://github.com/ClosedXML/ClosedXML/issues/2033), cells with rotations in the range -90 to -1 will not be shown with the correct rotation in Excel - and their content may even not be visible at all.
+> Note that due to [this ClosedXML issue](https://github.com/ClosedXML/ClosedXML/issues/2033), cells with rotations in the range -90 to -1 will not be shown with the correct rotation in Excel - and their content may even not be visible at all. The issue has been fixed and the problem should be resolved when ClosedXML v0.101 is released.
 
 <!-- Test -->
 
