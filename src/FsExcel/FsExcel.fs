@@ -578,9 +578,14 @@ type AutoFilter =
     /// <param name="column">The column number within the range to be filtered.</param>
     | BelowAverage of range : AutoFilterRange * column : int
 
+type StyleMergedCell =
+| BorderType of Border
+| ColorBorder of BorderColor
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
+    | BorderMergedCell of borderProps : StyleMergedCell list
     | Go of Position
     | Worksheet of string
     | AutoFit of AutoFit
@@ -589,7 +594,6 @@ type Item =
     | SizeAll of Size 
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
-
 
 
 module Render =
@@ -961,6 +965,41 @@ module Render =
                     ws.Rows().Height <- height
             | Style s ->
                 style <- s
+            | BorderMergedCell style ->
+                let ws = getCurrentWorksheet()
+                for borderStyle in style do
+                    match borderStyle with
+                    | BorderType borderstyle ->
+                        match borderstyle with
+                            | Border.Top style ->
+                                ws.Cells().Style.Border.TopBorder <- style
+                            | Border.Right style ->
+                                ws.Cells().Style.Border.RightBorder <- style
+                            | Border.Bottom style ->
+                                ws.Cells().Style.Border.BottomBorder <- style
+                            | Border.Left style ->
+                                ws.Cells().Style.Border.LeftBorder <- style
+                            | Border.All style ->
+                                ws.Cells().Style.Border.TopBorder <- style
+                                ws.Cells().Style.Border.RightBorder <- style
+                                ws.Cells().Style.Border.BottomBorder <- style
+                                ws.Cells().Style.Border.LeftBorder <- style
+                    | ColorBorder bordercolour ->
+                        match bordercolour with
+                            | BorderColor.Top c ->
+                                ws.Cells().Style.Border.TopBorderColor <- c
+                            | BorderColor.Right c ->
+                                ws.Cells().Style.Border.RightBorderColor <- c
+                            | BorderColor.Bottom c ->
+                                ws.Cells().Style.Border.BottomBorderColor <- c
+                            | BorderColor.Left c ->
+                                ws.Cells().Style.Border.LeftBorderColor <- c
+                            | BorderColor.All c ->
+                                ws.Cells().Style.Border.TopBorderColor <- c
+                                ws.Cells().Style.Border.RightBorderColor <- c
+                                ws.Cells().Style.Border.BottomBorderColor <- c
+                                ws.Cells().Style.Border.LeftBorderColor <- c
+            
             | AutoFilter autoFilter ->
                 let ws = getCurrentWorksheet()
 
