@@ -624,6 +624,89 @@ module PseudoRandom =
      style="width: 250px;" />
 
 ---
+## Adding a Border to Merged Cells
+
+To add a border to all cells in an Item list that includes *merged cells*, use:
+
+`BorderMergedCell [ BorderType (Border.x XLBorderStyleValues.[......]); ColorBorder (BorderColor.x (XLColor.FromArgb(0, 68, 114, 196)))]`
+
+where *x* = [All, Top, Right, Bottom, Left].  Include this border styling *after* any merged cells.
+
+Other styling such as background color, font emphasis, font style etc. can be applied to all cells (including merged cells) using `Style [prop; prop...]` at the *start* of the Item list as outlined above. These styling propeties are retained when a cell is merged, unlike with cell borders.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open System
+open ClosedXML.Excel
+open FsExcel 
+
+
+[   Go NewRow
+    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
+        Cell [
+            String heading
+            FontEmphasis Bold
+            FontName "Calibri"
+            FontSize 11
+            HorizontalAlignment Center
+            FontColor (XLColor.FromArgb(0, 255, 255, 255))
+            BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
+            Border (Border.All XLBorderStyleValues.Thin)
+            CellSize (ColWidth colWidth)
+        ]
+    Go NewRow
+    Style [ HorizontalAlignment Center
+            VerticalAlignment Middle
+            BackgroundColor (XLColor.FromArgb(0, 240, 240, 210))]
+    Cell [  Integer 1
+            //HorizontalAlignment Left
+            //VerticalAlignment TopMost
+            Name "ID" ] 
+    Cell [  String "Ford Fiesta" ]
+            //HorizontalAlignment Center
+            //VerticalAlignment Middle ] 
+    Cell [  String "Car Technical Details:"
+            Next (DownBy 1) ]
+    Cell [  String "Technical Detail 1"
+            Next (DownBy 1) ]
+    Cell [  String "Technical Detail 2"
+            Next (DownBy 1)]
+    Cell [  String "Technical Detail 3"
+            Name "LastL" ]
+    Go (RC (3, 4))
+    Cell [  String "AB12 CDE" 
+            //HorizontalAlignment Right
+            //VerticalAlignment Base
+            Name "Reg" ]
+    Go (RC (6, 4))
+    Cell [Name "RegEnd"]
+    Go (RC (7, 3))
+    Cell [  String "Another Technical Detail"
+            FontEmphasis Italic
+            //VerticalAlignment Middle
+            Name "TD" 
+            Next Stay]
+    Go (DownBy 1)
+    Cell [ Name "info"]
+
+    // Merging between named and specific cells
+    MergeCells (ColRowLabel ("B", 3), ColRowLabel ("B", 6))
+    MergeCells (NamedCell "ID", ColRowLabel ("A", 6))
+    MergeCells (ColRowLabel ("C", 7), NamedCell "info")
+    MergeCells (NamedCell "Reg", NamedCell "RegEnd") 
+    // Adding a border to merged cells - any original border around a single cell is lost post merging cells
+    BorderMergedCell [ BorderType (Border.All XLBorderStyleValues.Thin)
+                       ColorBorder (BorderColor.All (XLColor.FromArgb(0, 68, 114, 196)))]
+]
+|> Render.AsFile (Path.Combine(savePath, "BorderMergedCells.xlsx"))  
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/BorderMergedCells.PNG?raw=true"
+     alt="Adding a border to merged cells"
+     style="width: 250px;" />
+
+---
 ## Absolute Positioning
 
 FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell at an absolute row or column position - or both.
