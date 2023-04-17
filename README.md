@@ -704,7 +704,7 @@ open FsExcel
 ```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/BorderMergedCells.PNG?raw=true"
      alt="Adding a border to merged cells"
-     style="width: 400px;" />
+     style="width: 500px;" />
 
 ---
 ## Absolute Positioning
