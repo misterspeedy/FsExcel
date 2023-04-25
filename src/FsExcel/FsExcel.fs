@@ -79,7 +79,6 @@ type CellProp =
     | ScopedName of name: string * scope: NameScope
     | CellSize of Size
 
-
 module CellProps =
 
     let hasNext (props : CellProp list) =
@@ -594,7 +593,7 @@ type Item =
     | SizeAll of Size 
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
-
+    | Table of name:string * obj list
 
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
@@ -1004,6 +1003,13 @@ module Render =
                 let ws = getCurrentWorksheet()
 
                 processAutoFilter ws autoFilter
+
+            | Table(name, items) ->
+                // TODO does this have to be repeated so much?:
+                let ws = getCurrentWorksheet()
+                let cell = ws.Cell(r, c)
+                cell.InsertTable(items, name, true) |> ignore
+
 
         wb
 

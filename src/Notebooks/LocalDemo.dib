@@ -11,7 +11,20 @@ let savePath = "/temp"
 open System
 open FsExcel
 
+type R =
+    {
+        Name : string
+        Value : int
+        String : string
+        Date : DateTimeOffset
+    }
+
 [
-    Cell [String "Hello World!"]
+    Table("MyTable", [
+        { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
+        { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
+        { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
+        { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
+    ])
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
