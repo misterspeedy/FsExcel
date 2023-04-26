@@ -578,8 +578,18 @@ type AutoFilter =
     | BelowAverage of range : AutoFilterRange * column : int
 
 type StyleMergedCell =
-| BorderType of Border
-| ColorBorder of BorderColor
+    | BorderType of Border
+    | ColorBorder of BorderColor
+
+type TableProperty =
+    | Theme of XLTableTheme 
+    | ShowHeaderRow of bool
+    | ShowTotalsRow of bool
+    | ShowRowStripes of bool
+    | ShowColumnStripes of bool
+    | EmphasizeFirstColumn of bool
+    | EmphasizeLastColumn of bool
+    | ShowAutoFilter of bool
 
 type Item =
     | Cell of props : CellProp list
@@ -593,7 +603,7 @@ type Item =
     | SizeAll of Size 
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
-    | Table of name:string * obj list
+    | Table of name:string * obj list * TableProperty list
 
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
@@ -1004,12 +1014,22 @@ module Render =
 
                 processAutoFilter ws autoFilter
 
-            | Table(name, items) ->
+            | Table(name, items, properties) ->
                 // TODO does this have to be repeated so much?:
                 let ws = getCurrentWorksheet()
                 let cell = ws.Cell(r, c)
-                cell.InsertTable(items, name, true) |> ignore
-
+                let table = cell.InsertTable(items, name, true)
+                properties
+                |> List.iter (function
+                    | Theme theme -> table.Theme <- theme
+                    | ShowHeaderRow b -> table.ShowHeaderRow <- b
+                    // NB This will add a totals row but won't put the total formulae into it:
+                    | ShowTotalsRow b -> table.ShowTotalsRow <- b
+                    | ShowRowStripes b -> table.ShowRowStripes <- b
+                    | ShowColumnStripes b -> table.ShowColumnStripes <- b
+                    | EmphasizeFirstColumn b -> table.EmphasizeFirstColumn <- b
+                    | EmphasizeLastColumn b -> table.EmphasizeLastColumn <- b
+                    | ShowAutoFilter b -> table.ShowAutoFilter <- b)
 
         wb
 

@@ -17,14 +17,28 @@ type R =
         Value : int
         String : string
         Date : DateTimeOffset
+        // Formula : string // =[@Value]/2
     }
 
 [
-    Table("MyTable", [
-        { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
-        { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
-        { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
-        { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
-    ])
+    Table("MyTable", 
+        [
+            { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
+            { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
+            { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
+            { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
+        ],
+        [
+            Theme ClosedXML.Excel.XLTableTheme.TableStyleDark9
+            ShowHeaderRow true
+            ShowTotalsRow true
+            ShowRowStripes true
+            ShowColumnStripes true
+            EmphasizeFirstColumn true
+            EmphasizeLastColumn true
+        ]
+        
+        
+        )
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
