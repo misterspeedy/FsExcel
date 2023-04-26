@@ -21,15 +21,16 @@ type R =
     }
 
 [
-    Table("MyTable", 
+    Table
         [
-            { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
-            { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
-            { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
-            { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
-        ],
-        [
-            Theme ClosedXML.Excel.XLTableTheme.TableStyleDark9
+            TableName "KitsTable"
+            TableItems [
+                { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
+                { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
+                { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
+                { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
+            ]
+            TableTheme ClosedXML.Excel.XLTableTheme.TableStyleDark9
             ShowHeaderRow true
             ShowTotalsRow true
             ShowRowStripes true
@@ -37,8 +38,5 @@ type R =
             EmphasizeFirstColumn true
             EmphasizeLastColumn true
         ]
-        
-        
-        )
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

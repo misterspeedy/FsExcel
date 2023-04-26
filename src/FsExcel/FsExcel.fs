@@ -582,7 +582,9 @@ type StyleMergedCell =
     | ColorBorder of BorderColor
 
 type TableProperty =
-    | Theme of XLTableTheme 
+    | TableName of string
+    | TableItems of obj list
+    | TableTheme of XLTableTheme 
     | ShowHeaderRow of bool
     | ShowTotalsRow of bool
     | ShowRowStripes of bool
@@ -603,7 +605,7 @@ type Item =
     | SizeAll of Size 
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
-    | Table of name:string * obj list * TableProperty list
+    | Table of TableProperty list
 
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
@@ -1014,14 +1016,27 @@ module Render =
 
                 processAutoFilter ws autoFilter
 
-            | Table(name, items, properties) ->
+            | Table properties ->
                 // TODO does this have to be repeated so much?:
                 let ws = getCurrentWorksheet()
                 let cell = ws.Cell(r, c)
+
+                let name =
+                    properties
+                    |> List.tryPick (function | TableName name -> Some name | _ -> None)
+                    |> Option.defaultValue null
+
+                let items =
+                    properties
+                    |> List.tryPick (function | TableItems items -> Some items | _ -> None)
+                    |> Option.defaultValue List.empty
+
                 let table = cell.InsertTable(items, name, true)
                 properties
                 |> List.iter (function
-                    | Theme theme -> table.Theme <- theme
+                    | TableName _ 
+                    | TableItems _ -> ()
+                    | TableTheme theme -> table.Theme <- theme
                     | ShowHeaderRow b -> table.ShowHeaderRow <- b
                     // NB This will add a totals row but won't put the total formulae into it:
                     | ShowTotalsRow b -> table.ShowTotalsRow <- b
