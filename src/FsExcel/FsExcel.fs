@@ -1019,10 +1019,10 @@ module Render =
             | Table properties ->
                 // TODO does this have to be repeated so much?:
                 let ws = getCurrentWorksheet()
-                let cell = ws.Cell(r, c)
 
                 let name =
                     properties
+                    |> List.rev // "Obey the last order first"
                     |> List.tryPick (function | TableName name -> Some name | _ -> None)
                     |> Option.defaultValue null
 
@@ -1031,20 +1031,33 @@ module Render =
                     |> List.tryPick (function | TableItems items -> Some items | _ -> None)
                     |> Option.defaultValue List.empty
 
-                let table = cell.InsertTable(items, name, true)
+                let cell = ws.Cell(r, c)
+                let table = cell.InsertTable(items, name, true, ShowTotalsRow=true)
+                let mutable includesTotalsRow = false
                 properties
                 |> List.iter (function
                     | TableName _ 
-                    | TableItems _ -> ()
-                    | TableTheme theme -> table.Theme <- theme
-                    | ShowHeaderRow b -> table.ShowHeaderRow <- b
+                    | TableItems _ -> 
+                        ()
+                    | TableTheme theme -> 
+                        table.Theme <- theme
+                    | ShowHeaderRow b -> 
+                        table.ShowHeaderRow <- b
                     // NB This will add a totals row but won't put the total formulae into it:
-                    | ShowTotalsRow b -> table.ShowTotalsRow <- b
-                    | ShowRowStripes b -> table.ShowRowStripes <- b
-                    | ShowColumnStripes b -> table.ShowColumnStripes <- b
-                    | EmphasizeFirstColumn b -> table.EmphasizeFirstColumn <- b
-                    | EmphasizeLastColumn b -> table.EmphasizeLastColumn <- b
+                    | ShowTotalsRow b -> 
+                        includesTotalsRow <- b
+                        table.ShowTotalsRow <- b
+                    | ShowRowStripes b -> 
+                        table.ShowRowStripes <- b
+                    | ShowColumnStripes b -> 
+                        table.ShowColumnStripes <- b
+                    | EmphasizeFirstColumn b -> 
+                        table.EmphasizeFirstColumn <- b
+                    | EmphasizeLastColumn b -> 
+                        table.EmphasizeLastColumn <- b
                     | ShowAutoFilter b -> table.ShowAutoFilter <- b)
+
+                r <- r + items.Length + if includesTotalsRow then 2 else 1
 
         wb
 

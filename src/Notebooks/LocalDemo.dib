@@ -38,5 +38,6 @@ type R =
             EmphasizeFirstColumn true
             EmphasizeLastColumn true
         ]
+    Cell [ String "hereIam"]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
