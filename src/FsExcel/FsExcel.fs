@@ -581,17 +581,21 @@ type StyleMergedCell =
     | BorderType of Border
     | ColorBorder of BorderColor
 
+type TotalsRowItem =
+    | Label of string
+    | Function of XLTotalsRowFunction
+
 type TableProperty =
     | TableName of string
     | TableItems of obj list
     | TableTheme of XLTableTheme 
     | ShowHeaderRow of bool
-    | ShowTotalsRow of bool
     | ShowRowStripes of bool
     | ShowColumnStripes of bool
     | EmphasizeFirstColumn of bool
     | EmphasizeLastColumn of bool
     | ShowAutoFilter of bool
+    | TotalsRowItems of List<string * TotalsRowItem>
 
 type Item =
     | Cell of props : CellProp list
@@ -1032,21 +1036,28 @@ module Render =
                     |> Option.defaultValue List.empty
 
                 let cell = ws.Cell(r, c)
-                let table = cell.InsertTable(items, name, true, ShowTotalsRow=true)
+                let table = cell.InsertTable(items, name, true)
                 let mutable includesTotalsRow = false
                 properties
                 |> List.iter (function
-                    | TableName _ 
-                    | TableItems _ -> 
+                    | TableName _
+                    | TableItems _ ->
                         ()
                     | TableTheme theme -> 
                         table.Theme <- theme
                     | ShowHeaderRow b -> 
                         table.ShowHeaderRow <- b
-                    // NB This will add a totals row but won't put the total formulae into it:
-                    | ShowTotalsRow b -> 
-                        includesTotalsRow <- b
-                        table.ShowTotalsRow <- b
+                    | TotalsRowItems items ->
+                        // Latch includesTotalsRow on in case we have two separate TotalsRowItems passed in:
+                        includesTotalsRow <- items.Length > 0 || includesTotalsRow
+                        table.ShowTotalsRow <- includesTotalsRow
+                        // TODO custom totals row formulae
+                        items
+                        |> List.iter (fun (name, item) -> 
+                            let field = table.Field(name)
+                            match item with
+                            | Label label -> field.TotalsRowLabel <- label
+                            | Function f -> field.TotalsRowFunction <- f)
                     | ShowRowStripes b -> 
                         table.ShowRowStripes <- b
                     | ShowColumnStripes b -> 

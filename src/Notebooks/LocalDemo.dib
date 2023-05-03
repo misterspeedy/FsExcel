@@ -9,7 +9,8 @@
 let savePath = "/temp"
 
 open System
-open FsExcel
+open FsExcel 
+open ClosedXML.Excel
 
 type R =
     {
@@ -17,6 +18,7 @@ type R =
         Value : int
         String : string
         Date : DateTimeOffset
+        Float : float
         // Formula : string // =[@Value]/2
     }
 
@@ -25,19 +27,26 @@ type R =
         [
             TableName "KitsTable"
             TableItems [
-                { Name = "Value"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now }
-                { Name = "Value"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now }
-                { Name = "Value"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now }
-                { Name = "Value"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now }
+                { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9 }
+                { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9 }
+                { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9 }
+                { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4 }
             ]
-            TableTheme ClosedXML.Excel.XLTableTheme.TableStyleDark9
+            TotalsRowItems [
+                "Name", Label "Tot."
+                "Value", Function XLTotalsRowFunction.Sum
+                "Float", Function XLTotalsRowFunction.StandardDeviation
+            ]
+            TableTheme XLTableTheme.TableStyleDark9
             ShowHeaderRow true
-            ShowTotalsRow true
             ShowRowStripes true
             ShowColumnStripes true
             EmphasizeFirstColumn true
             EmphasizeLastColumn true
         ]
+    Go (UpBy 1)
+    Go (RightBy 1)
+    Go NewRow
     Cell [ String "hereIam"]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
