@@ -584,18 +584,19 @@ type StyleMergedCell =
 type TotalsRowItem =
     | Label of string
     | Function of XLTotalsRowFunction
+    | CustomA1 of string
 
 type TableProperty =
-    | TableName of string
-    | TableItems of obj list
-    | TableTheme of XLTableTheme 
+    | Name of string
+    | Items of obj list
+    | Theme of XLTableTheme 
     | ShowHeaderRow of bool
     | ShowRowStripes of bool
     | ShowColumnStripes of bool
     | EmphasizeFirstColumn of bool
     | EmphasizeLastColumn of bool
     | ShowAutoFilter of bool
-    | TotalsRowItems of List<string * TotalsRowItem>
+    | Totals of List<string * TotalsRowItem>
 
 type Item =
     | Cell of props : CellProp list
@@ -908,7 +909,7 @@ module Render =
                         cell.Style.Alignment.WrapText <- wt
                     | FormatCode fc ->
                         cell.Style.NumberFormat.Format <- fc
-                    | Name name ->
+                    | CellProp.Name name ->
                         cell.AddToNamed(name, XLScope.Worksheet) |> ignore
                     | ScopedName (name, scope) ->
                         let xlScope =
@@ -1027,12 +1028,12 @@ module Render =
                 let name =
                     properties
                     |> List.rev // "Obey the last order first"
-                    |> List.tryPick (function | TableName name -> Some name | _ -> None)
+                    |> List.tryPick (function | Name name -> Some name | _ -> None)
                     |> Option.defaultValue null
 
                 let items =
                     properties
-                    |> List.tryPick (function | TableItems items -> Some items | _ -> None)
+                    |> List.tryPick (function | Items items -> Some items | _ -> None)
                     |> Option.defaultValue List.empty
 
                 let cell = ws.Cell(r, c)
@@ -1040,14 +1041,14 @@ module Render =
                 let mutable includesTotalsRow = false
                 properties
                 |> List.iter (function
-                    | TableName _
-                    | TableItems _ ->
+                    | Name _
+                    | Items _ ->
                         ()
-                    | TableTheme theme -> 
+                    | Theme theme -> 
                         table.Theme <- theme
                     | ShowHeaderRow b -> 
                         table.ShowHeaderRow <- b
-                    | TotalsRowItems items ->
+                    | Totals items ->
                         // Latch includesTotalsRow on in case we have two separate TotalsRowItems passed in:
                         includesTotalsRow <- items.Length > 0 || includesTotalsRow
                         table.ShowTotalsRow <- includesTotalsRow
@@ -1056,8 +1057,14 @@ module Render =
                         |> List.iter (fun (name, item) -> 
                             let field = table.Field(name)
                             match item with
-                            | Label label -> field.TotalsRowLabel <- label
-                            | Function f -> field.TotalsRowFunction <- f)
+                            | Label label -> 
+                                field.TotalsRowLabel <- label
+                            | Function f when f = XLTotalsRowFunction.Custom -> 
+                                // Do this via CustomA1
+                                ()
+                            | Function f ->
+                                field.TotalsRowFunction <- f
+                            | CustomA1 s -> field.TotalsRowFormulaA1 <- s)
                     | ShowRowStripes b -> 
                         table.ShowRowStripes <- b
                     | ShowColumnStripes b -> 

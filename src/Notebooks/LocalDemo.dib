@@ -25,19 +25,22 @@ type R =
 [
     Table
         [
-            TableName "KitsTable"
-            TableItems [
+            Name "KitsTable"
+            Items [
                 { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9 }
                 { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9 }
                 { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9 }
                 { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4 }
             ]
-            TotalsRowItems [
+            Totals [
                 "Name", Label "Tot."
                 "Value", Function XLTotalsRowFunction.Sum
-                "Float", Function XLTotalsRowFunction.StandardDeviation
+                // TODO Log a ClosedXml issue about these references getting changed to @
+                //"String", CustomA1 "=SUM([Value]+[Float])"
+                "String", CustomA1 "=AVERAGE([Value])"
+                "Float", Function XLTotalsRowFunction.Average
             ]
-            TableTheme XLTableTheme.TableStyleDark9
+            Theme XLTableTheme.TableStyleDark9
             ShowHeaderRow true
             ShowRowStripes true
             ShowColumnStripes true
