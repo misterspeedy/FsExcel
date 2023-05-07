@@ -20,6 +20,8 @@ type R =
         Date : DateTimeOffset
         Float : float
         // Formula : string // =[@Value]/2
+        Formula : string
+        Formula2 : string
     }
 
 [
@@ -27,10 +29,10 @@ type R =
         [
             Name "KitsTable"
             Items [
-                { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9 }
-                { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9 }
-                { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9 }
-                { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4 }
+                { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9; Formula=""; Formula2="" }
+                { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9; Formula=""; Formula2="" }
+                { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9; Formula=""; Formula2="" }
+                { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4; Formula=""; Formula2="" }
             ]
             Totals [
                 "Name", Label "Tot."
@@ -39,6 +41,11 @@ type R =
                 //"String", CustomA1 "=SUM([Value]+[Float])"
                 "String", CustomA1 "=AVERAGE([Value])"
                 "Float", Function XLTotalsRowFunction.Average
+            ]
+            ColFormulae [
+                // N.B. Leave out the @
+                "Formula", "=[Value]/[Float]"
+                "Formula2", "=[Formula]*2.5"
             ]
             Theme XLTableTheme.TableStyleDark9
             ShowHeaderRow true

@@ -597,6 +597,8 @@ type TableProperty =
     | EmphasizeLastColumn of bool
     | ShowAutoFilter of bool
     | Totals of List<string * TotalsRowItem>
+    | ColFormulas of List<string * string>
+    | ColFormulae of List<string * string>
 
 type Item =
     | Cell of props : CellProp list
@@ -1065,6 +1067,13 @@ module Render =
                             | Function f ->
                                 field.TotalsRowFunction <- f
                             | CustomA1 s -> field.TotalsRowFormulaA1 <- s)
+                    | ColFormulas items 
+                    | ColFormulae items ->
+                        items
+                        |> List.iter (fun (name, item) ->
+                            let field = table.Field(name)
+                            field.DataCells
+                            |> Seq.iter (fun cell -> cell.FormulaA1 <- item))
                     | ShowRowStripes b -> 
                         table.ShowRowStripes <- b
                     | ShowColumnStripes b -> 
