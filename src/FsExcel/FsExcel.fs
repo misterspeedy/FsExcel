@@ -600,6 +600,11 @@ type TableProperty =
     | ColFormulas of List<string * string>
     | ColFormulae of List<string * string>
 
+module TableItems =
+
+    let build items =
+        items |> List.map box
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
