@@ -274,7 +274,7 @@ module YearStatsWithCategoryTotals =
 
 ### Using a class instead of a record type
 
-Although tables will normally be generated from F# record instances, class types are also supported.  The example below uses a class instead of a record type.
+Although tables are normally generated from F# record instances, class types are also supported.  The example below uses a class instead of a record type.
 
 *Note that although it is possible to use F# anonymous record instances as table items, the F# compiler returns these in alphabetical order rather than declaration order, and so your columns are likely to appear in the wrong order.*
 
@@ -312,7 +312,13 @@ let yearStatsClasses =
 
 #!markdown
 
-Table styles
+### Table styles
+
+You can apply various kinds of styling to a table.
+
+- So set a theme, use `Theme <theme>` where `<theme>` is one of the values in `ClosedXml.Excel.XLTableTheme`.
+- To show row and column stripes, use `ShowRowStripes true` and `ShowColumnStripes true`.
+- To emphasize the the first and last columns, use `EmphasizeFirstColumn true` and `EmphasizeLastColumn true`.
 
 #!fsharp
 
@@ -338,7 +344,11 @@ Table styles
 
 #!markdown
 
-Structured references from outside the table
+### Structured references from outside the table
+
+Cells outside the table can use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to use values from within the table. This makes most sense when the formula involved reduces all the values in a column to a single value, e.g. `MIN`, `MAX` or `AVERAGE`.
+
+In this example we use `MIN`, `MAX` and structured references, together with some string concatenation using `&`, to get the year range for the title from the table data.
 
 #!fsharp
 
