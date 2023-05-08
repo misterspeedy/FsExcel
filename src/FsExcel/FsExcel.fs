@@ -600,10 +600,10 @@ type TableProperty =
     | ColFormulas of List<string * string>
     | ColFormulae of List<string * string>
 
-module TableItems =
-
-    let build items =
-        items |> List.map box
+[<AutoOpen>]
+module TableProperty =
+    let TableItems<'T> (items :'T list) =
+        items |> List.map box |> TableProperty.Items
 
 type Item =
     | Cell of props : CellProp list

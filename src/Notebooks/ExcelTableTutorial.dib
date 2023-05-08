@@ -8,9 +8,9 @@ Spaces in column names are not supported if there is a sum formala on that colun
 
 TODO how to format totals columns
 
-TODO structured references from outside the table
+TODO ShowHeaderRow
 
-ShowHeaderRow
+TODO Custom totals row function
 
 #!fsharp
 
@@ -89,21 +89,21 @@ open ClosedXML.Excel
 
 #!markdown
 
-Building a basic table
+Table with data
 
 #!fsharp
 
 [
     Cell [ 
-        String "UK Energy Contributions by Fuel Type 1996-2021"
+        String "UK Elecricity Energy Contributions by Fuel Type 1996-2021"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsRecords |> TableItems.build)
+            TableName "UK Elecricity Energy Contributions by Fuel Type"
+            TableItems yearStatsRecords
         ]
     Cell [
         String "Source: https://www.gov.uk/government/statistical-data-sets/historical-electricity-data"
@@ -121,15 +121,15 @@ Adding a totals row
 
 [
     Cell [ 
-        String "UK Energy Contributions by Fuel Type 1996-2021"
+        String "UK Elecricity Energy Contributions by Fuel Type 1996-2021"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsRecords |> TableItems.build)
+            TableName "UK Elecricity Energy Contributions by Fuel Type"
+            TableItems yearStatsRecords
             Totals [
                 "Year", Label "Average:"
                 // TODO add formatting
@@ -193,15 +193,15 @@ module YearStatsWithCategoryTotals =
 
 [
     Cell [ 
-        String "UK Energy Contributions by Fuel Type 1996-2021"
+        String "UK Elecricity Energy Contributions by Fuel Type 1996-2021"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords |> TableItems.build)
+            TableName "UK Elecricity Energy Contributions by Fuel Type"
+            TableItems (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords)
             Totals [
                 "Year", Label "Average:"
                 // TODO add formatting
@@ -246,15 +246,15 @@ let yearStatsClasses =
 
 [
     Cell [ 
-        String "UK Energy Contributions by Fuel Type 1996-2021"
+        String "UK Elecricity Energy Contributions by Fuel Type 1996-2021"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsClasses |> TableItems.build)
+            TableName "UK Elecricity Energy Contributions by Fuel Type"
+            TableItems yearStatsClasses
         ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables4.xlsx"))
@@ -267,7 +267,7 @@ Table styles
 
 [
     Cell [ 
-        String "UK Energy Contributions by Fuel Type 1996-2021"
+        String "UK Elecricity Energy Contributions by Fuel Type 1996-2021"
         FontEmphasis Bold
         FontSize 15
     ]
@@ -275,7 +275,7 @@ Table styles
     Table
         [
             TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsRecords |> TableItems.build)
+            TableItems yearStatsRecords
             Theme XLTableTheme.TableStyleDark9
             ShowRowStripes true
             ShowColumnStripes true
@@ -293,20 +293,15 @@ Structured references from outside the table
 
 [
     Cell [ 
-        FormulaA1 "=\"UK Energy Contributions by Fuel Type \"&MIN(UKEnergyContributionsbyFuelType[Year])&\"-\"&MAX(UKEnergyContributionsbyFuelType[Year])"
+        FormulaA1 "=\"UK Electricity Energy Contributions by Fuel Type \"&MIN(UKElectricityEnergyContributionsbyFuelType[Year])&\"-\"&MAX(UKElectricityEnergyContributionsbyFuelType[Year])"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
-            Items (yearStatsRecords |> TableItems.build)
+            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableItems yearStatsRecords
         ]
-    Cell [
-        String "Source: https://www.gov.uk/government/statistical-data-sets/historical-electricity-data"
-        FontEmphasis Italic
-        FontSize 9
-    ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables6.xlsx"))
