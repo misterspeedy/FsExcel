@@ -584,7 +584,8 @@ type StyleMergedCell =
 type TotalsRowItem =
     | Label of string
     | Function of XLTotalsRowFunction
-    | CustomA1 of string
+    // Doesn't currently work well as something keeps inserting a @
+    //| CustomA1 of string
 
 type TableProperty =
     | TableName of string
@@ -1066,12 +1067,13 @@ module Render =
                             match item with
                             | Label label -> 
                                 field.TotalsRowLabel <- label
-                            | Function f when f = XLTotalsRowFunction.Custom -> 
-                                // Do this via CustomA1
+                            // Currently not working
+                            //| Function f when f = XLTotalsRowFunction.Custom -> 
                                 ()
                             | Function f ->
-                                field.TotalsRowFunction <- f
-                            | CustomA1 s -> field.TotalsRowFormulaA1 <- s)
+                                field.TotalsRowFunction <- f)
+                            // Currently not working
+                            //| CustomA1 s -> field.TotalsRowFormulaA1 <- s)
                     | ColFormulas items 
                     | ColFormulae items ->
                         items
