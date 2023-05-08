@@ -587,7 +587,7 @@ type TotalsRowItem =
     | CustomA1 of string
 
 type TableProperty =
-    | Name of string
+    | TableName of string
     | Items of obj list
     | Theme of XLTableTheme 
     | ShowHeaderRow of bool
@@ -1030,7 +1030,7 @@ module Render =
                 let name =
                     properties
                     |> List.rev // "Obey the last order first"
-                    |> List.tryPick (function | Name name -> Some name | _ -> None)
+                    |> List.tryPick (function | TableName name -> Some name | _ -> None)
                     |> Option.defaultValue null
 
                 let items =
@@ -1043,7 +1043,7 @@ module Render =
                 let mutable includesTotalsRow = false
                 properties
                 |> List.iter (function
-                    | Name _
+                    | TableName _
                     | Items _ ->
                         ()
                     | Theme theme -> 

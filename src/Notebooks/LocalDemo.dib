@@ -27,7 +27,7 @@ type R =
 [
     Table
         [
-            Name "KitsTable"
+            TableName "KitsTable"
             Items [
                 { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9; Formula=""; Formula2="" }
                 { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9; Formula=""; Formula2="" }
