@@ -2,6 +2,13 @@
 
 {"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":["C#","c#"],"languageName":"C#","name":"csharp"},{"aliases":[],"languageName":"Mermaid","name":"mermaid"},{"aliases":[],"languageName":"SQL","name":"sql"},{"aliases":["frontend"],"name":"vscode"}]}}
 
+#!markdown
+
+Status - working on ColFormatCode - it works for the data cells but does not format the totals row.  Is this a ClosedXml issue?
+Also need to change ColFormulae/as to not take a list.
+
+Then the tutorial needs updating to reflect the things which are no longer lists, and the availability of ColFormatCode
+
 #!fsharp
 
 #r "nuget: ClosedXML"
@@ -33,13 +40,12 @@ type R =
                 { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9; Long = 99L; Bool = true }
                 { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4; Long = 99L; Bool = false }
             ]
-            Totals [
-                "Name", Label "Tot."
-                "Value", Function XLTotalsRowFunction.Sum
+            Total("Name", Label "Tot.")
+            Total("Value", Function XLTotalsRowFunction.Sum)
                 // TODO Log a ClosedXml issue about these references getting changed to @
                 //"String", CustomA1 "=SUM([Value]+[Float])"
-                "Float", Function XLTotalsRowFunction.Average
-            ]
+            Total("Float", Function XLTotalsRowFunction.Average)
+            ColFormatCode("Float", "0.000")
             Theme XLTableTheme.TableStyleDark9
             ShowHeaderRow true
             ShowRowStripes true
@@ -48,8 +54,8 @@ type R =
             EmphasizeLastColumn true
         ]
     Go (UpBy 1)
-    Go (RightBy 1)
-    Go NewRow
+    Go (RightBy 4)
+    Cell [ FormatCode "0.00" ]
     Cell [ String "hereIam"]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

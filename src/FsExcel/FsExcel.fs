@@ -597,7 +597,8 @@ type TableProperty =
     | EmphasizeFirstColumn of bool
     | EmphasizeLastColumn of bool
     | ShowAutoFilter of bool
-    | Totals of List<string * TotalsRowItem>
+    | Total of string * TotalsRowItem
+    | ColFormatCode of string * string
     | ColFormulas of List<string * string>
     | ColFormulae of List<string * string>
 
@@ -1056,24 +1057,24 @@ module Render =
                         table.Theme <- theme
                     | ShowHeaderRow b -> 
                         table.ShowHeaderRow <- b
-                    | Totals items ->
-                        // Latch includesTotalsRow on in case we have two separate TotalsRowItems passed in:
-                        includesTotalsRow <- items.Length > 0 || includesTotalsRow
+                    | Total(name, totalItem) ->
+                        includesTotalsRow <- true
                         table.ShowTotalsRow <- includesTotalsRow
                         // TODO custom totals row formulae
-                        items
-                        |> List.iter (fun (name, item) -> 
-                            let field = table.Field(name)
-                            match item with
-                            | Label label -> 
-                                field.TotalsRowLabel <- label
-                            // Currently not working
-                            //| Function f when f = XLTotalsRowFunction.Custom -> 
-                                ()
-                            | Function f ->
-                                field.TotalsRowFunction <- f)
-                            // Currently not working
-                            //| CustomA1 s -> field.TotalsRowFormulaA1 <- s)
+                        let field = table.Field(name)
+                        match totalItem with
+                        | Label label -> 
+                            field.TotalsRowLabel <- label
+                        // Currently not working
+                        //| Function f when f = XLTotalsRowFunction.Custom -> 
+                            ()
+                        | Function f ->
+                            field.TotalsRowFunction <- f
+                        // Currently not working
+                        //| CustomA1 s -> field.TotalsRowFormulaA1 <- s)
+                    | ColFormatCode(name, format) ->
+                        let field = table.Field(name)
+                        field.Column.Style.NumberFormat.Format <- format
                     | ColFormulas items 
                     | ColFormulae items ->
                         items
