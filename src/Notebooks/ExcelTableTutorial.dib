@@ -4,25 +4,17 @@
 
 #!markdown
 
-Spaces in column names are not supported if there is a sum formala on that colunn
-
 TODO how to format totals columns
-
-TODO ShowHeaderRow
-
-TODO Custom totals row function
-
-TODO Test wierd record properties like arrays
 
 #!markdown
 
 ## Excel Tables
 
-FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c), including applying table styles, including a totals row, and using [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e).
+FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c). You can apply table styles, add a totals row, and use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to inclue values from the table in formulae.
 
-To create a table you'll need a list of record instances (or instances of a class type). The fields of the records (or class instances) will become columns in table.
+To create a table you'll need a list of record instances (or instances of a class type). The fields of the records (or class instances) will become columns in the table.
 
-Let's start with a small dataset listing the contributions to UK Electricity by various classes of energy source.
+Let's start with a small dataset listing the contributions to UK electricity generation by various classes of energy source.
 
 #!fsharp
 
@@ -34,41 +26,9 @@ open System
 open FsExcel 
 open ClosedXML.Excel
 
-#!fsharp
-
-type YearStats =
-    {
-        Year : int
-        Coal : float
-        Oil : float
-        NaturalGas : float
-        Nuclear : float
-        Hydro : float
-        WindSolar : float
-        Other : float
-        Total : float
-    }
-
-module YearStats =
-
-    let fromCsvs csvs =
-        csvs
-        |> List.map (fun (y, c, o, ng, n, h, ws, ot, t) ->
-            {
-                Year = y
-                Coal = c
-                Oil = o
-                NaturalGas = ng
-                Nuclear = n
-                Hydro = h
-                WindSolar = ws
-                Other = ot
-                Total = t
-            })
-
 let yearStats =
     [
-        // Year, Coal, Oil, Natural Gas, Nuclear, Hydro, Wind/Solar, OtherTotal, 
+        // Year, Coal, Oil, Natural Gas, Nuclear, Hydro, Wind/Solar, Other, Total
         1996, 33.67, 3.87, 17.36, 22.18, 0.29, 0.04, 2.14, 79.55
         1997, 28.30, 1.85, 21.57, 21.98, 0.38, 0.06, 2.29, 76.43
         1998, 29.94, 1.70, 23.02, 23.44, 0.44, 0.08, 2.52, 81.14
@@ -96,21 +56,59 @@ let yearStats =
         2020, 1.47, 0.36, 19.98, 10.72, 0.59, 7.61, 11.65, 52.38
         2021, 1.67, 0.41, 21.83, 9.90, 0.47, 6.60, 12.12, 53.01
     ] 
+
+type YearStats =
+    {
+        Year : int
+        Coal : float
+        Oil : float
+        NaturalGas : float
+        Nuclear : float
+        Hydro : float
+        WindSolar : float
+        Other : float
+        Total : float
+    }
+
+module YearStats =
+
+    let fromValues = 
+        List.map (fun (y, c, o, ng, n, h, ws, ot, t) ->
+            {
+                Year = y
+                Coal = c
+                Oil = o
+                NaturalGas = ng
+                Nuclear = n
+                Hydro = h
+                WindSolar = ws
+                Other = ot
+                Total = t
+            })
+
     
-let yearStatsRecords = yearStats |> YearStats.fromCsvs
+let yearStatsRecords = yearStats |> YearStats.fromValues
 
 #!markdown
 
 ### A simple table
 
-In the example below we include a title and a footer using basic FsExcel `Cell` items - these do not form part of the Excel Table.
+In the example below we start by adding a title using a basic FsExcel `Cell` item - this does not form part of the Excel Table.
 
 After the title we use `Go NewRow` to create a little empty space.
 
-Then we use `Table` to create the table.  Like `Cell`, `Table` takes a list of properties.  The most important of these are:
+Then we use `Table` to create the table.
+
+Like `Cell`, `Table` takes a list of properties.  The most important of these are:
 
 - `TableName` - gives the Excel Table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
-- `TableItems` - takes a list of record or class instances, each of which will become a row in the table.
+- `TableItems` - takes a list of record or class instances, each of which will become a row in the table, using fields from the instance as columns in the table.
+
+*The types of the instance fields must be simple ones like `float`, `int`, `string` and `bool`.*
+
+*`DateTime` and `DateTimeOffset` also work, but you should be very wary of formatting and timezone issues when using these. More complex types, including Discriminated Unions, collections, classes and entire records will not work.*
+
+Finally we add another `Cell` item to provide a footer. Note how the 'current cell' after inserting a table is always the cell below and at the left of the added table.
 
 #!fsharp
 
@@ -123,7 +121,7 @@ Then we use `Table` to create the table.  Like `Cell`, `Table` takes a list of p
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems yearStatsRecords
         ]
     Cell [
@@ -143,7 +141,7 @@ Excel Tables can have a 'totals row', which can be populated with a value based 
 Add these using `Totals`, which takes a list of tuples. The first item in each tuple is the name of the column for which to populate the total row - this *must* be the name of one of the table columns. The second item of each tuple determines what goes in the total cell.
 
 - To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXml.Excel.XLTotalsRowFunction`.
-- To include a label, such a the string "Total:" use `Label <string>`.
+- To include a label use `Label <string>`.
 
 *Note that the value `ClosedXml.Excel.XLTotalsRowFunction.Custom` is not currently supported and does nothing.*
 
@@ -158,7 +156,7 @@ Add these using `Totals`, which takes a list of tuples. The first item in each t
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems yearStatsRecords
             Totals [
                 "Year", Label "Average:"
@@ -183,7 +181,7 @@ Add these using `Totals`, which takes a list of tuples. The first item in each t
 Some of the columns in your table can be calculated from other values in the table, or from values elsewhere in the spreadsheet.
 
 To achieve this:
-- Include the additional columns as fields in the item records or classes. Use dummy values - these will be overwritten.
+- Include the additional columns as fields in the item records or classes. Use dummy values when instantiating the instances - these will be overwritten in the table.
 - Use `CellFormulae` (or if you prefer "`CellFormulas`") to populate the table cells with the required values.
 
 `CellFormulae` takes a list of tuples of string and string.
@@ -191,7 +189,7 @@ To achieve this:
 - The first item in each tuple is the name of the column to populate with a formula - this *must* be the name of one of the table columns.
 - The second item is a string containing the required formula - e.g. `"=[Coal]+[Oil]+[NaturalGas]"`.
 
-Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references.
+Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references to the columns with these names.
 
 #!fsharp
 
@@ -247,20 +245,8 @@ module YearStatsWithCategoryTotals =
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords)
-            Totals [
-                "Year", Label "Average:"
-                // TODO add formatting
-                "Coal", Function XLTotalsRowFunction.Average
-                "Oil", Function XLTotalsRowFunction.Average
-                "NaturalGas", Function XLTotalsRowFunction.Average
-                "Nuclear", Function XLTotalsRowFunction.Average
-                "Hydro", Function XLTotalsRowFunction.Average
-                "WindSolar", Function XLTotalsRowFunction.Average
-                "Other", Function XLTotalsRowFunction.Average
-                "Total", Function XLTotalsRowFunction.Average
-            ]
             ColFormulae [
                 "TotalFossil", "=[Coal]+[Oil]+[NaturalGas]"
                 "TotalSustainable", "=[Nuclear]+[Hydro]+[WindSolar]"
@@ -276,7 +262,7 @@ module YearStatsWithCategoryTotals =
 
 Although tables are normally generated from F# record instances, class types are also supported.  The example below uses a class instead of a record type.
 
-*Note that although it is possible to use F# anonymous record instances as table items, the F# compiler returns these in alphabetical order rather than declaration order, and so your columns are likely to appear in the wrong order.*
+*Note that although it is also possible to use F# __anonymous__ record instances as table items, the F# compiler returns anonymous record fields in alphabetical order rather than declaration order, so your columns are likely to appear in the wrong order.*
 
 #!fsharp
 
@@ -304,7 +290,7 @@ let yearStatsClasses =
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems yearStatsClasses
         ]
 ]
@@ -314,11 +300,12 @@ let yearStatsClasses =
 
 ### Table styles
 
-You can apply various kinds of styling to a table.
+You can apply various kinds of styling to a table:
 
-- So set a theme, use `Theme <theme>` where `<theme>` is one of the values in `ClosedXml.Excel.XLTableTheme`.
+- To set a standard theme, use `Theme <theme>` where `<theme>` is one of the values in `ClosedXml.Excel.XLTableTheme`.
 - To show row and column stripes, use `ShowRowStripes true` and `ShowColumnStripes true`.
-- To emphasize the the first and last columns, use `EmphasizeFirstColumn true` and `EmphasizeLastColumn true`.
+- To emphasize the first and last columns, use `EmphasizeFirstColumn true` and `EmphasizeLastColumn true`.
+- You can hide the header row with `ShowHeaderRow false`. We don't give an example here as our example table only makes sense with headers.
 
 #!fsharp
 
@@ -331,7 +318,7 @@ You can apply various kinds of styling to a table.
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems yearStatsRecords
             Theme XLTableTheme.TableStyleDark9
             ShowRowStripes true
@@ -354,14 +341,14 @@ In this example we use `MIN`, `MAX` and structured references, together with som
 
 [
     Cell [ 
-        FormulaA1 "=\"UK Electricity Energy Contributions by Fuel Type \"&MIN(UKElectricityEnergyContributionsbyFuelType[Year])&\"-\"&MAX(UKElectricityEnergyContributionsbyFuelType[Year])"
+        FormulaA1 "=\"UK Electricity Energy Contributions by Fuel Type \"&MIN(UKElectricity[Year])&\"-\"&MAX(UKElectricity[Year])"
         FontEmphasis Bold
         FontSize 15
     ]
     Go NewRow; Go NewRow
     Table
         [
-            TableName "UK Electricity Energy Contributions by Fuel Type"
+            TableName "UK Electricity"
             TableItems yearStatsRecords
         ]
 ]
