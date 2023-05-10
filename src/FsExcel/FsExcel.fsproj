@@ -22,7 +22,7 @@
     <None Include="..\..\assets\logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.100.3" />
+    <PackageReference Include="ClosedXML" Version="0.101.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="6.0.7" />

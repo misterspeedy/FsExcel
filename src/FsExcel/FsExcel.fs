@@ -1048,6 +1048,7 @@ module Render =
                 let cell = ws.Cell(r, c)
                 let table = cell.InsertTable(items, name, true)
                 let mutable includesTotalsRow = false
+
                 properties
                 |> List.iter (function
                     | TableName _
