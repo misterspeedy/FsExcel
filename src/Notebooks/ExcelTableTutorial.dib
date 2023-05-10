@@ -158,21 +158,58 @@ Add these using `Totals`, which takes a list of tuples. The first item in each t
         [
             TableName "UK Electricity"
             TableItems yearStatsRecords
-            Totals [
-                "Year", Label "Average:"
-                // TODO add formatting
-                "Coal", Function XLTotalsRowFunction.Average
-                "Oil", Function XLTotalsRowFunction.Average
-                "NaturalGas", Function XLTotalsRowFunction.Average
-                "Nuclear", Function XLTotalsRowFunction.Average
-                "Hydro", Function XLTotalsRowFunction.Average
-                "WindSolar", Function XLTotalsRowFunction.Average
-                "Other", Function XLTotalsRowFunction.Average
-                "Total", Function XLTotalsRowFunction.Average
-            ]
+            Total("Year", Label "Average:")
+            Total("Coal", Function XLTotalsRowFunction.Average)
+            Total("Oil", Function XLTotalsRowFunction.Average)
+            Total("NaturalGas", Function XLTotalsRowFunction.Average)
+            Total("Nuclear", Function XLTotalsRowFunction.Average)
+            Total("Hydro", Function XLTotalsRowFunction.Average)
+            Total("WindSolar", Function XLTotalsRowFunction.Average)
+            Total("Other", Function XLTotalsRowFunction.Average)
+            Total("Total", Function XLTotalsRowFunction.Average)
         ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables2.xlsx"))
+
+#!markdown
+
+# Adding a number format for a table
+
+In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCode`.
+
+#!fsharp
+
+[
+    Cell [ 
+        String "UK Electricity Energy Contributions by Fuel Type 1996-2021"
+        FontEmphasis Bold
+        FontSize 15
+    ]
+    Go NewRow; Go NewRow
+    Table
+        [
+            TableName "UK Electricity"
+            TableItems yearStatsRecords
+            Total("Year", Label "Average:")
+            Total("Coal", Function XLTotalsRowFunction.Average)
+            Total("Oil", Function XLTotalsRowFunction.Average)
+            Total("NaturalGas", Function XLTotalsRowFunction.Average)
+            Total("Nuclear", Function XLTotalsRowFunction.Average)
+            Total("Hydro", Function XLTotalsRowFunction.Average)
+            Total("WindSolar", Function XLTotalsRowFunction.Average)
+            Total("Other", Function XLTotalsRowFunction.Average)
+            Total("Total", Function XLTotalsRowFunction.Average)
+            ColFormatCode("Coal", "0.00")
+            ColFormatCode("Oil", "0.00")
+            ColFormatCode("NaturalGas", "0.00")
+            ColFormatCode("Nuclear", "0.00")
+            ColFormatCode("Hydro", "0.00")
+            ColFormatCode("WindSolar", "0.00")
+            ColFormatCode("Other", "0.00")
+            ColFormatCode("Total", "0.00")
+        ]
+]
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables3.xlsx"))
 
 #!markdown
 
@@ -247,14 +284,12 @@ module YearStatsWithCategoryTotals =
         [
             TableName "UK Electricity"
             TableItems (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords)
-            ColFormulae [
-                "TotalFossil", "=[Coal]+[Oil]+[NaturalGas]"
-                "TotalSustainable", "=[Nuclear]+[Hydro]+[WindSolar]"
-                "TotalSustainableNonNuclear", "=[Hydro]+[WindSolar]"
-            ]            
+            ColFormula ("TotalFossil", "=[Coal]+[Oil]+[NaturalGas]")
+            ColFormula ("TotalSustainable", "=[Nuclear]+[Hydro]+[WindSolar]")
+            ColFormula ("TotalSustainableNonNuclear", "=[Hydro]+[WindSolar]")
         ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables3.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables4.xlsx"))
 
 #!markdown
 
@@ -294,7 +329,7 @@ let yearStatsClasses =
             TableItems yearStatsClasses
         ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables4.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables5.xlsx"))
 
 #!markdown
 
@@ -327,7 +362,7 @@ You can apply various kinds of styling to a table:
             EmphasizeLastColumn true            
         ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables5.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables6.xlsx"))
 
 #!markdown
 
@@ -352,4 +387,4 @@ In this example we use `MIN`, `MAX` and structured references, together with som
             TableItems yearStatsRecords
         ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables6.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables7.xlsx"))

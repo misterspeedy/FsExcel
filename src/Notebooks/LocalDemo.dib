@@ -40,11 +40,11 @@ type R =
                 { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9; Long = 99L; Bool = true }
                 { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4; Long = 99L; Bool = false }
             ]
-            Total("Name", Label "Tot.")
-            Total("Value", Function XLTotalsRowFunction.Sum)
+            //Total("Name", Label "Tot.")
+            //Total("Value", Function XLTotalsRowFunction.Sum)
                 // TODO Log a ClosedXml issue about these references getting changed to @
                 //"String", CustomA1 "=SUM([Value]+[Float])"
-            Total("Float", Function XLTotalsRowFunction.Average)
+            //Total("Float", Function XLTotalsRowFunction.Sum)
             ColFormatCode("Float", "0.000")
             Theme XLTableTheme.TableStyleDark9
             ShowHeaderRow true
@@ -53,9 +53,6 @@ type R =
             EmphasizeFirstColumn true
             EmphasizeLastColumn true
         ]
-    Go (UpBy 1)
-    Go (RightBy 4)
-    Cell [ FormatCode "0.00" ]
     Cell [ String "hereIam"]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
