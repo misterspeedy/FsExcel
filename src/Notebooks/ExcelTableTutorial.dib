@@ -6,7 +6,7 @@
 
 ## Excel Tables
 
-FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c). You can apply table styles, add a totals row, and use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to inclue values from the table in formulae.
+FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c). You can apply table styles, add a totals row, and use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to include values from the table in formulae.
 
 To create a table you'll need a list of record instances (or class instances). The fields of the instances will become columns in the table.
 
@@ -91,7 +91,7 @@ let yearStatsRecords = yearStats |> YearStats.fromValues
 
 In the example below we start by adding a title using a basic FsExcel `Cell` item - this does not form part of the Excel table.
 
-After the title we use `Go NewRow` to create a little empty space.
+After the title we use `Go NewRow` twice to create a little empty space.
 
 Then we use `Table` to create the table.
 
@@ -129,6 +129,17 @@ Finally we add another `Cell` item to provide a footer. Note how the 'current ce
 
 #!markdown
 
+*Some of the rows in this and following screenshots have been hidden to save space.*
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableSimple.PNG?raw=true"
+     alt="Excel table - simple example"
+     style="width: 6
+     00px;" />
+
+#!markdown
+
 ### Adding a totals row
 
 Excel tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
@@ -160,6 +171,12 @@ Add these using `Totals`, which takes a list of column names (each *must* be the
 
 #!markdown
 
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableTotals.PNG?raw=true"
+     alt="Excel table - column totals example"
+     style="width: 600px;" />
+
+#!markdown
+
 ### Adding a number format for a table column
 
 In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
@@ -188,18 +205,24 @@ In the previous example, the totals rows (showing averages) have more decimal pl
 
 #!markdown
 
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableColumnFormat.PNG?raw=true"
+     alt="Excel table - column format example"
+     style="width: 600px;" />
+
+#!markdown
+
 ### Adding formula-based columns
 
 Some of the columns in your table can be calculated from other values in the table, or from values elsewhere in the spreadsheet.
 
 To achieve this:
 - Include the additional columns as fields in the item records or classes. Use dummy values when instantiating the instances - these will be overwritten in the table.
-- Use `CellFormulae` (or if you prefer "`CellFormulas`") to populate the table cells with the required values.
+- Use `ColFormula` to populate the table cells with the required values.
 
-`CellFormulae` takes a list of tuples of string and string.
+`ColFormula` takes:
 
-- The first item in each tuple is the name of the column to populate with a formula - this *must* be the name of one of the table columns.
-- The second item is a string containing the required formula - e.g. `"=[Coal]+[Oil]+[NaturalGas]"`.
+- A list of column names - each *must* be the name of one of the table columns.
+- A string containing the required formula - e.g. `"=[Coal]+[Oil]+[NaturalGas]"`.
 
 Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references to the columns with these names.
 
@@ -263,7 +286,13 @@ module YearStatsWithCategoryTotals =
         ColFormula ("TotalSustainableNonNuclear", "=[Hydro]+[WindSolar]")
     ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableFormulaColumns.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormulae.xlsx"))
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableColumnFormulae.PNG?raw=true"
+     alt="Excel table - column formulae example"
+     style="width: 600px;" />
 
 #!markdown
 
@@ -306,6 +335,12 @@ let yearStatsClasses =
 
 #!markdown
 
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableClass.PNG?raw=true"
+     alt="Excel table - class example"
+     style="width: 600px;" />
+
+#!markdown
+
 ### Table styles
 
 You can apply various kinds of styling to a table:
@@ -338,6 +373,12 @@ You can apply various kinds of styling to a table:
 
 #!markdown
 
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableStyle.PNG?raw=true"
+     alt="Excel table - table style example"
+     style="width: 600px;" />
+
+#!markdown
+
 ### Structured references from outside the table
 
 Cells outside the table can use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to use values from within the table. This makes most sense when the formula involved reduces all the values in a column to a single value, e.g. `MIN`, `MAX` or `AVERAGE`.
@@ -359,3 +400,9 @@ In this example we use `MIN`, `MAX` and structured references, together with som
     ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStructuredReference.xlsx"))
+
+#!markdown
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableStructuredReference.PNG?raw=true"
+     alt="Excel table - structured reference example"
+     style="width: 700px;" />
