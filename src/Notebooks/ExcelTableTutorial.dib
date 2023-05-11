@@ -4,15 +4,11 @@
 
 #!markdown
 
-TODO how to format totals columns
-
-#!markdown
-
 ## Excel Tables
 
 FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c). You can apply table styles, add a totals row, and use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to inclue values from the table in formulae.
 
-To create a table you'll need a list of record instances (or instances of a class type). The fields of the records (or class instances) will become columns in the table.
+To create a table you'll need a list of record instances (or class instances). The fields of the instances will become columns in the table.
 
 Let's start with a small dataset listing the contributions to UK electricity generation by various classes of energy source.
 
@@ -93,7 +89,7 @@ let yearStatsRecords = yearStats |> YearStats.fromValues
 
 ### A simple table
 
-In the example below we start by adding a title using a basic FsExcel `Cell` item - this does not form part of the Excel Table.
+In the example below we start by adding a title using a basic FsExcel `Cell` item - this does not form part of the Excel table.
 
 After the title we use `Go NewRow` to create a little empty space.
 
@@ -104,7 +100,7 @@ Like `Cell`, `Table` takes a list of properties.  The most important of these ar
 - `TableName` - gives the Excel Table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
 - `TableItems` - takes a list of record or class instances, each of which will become a row in the table, using fields from the instance as columns in the table.
 
-*The types of the instance fields must be simple ones like `float`, `int`, `string` and `bool`.*
+*The instance fields must be of simple types like `float`, `int`, `string` and `bool`.*
 
 *`DateTime` and `DateTimeOffset` also work, but you should be very wary of formatting and timezone issues when using these. More complex types, including Discriminated Unions, collections, classes and entire records will not work.*
 
@@ -119,26 +115,25 @@ Finally we add another `Cell` item to provide a footer. Note how the 'current ce
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsRecords
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsRecords
+    ]
     Cell [
         String "Source: https://www.gov.uk/government/statistical-data-sets/historical-electricity-data"
         FontEmphasis Italic
         FontSize 9
     ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables1.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableSimple.xlsx"))
 
 #!markdown
 
 ### Adding a totals row
 
-Excel Tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
+Excel tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
 
-Add these using `Totals`, which takes a list of tuples. The first item in each tuple is the name of the column for which to populate the total row - this *must* be the name of one of the table columns. The second item of each tuple determines what goes in the total cell.
+Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and a an item which specifies what to put in the total cell for these columns.
 
 - To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXml.Excel.XLTotalsRowFunction`.
 - To include a label use `Label <string>`.
@@ -154,28 +149,20 @@ Add these using `Totals`, which takes a list of tuples. The first item in each t
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsRecords
-            Total("Year", Label "Average:")
-            Total("Coal", Function XLTotalsRowFunction.Average)
-            Total("Oil", Function XLTotalsRowFunction.Average)
-            Total("NaturalGas", Function XLTotalsRowFunction.Average)
-            Total("Nuclear", Function XLTotalsRowFunction.Average)
-            Total("Hydro", Function XLTotalsRowFunction.Average)
-            Total("WindSolar", Function XLTotalsRowFunction.Average)
-            Total("Other", Function XLTotalsRowFunction.Average)
-            Total("Total", Function XLTotalsRowFunction.Average)
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsRecords
+        Totals(["Year"], Label "Average:")
+        Totals(["Coal"; "Oil"; "NaturalGas"; "Nuclear"; "Hydro"; "WindSolar"; "Other"; "Total"], Function XLTotalsRowFunction.Average)
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables2.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableTotals.xlsx"))
 
 #!markdown
 
-# Adding a number format for a table
+### Adding a number format for a table column
 
-In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCode`.
+In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
 
 #!fsharp
 
@@ -186,30 +173,18 @@ In the previous example, the totals rows (showing averages) have more decimal pl
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsRecords
-            Total("Year", Label "Average:")
-            Total("Coal", Function XLTotalsRowFunction.Average)
-            Total("Oil", Function XLTotalsRowFunction.Average)
-            Total("NaturalGas", Function XLTotalsRowFunction.Average)
-            Total("Nuclear", Function XLTotalsRowFunction.Average)
-            Total("Hydro", Function XLTotalsRowFunction.Average)
-            Total("WindSolar", Function XLTotalsRowFunction.Average)
-            Total("Other", Function XLTotalsRowFunction.Average)
-            Total("Total", Function XLTotalsRowFunction.Average)
-            ColFormatCode("Coal", "0.00")
-            ColFormatCode("Oil", "0.00")
-            ColFormatCode("NaturalGas", "0.00")
-            ColFormatCode("Nuclear", "0.00")
-            ColFormatCode("Hydro", "0.00")
-            ColFormatCode("WindSolar", "0.00")
-            ColFormatCode("Other", "0.00")
-            ColFormatCode("Total", "0.00")
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsRecords
+
+        Totals(["Year"], Label "Average:")
+
+        let statsColumns = ["Coal"; "Oil"; "NaturalGas"; "Nuclear"; "Hydro"; "WindSolar"; "Other"; "Total"]
+        Totals(statsColumns, Function XLTotalsRowFunction.Average)
+        ColFormatCodes(statsColumns, "0.00")
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables3.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormat.xlsx"))
 
 #!markdown
 
@@ -280,16 +255,15 @@ module YearStatsWithCategoryTotals =
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords)
-            ColFormula ("TotalFossil", "=[Coal]+[Oil]+[NaturalGas]")
-            ColFormula ("TotalSustainable", "=[Nuclear]+[Hydro]+[WindSolar]")
-            ColFormula ("TotalSustainableNonNuclear", "=[Hydro]+[WindSolar]")
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems (yearStatsRecords |> YearStatsWithCategoryTotals.fromYearStatsRecords)
+        ColFormula ("TotalFossil", "=[Coal]+[Oil]+[NaturalGas]")
+        ColFormula ("TotalSustainable", "=[Nuclear]+[Hydro]+[WindSolar]")
+        ColFormula ("TotalSustainableNonNuclear", "=[Hydro]+[WindSolar]")
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables4.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableFormulaColumns.xlsx"))
 
 #!markdown
 
@@ -323,13 +297,12 @@ let yearStatsClasses =
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsClasses
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsClasses
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables5.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableClass.xlsx"))
 
 #!markdown
 
@@ -351,18 +324,17 @@ You can apply various kinds of styling to a table:
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsRecords
-            Theme XLTableTheme.TableStyleDark9
-            ShowRowStripes true
-            ShowColumnStripes true
-            EmphasizeFirstColumn true
-            EmphasizeLastColumn true            
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsRecords
+        Theme XLTableTheme.TableStyleDark9
+        ShowRowStripes true
+        ShowColumnStripes true
+        EmphasizeFirstColumn true
+        EmphasizeLastColumn true            
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables6.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
 
 #!markdown
 
@@ -381,10 +353,9 @@ In this example we use `MIN`, `MAX` and structured references, together with som
         FontSize 15
     ]
     Go NewRow; Go NewRow
-    Table
-        [
-            TableName "UK Electricity"
-            TableItems yearStatsRecords
-        ]
+    Table [
+        TableName "UK Electricity"
+        TableItems yearStatsRecords
+    ]
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTables7.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStructuredReference.xlsx"))

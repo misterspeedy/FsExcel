@@ -647,12 +647,12 @@ module Test23 =
                 CellSize (ColWidth colWidth)
             ]
         Go NewRow
-        Cell [  Integer 1
-                HorizontalAlignment Center] 
-        Cell [  String "Ford Fiesta"]
-        Cell [  String "Car Technical Details..."] 
-        Cell [  String "AB12 CDE" 
-                HorizontalAlignment Center]
+        Cell [ Integer 1
+               HorizontalAlignment Center ] 
+        Cell [ String "Ford Fiesta" ]
+        Cell [ String "Car Technical Details..."]  
+        Cell [ String "AB12 CDE" 
+               HorizontalAlignment Center]
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     

@@ -597,9 +597,7 @@ type TableProperty =
     | EmphasizeFirstColumn of bool
     | EmphasizeLastColumn of bool
     | ShowAutoFilter of bool
-    | Total of fieldName:string * TotalsRowItem
     | Totals of fieldNames:string list * TotalsRowItem
-    | ColFormatCode of fieldName:string * formatCode:string
     | ColFormatCodes of fieldNames:string list * formatCode:string
     | ColFormula of fieldName:string * formula:string
 
@@ -1050,15 +1048,6 @@ module Render =
                 let table = cell.InsertTable(items, name, true)
                 let mutable includesTotalsRow = false
 
-                let setTotal totalItem (name : string) =
-                    includesTotalsRow <- true
-                    table.ShowTotalsRow <- includesTotalsRow
-                    let field = table.Field(name)
-                    match totalItem with
-                    | Label label -> 
-                        field.TotalsRowLabel <- label
-                    | Function f ->
-                        field.TotalsRowFunction <- f
 
                 properties
                 |> List.iter (function
@@ -1069,14 +1058,21 @@ module Render =
                         table.Theme <- theme
                     | ShowHeaderRow b -> 
                         table.ShowHeaderRow <- b
-                    | Total(name, totalItem) ->
-                        setTotal totalItem name
                     | Totals(names, totalItem) ->
+
+                        let setTotal totalItem (name : string) =
+                            includesTotalsRow <- true
+                            table.ShowTotalsRow <- includesTotalsRow
+                            let field = table.Field(name)
+                            match totalItem with
+                            | Label label -> 
+                                field.TotalsRowLabel <- label
+                            | Function f ->
+                                field.TotalsRowFunction <- f
+
                         names
                         |> List.iter (setTotal totalItem)
-                    | ColFormatCode(name, format) ->
-                        let field = table.Field(name)
-                        field.Column.Style.NumberFormat.Format <- format
+
                     | ColFormatCodes(names, format) ->
                         names
                         |> List.iter (fun name ->
