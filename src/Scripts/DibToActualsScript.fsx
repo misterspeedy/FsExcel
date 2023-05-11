@@ -1,6 +1,13 @@
 open System.IO
 
-let inFile = Path.Combine(__SOURCE_DIRECTORY__, "../Notebooks/Tutorial.dib")
+let inFiles = 
+    [
+        "../Notebooks/Tutorial.dib"
+        "../Notebooks/ExcelTableTutorial.dib"
+    ]
+    |> List.map (fun path -> 
+        Path.Combine(__SOURCE_DIRECTORY__, path))
+
 let outFile = Path.Combine(__SOURCE_DIRECTORY__, "CreateRegressionTestActuals.fsx")
 
 let mutable inCode = false
@@ -14,20 +21,26 @@ let code =
 
         "let savePath = __SOURCE_DIRECTORY__ + \"/../Tests/RegressionTests/Actual\""
 
-        for line in File.ReadAllLines inFile do
-            if line.StartsWith "#r \"nuget: FsExcel\"" || line.StartsWith "let savePath =" || line.TrimStart().StartsWith "//" then
-                ()
-            elif line.StartsWith "<!-- Test -->" then
-                inTest <- true
-                $"module Test{testNumber} ="
-                testNumber <- testNumber + 1
-            elif line.StartsWith "#!fsharp" then
-                inCode <- true
-            elif line.StartsWith "#!markdown" then
-                inCode <- false
-                inTest <- false
-            elif inCode && inTest then
-                    $"    {line}"
+        for inFile in inFiles do
+            for line in File.ReadAllLines inFile do
+                if line.StartsWith "#r \"nuget: FsExcel\"" || line.StartsWith "let savePath =" || line.TrimStart().StartsWith "//" then
+                    ()
+                elif line.StartsWith "<!-- TestSetup -->" then
+                    inTest <- true
+                    $"[<AutoOpen>]"
+                    $"module Test{testNumber} ="
+                    testNumber <- testNumber + 1
+                elif line.StartsWith "<!-- Test -->" then
+                    inTest <- true
+                    $"module Test{testNumber} ="
+                    testNumber <- testNumber + 1
+                elif line.StartsWith "#!fsharp" then
+                    inCode <- true
+                elif line.StartsWith "#!markdown" then
+                    inCode <- false
+                    inTest <- false
+                elif inCode && inTest then
+                        $"    {line}"
     ]
 
 File.WriteAllLines(outFile, code)

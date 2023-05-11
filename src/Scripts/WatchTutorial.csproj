@@ -1,6 +1,7 @@
 <Project>
     <ItemGroup>
         <Watch Include="../Notebooks/Tutorial.dib" />
+        <Watch Include="../Notebooks/ExcelTableTutorial.dib" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Microsoft.Common.targets" />    
 </Project>

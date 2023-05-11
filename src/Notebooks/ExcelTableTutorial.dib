@@ -11,16 +11,14 @@ FsExcel can create [Excel Tables](https://support.microsoft.com/en-us/office/ove
 To create a table you'll need a list of record instances (or class instances). The fields of the instances will become columns in the table.
 
 Let's start with a small dataset listing the contributions to UK electricity generation by various classes of energy source.
+<!-- TestSetup -->
 
 #!fsharp
 
 #r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
-let savePath = "/temp"
+#r "nuget: FsExcel"
 
-open System
-open FsExcel 
-open ClosedXML.Excel
+let savePath = "/temp"
 
 let yearStats =
     [
@@ -105,8 +103,12 @@ Like `Cell`, `Table` takes a list of properties.  The most important of these ar
 *`DateTime` and `DateTimeOffset` also work, but you should be very wary of formatting and timezone issues when using these. More complex types, including Discriminated Unions, collections, classes and entire records will not work.*
 
 Finally we add another `Cell` item to provide a footer. Note how the 'current cell' after inserting a table is always the cell below and at the left of the added table.
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
 
 [
     Cell [ 
@@ -146,12 +148,17 @@ Excel tables can have a 'totals row', which can be populated with a value based 
 
 Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and a an item which specifies what to put in the total cell for these columns.
 
-- To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXml.Excel.XLTotalsRowFunction`.
+- To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXML.Excel.XLTotalsRowFunction`.
 - To include a label use `Label <string>`.
 
-*Note that the value `ClosedXml.Excel.XLTotalsRowFunction.Custom` is not currently supported and does nothing.*
+*Note that the value `ClosedXML.Excel.XLTotalsRowFunction.Custom` is not currently supported and does nothing.*
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
+open ClosedXML.Excel
 
 [
     Cell [ 
@@ -180,8 +187,13 @@ Add these using `Totals`, which takes a list of column names (each *must* be the
 ### Adding a number format for a table column
 
 In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
+open ClosedXML.Excel
 
 [
     Cell [ 
@@ -225,8 +237,12 @@ To achieve this:
 - A string containing the required formula - e.g. `"=[Coal]+[Oil]+[NaturalGas]"`.
 
 Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references to the columns with these names.
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
 
 type YearStatsWithCategoryTotals =
     {
@@ -301,8 +317,12 @@ module YearStatsWithCategoryTotals =
 Although tables are normally generated from F# record instances, class types are also supported.  The example below uses a class instead of a record type.
 
 *Note that although it is also possible to use F# __anonymous__ record instances as table items, the F# compiler returns anonymous record fields in alphabetical order rather than declaration order, so your columns are likely to appear in the wrong order.*
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
 
 type YearStatsClass(year : int, coal : float, oil : float, naturalGas : float, nuclear : float, hydro : float, windSolar : float, other : float, total : float) =
     member _.Year = year
@@ -345,12 +365,17 @@ let yearStatsClasses =
 
 You can apply various kinds of styling to a table:
 
-- To set a standard theme, use `Theme <theme>` where `<theme>` is one of the values in `ClosedXml.Excel.XLTableTheme`.
+- To set a standard theme, use `Theme <theme>` where `<theme>` is one of the values in `ClosedXML.Excel.XLTableTheme`.
 - To show row and column stripes, use `ShowRowStripes true` and `ShowColumnStripes true`.
 - To emphasize the first and last columns, use `EmphasizeFirstColumn true` and `EmphasizeLastColumn true`.
 - You can hide the header row with `ShowHeaderRow false`. We don't give an example here as our example table only makes sense with headers.
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
+open ClosedXML.Excel
 
 [
     Cell [ 
@@ -384,8 +409,12 @@ You can apply various kinds of styling to a table:
 Cells outside the table can use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to use values from within the table. This makes most sense when the formula involved reduces all the values in a column to a single value, e.g. `MIN`, `MAX` or `AVERAGE`.
 
 In this example we use `MIN`, `MAX` and structured references, together with some string concatenation using `&`, to get the year range for the title from the table data.
+<!-- Test -->
 
 #!fsharp
+
+open System.IO
+open FsExcel
 
 [
     Cell [ 
