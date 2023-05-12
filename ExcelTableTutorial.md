@@ -1,9 +1,3 @@
-#!meta
-
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"},{"aliases":[],"languageName":"fsharp","name":"fsharp"}]}}
-
-#!markdown
-
 <img src="https://raw.githubusercontent.com/misterspeedy/FsExcel/main/assets/logo.png"
      alt="FsExcel Logo"
      style="width: 150px;" />
@@ -17,8 +11,7 @@ To create a table you'll need a list of record instances (or class instances). T
 Let's start with a small dataset listing the contributions to UK electricity generation by various classes of energy source.
 <!-- TestSetup -->
 
-#!fsharp
-
+```fsharp
 #r "nuget: ClosedXML"
 #r "nuget: FsExcel"
 
@@ -87,8 +80,7 @@ module YearStats =
     
 let yearStatsRecords = yearStats |> YearStats.fromValues
 
-#!markdown
-
+```
 ### A simple table
 
 In the example below we start by adding a title using a basic FsExcel `Cell` item - this does not form part of the Excel table.
@@ -99,7 +91,7 @@ Then we use `Table` to create the table.
 
 Like `Cell`, `Table` takes a list of properties.  The most important of these are:
 
-- `TableName` - gives the Excel Table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
+- `TableName` - gives the Excel table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
 - `TableItems` - takes a list of record or class instances, each of which will become a row in the table, using fields from the instance as columns in the table.
 
 *The instance fields must be of simple types like `float`, `int`, `string` and `bool`.*
@@ -109,8 +101,7 @@ Like `Cell`, `Table` takes a list of properties.  The most important of these ar
 Finally we add another `Cell` item to provide a footer. Note how the 'current cell' after inserting a table is always the cell below and at the left of the added table.
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 
@@ -133,24 +124,21 @@ open FsExcel
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableSimple.xlsx"))
 
-#!markdown
-
+```
 *Some of the rows in this and following screenshots have been hidden to save space.*
 
-#!markdown
-
+---
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableSimple.PNG?raw=true"
      alt="Excel table - simple example"
      style="width: 6
      00px;" />
 
-#!markdown
-
+---
 ### Adding a totals row
 
 Excel tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
 
-Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and a an item which specifies what to put in the total cell for these columns.
+Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and an item which specifies what to put in the total cell for these columns.
 
 - To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXML.Excel.XLTotalsRowFunction`.
 - To include a label use `Label <string>`.
@@ -158,8 +146,7 @@ Add these using `Totals`, which takes a list of column names (each *must* be the
 *Note that the value `ClosedXML.Excel.XLTotalsRowFunction.Custom` is not currently supported and does nothing.*
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 open ClosedXML.Excel
@@ -180,21 +167,18 @@ open ClosedXML.Excel
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableTotals.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableTotals.PNG?raw=true"
      alt="Excel table - column totals example"
      style="width: 600px;" />
 
-#!markdown
-
+---
 ### Adding a number format for a table column
 
 In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 open ClosedXML.Excel
@@ -219,14 +203,12 @@ open ClosedXML.Excel
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormat.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableColumnFormat.PNG?raw=true"
      alt="Excel table - column format example"
      style="width: 600px;" />
 
-#!markdown
-
+---
 ### Adding formula-based columns
 
 Some of the columns in your table can be calculated from other values in the table, or from values elsewhere in the spreadsheet.
@@ -243,8 +225,7 @@ To achieve this:
 Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references to the columns with these names.
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 
@@ -308,14 +289,12 @@ module YearStatsWithCategoryTotals =
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormulae.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableColumnFormulae.PNG?raw=true"
      alt="Excel table - column formulae example"
      style="width: 600px;" />
 
-#!markdown
-
+---
 ### Using a class instead of a record type
 
 Although tables are normally generated from F# record instances, class types are also supported.  The example below uses a class instead of a record type.
@@ -323,8 +302,7 @@ Although tables are normally generated from F# record instances, class types are
 *Note that although it is also possible to use F# __anonymous__ record instances as table items, the F# compiler returns anonymous record fields in alphabetical order rather than declaration order, so your columns are likely to appear in the wrong order.*
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 
@@ -357,14 +335,12 @@ let yearStatsClasses =
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableClass.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableClass.PNG?raw=true"
      alt="Excel table - class example"
      style="width: 600px;" />
 
-#!markdown
-
+---
 ### Table styles
 
 You can apply various kinds of styling to a table:
@@ -375,8 +351,7 @@ You can apply various kinds of styling to a table:
 - You can hide the header row with `ShowHeaderRow false`. We don't give an example here as our example table only makes sense with headers.
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 open ClosedXML.Excel
@@ -400,14 +375,12 @@ open ClosedXML.Excel
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableStyle.PNG?raw=true"
      alt="Excel table - table style example"
      style="width: 600px;" />
 
-#!markdown
-
+---
 ### Structured references from outside the table
 
 Cells outside the table can use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to use values from within the table. This makes most sense when the formula involved reduces all the values in a column to a single value, e.g. `MIN`, `MAX` or `AVERAGE`.
@@ -415,8 +388,7 @@ Cells outside the table can use [structured references](https://support.microsof
 In this example we use `MIN`, `MAX` and structured references, together with some string concatenation using `&`, to get the year range for the title from the table data.
 <!-- Test -->
 
-#!fsharp
-
+```fsharp
 open System.IO
 open FsExcel
 
@@ -434,8 +406,7 @@ open FsExcel
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStructuredReference.xlsx"))
 
-#!markdown
-
+```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ExcelTableStructuredReference.PNG?raw=true"
      alt="Excel table - structured reference example"
      style="width: 700px;" />

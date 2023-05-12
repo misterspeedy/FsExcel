@@ -1199,7 +1199,7 @@ module Test36 =
             ShowRowStripes true
             ShowColumnStripes true
             EmphasizeFirstColumn true
-            EmphasizeLastColumn true            
+            EmphasizeLastColumn true
         ]
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
