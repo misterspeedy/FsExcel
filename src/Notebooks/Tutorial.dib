@@ -382,8 +382,6 @@ open ClosedXML.Excel
 
 You can rotate text between -90° and +90° with `TextRotation n`.
 
-> Note that due to [this ClosedXML issue](https://github.com/ClosedXML/ClosedXML/issues/2033), cells with rotations in the range -90 to -1 will not be shown with the correct rotation in Excel - and their content may even not be visible at all. The issue has been fixed and the problem should be resolved when ClosedXML v0.101 is released.
-
 <!-- Test -->
 
 #!fsharp
@@ -411,7 +409,7 @@ let getPerformance (categoryIndex : int) (supplierIndex : int) =
 [
     Go (RC(1, 2))
     for category in 1..10 do
-        Cell [String $"Category {category}"; TextRotation 45; CellSize (RowHeight 45)]
+        Cell [String $"Category {category}"; TextRotation 91; CellSize (RowHeight 45)]
     Go NewRow
     for supplier in 1..8 do
         Cell [String $"Supplier {supplier}"; CellSize (ColWidth 10)]

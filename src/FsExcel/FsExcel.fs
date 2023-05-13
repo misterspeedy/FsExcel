@@ -917,7 +917,7 @@ module Render =
                         cell.Style.Alignment.WrapText <- wt
                     | FormatCode fc ->
                         cell.Style.NumberFormat.Format <- fc
-                    | CellProp.Name name ->
+                    | Name name ->
                         cell.AddToNamed(name, XLScope.Worksheet) |> ignore
                     | ScopedName (name, scope) ->
                         let xlScope =
