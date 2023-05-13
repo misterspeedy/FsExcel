@@ -138,7 +138,7 @@ open FsExcel
 
 Excel tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
 
-Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and a an item which specifies what to put in the total cell for these columns.
+Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and an item which specifies what to put in the total cell for these columns.
 
 - To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXML.Excel.XLTotalsRowFunction`.
 - To include a label use `Label <string>`.
