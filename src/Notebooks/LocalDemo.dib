@@ -19,40 +19,26 @@ open System
 open FsExcel 
 open ClosedXML.Excel
 
-type R =
+type Hours =
     {
-        Name : string
-        Value : int
-        String : string
-        Date : DateTimeOffset
-        Float : float
-        Long : Int64
-        Bool : bool
+        ActualHours : float
+        ExpectedHours : float
+        PercentageCalculation : float
     }
 
+let data =
+    [
+        { ActualHours = 10.0; ExpectedHours = 100.0; PercentageCalculation = 0.0 }
+        { ActualHours = 10.0; ExpectedHours = 9.0; PercentageCalculation = 0.0 }
+    ]
+
 [
-    Table
-        [
-            TableName "KitsTable"
-            Items [
-                { Name = "R1"; Value = 99; String = "Hello world1"; Date = DateTimeOffset.Now; Float = 99.9; Long = 99L; Bool = true }
-                { Name = "R2"; Value = 100; String = "Hello world2"; Date = DateTimeOffset.Now; Float = 123.9; Long = 99L; Bool = true }
-                { Name = "R3"; Value = 101; String = "Hello world3"; Date = DateTimeOffset.Now; Float = 33.9; Long = 99L; Bool = true }
-                { Name = "R4"; Value = 103; String = "Hello world4"; Date = DateTimeOffset.Now; Float = 99.4; Long = 99L; Bool = false }
-            ]
-            //Total("Name", Label "Tot.")
-            //Total("Value", Function XLTotalsRowFunction.Sum)
-                // TODO Log a ClosedXml issue about these references getting changed to @
-                //"String", CustomA1 "=SUM([Value]+[Float])"
-            //Total("Float", Function XLTotalsRowFunction.Sum)
-            ColFormatCode("Float", "0.000")
-            Theme XLTableTheme.TableStyleDark9
-            ShowHeaderRow true
-            ShowRowStripes true
-            ShowColumnStripes true
-            EmphasizeFirstColumn true
-            EmphasizeLastColumn true
-        ]
-    Cell [ String "hereIam"]
+    Table [
+        TableName "Hours"
+        TableItems data
+        ColFormula ("PercentageCalculation", "=[ActualHours]/[ExpectedHours]*100")
+        ColFormatCodes (["ActualHours"; "ExpectedHours"], "0.0")
+        ColFormatCodes (["PercentageCalculation"], "0")
+    ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

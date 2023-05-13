@@ -1191,6 +1191,8 @@ open FsExcel
 
 You can create a table of cells from an F# record or a sequence of F# records.
 
+*The tables created using this approach are not proper Excel tables, simply grids of cells with potentially a little formatting. To create true Excel tables, see [Excel Table Tutorial](https://github.com/misterspeedy/FsExcel/blob/main/ExcelTableTutorial.md).*
+
 Use `Table.fromInstance` or `Table.fromSeq` and provide
 
 - an orientation (`Table.Direction.Horizontal` or `Table.Direction.Vertical`)
@@ -1657,3 +1659,8 @@ AutoFilter applied:
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AutoFilterAfter.PNG?raw=true"
      alt="AutoFilter example"
      style="width: 500px;" />
+
+---
+## Excel Tables
+
+To create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c), see the separate [Excel Table Tutorial](https://github.com/misterspeedy/FsExcel/blob/main/ExcelTableTutorial.md).

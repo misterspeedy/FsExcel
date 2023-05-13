@@ -91,7 +91,7 @@ Then we use `Table` to create the table.
 
 Like `Cell`, `Table` takes a list of properties.  The most important of these are:
 
-- `TableName` - gives the Excel table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
+- `TableName` - gives the Excel Table a name. If you omit this, your tables will be called "Table1", "Table2" etc. Any spaces in the name you provide will be removed.
 - `TableItems` - takes a list of record or class instances, each of which will become a row in the table, using fields from the instance as columns in the table.
 
 *The instance fields must be of simple types like `float`, `int`, `string` and `bool`.*
@@ -138,7 +138,7 @@ open FsExcel
 
 Excel tables can have a 'totals row', which can be populated with a value based on one of a number of standard functions - `SUM`, `AVERAGE` and so forth.
 
-Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and an item which specifies what to put in the total cell for these columns.
+Add these using `Totals`, which takes a list of column names (each *must* be the name of one of the table columns), and a an item which specifies what to put in the total cell for these columns.
 
 - To include a standard function (`Average`, `Count`, `CountNumbers`...) use `Function <totalsRowFunction>`. The available standard functions are enumerated in `ClosedXML.Excel.XLTotalsRowFunction`.
 - To include a label use `Label <string>`.
