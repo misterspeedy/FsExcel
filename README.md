@@ -372,7 +372,7 @@ let getPerformance (categoryIndex : int) (supplierIndex : int) =
 [
     Go (RC(1, 2))
     for category in 1..10 do
-        Cell [String $"Category {category}"; TextRotation 91; CellSize (RowHeight 45)]
+        Cell [String $"Category {category}"; TextRotation 45; CellSize (RowHeight 45)]
     Go NewRow
     for supplier in 1..8 do
         Cell [String $"Supplier {supplier}"; CellSize (ColWidth 10)]
