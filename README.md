@@ -8,7 +8,7 @@
 
 ## Welcome! 
 
-Welcome to FsExcel, a library for generating Excel spreadsheets using very simple code.
+Welcome to FsExcel, a library for generating Excel spreadsheets using very simple F# code.
 
 FsExcel is based on [ClosedXML](https://github.com/ClosedXML/ClosedXML) but abstracts away many of the complications of building spreadsheets cell by cell.
 
@@ -193,6 +193,161 @@ Indents apply to all `NewRow` operations until some other indent value is set us
 You can specify indents relative to the current indent level using `Go(IndentBy n)` where _n_ can be a positive or negative integer.
 
 ---
+## Absolute Positioning
+
+FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell at an absolute row or column position - or both.
+
+After the explicitly-positioned cell, subsequent cells are by default rendered to the right again.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open FsExcel
+open ClosedXML.Excel
+
+[
+    Go (Col 3)
+    Cell [ String "Col 3"]
+    Go (Row 4)
+    Cell [ String "Row 4"]
+    Go (RC(6, 5))
+    Cell [ String "R6C5"]
+    Cell [ String "R6C6"]
+]
+|> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
+     alt="Rows example"
+     style="width: 300;" />
+
+---
+## Staying on the same cell
+
+Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open FsExcel
+
+[
+    for i in 1..5 do
+        Cell [
+            Integer i
+            Next Stay
+        ]
+        Go(DownBy i)
+]
+|> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
+     alt="Absolute Positioning example"
+     style="width: 150;" />    
+
+---
+## Data Types
+
+FsExcel supports the following data types for cell content:
+
+- String
+- Integer
+- Float
+- Boolean
+- DateTime
+- TimeSpan
+<!-- Test -->
+
+```fsharp
+open System
+open System.IO
+open FsExcel
+
+[
+    Cell [ String "String"]; Cell [ String "string" ]
+    Go NewRow
+    Cell [ String "Integer" ]; Cell [ Integer 42 ]
+    Go NewRow
+    Cell [ String "Number" ]; Cell [ Float Math.PI ]
+    Go NewRow
+    Cell [ String "Boolean" ]; Cell [ Boolean false  ]
+    Go NewRow
+    Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
+    Go NewRow
+    Cell [ String "TimeSpan" ]
+    Cell [ 
+        TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
+        FormatCode "hh:mm:ss"
+    ]
+]
+|> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/DataTypes.PNG?raw=true"
+     alt="Data Types example"
+     style="width: 200px;" />
+
+---
+## Number Formatting and Alignment
+
+Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
+<!-- Test -->
+
+```fsharp
+open System
+open System.IO
+open FsExcel
+open ClosedXML.Excel
+
+module PseudoRandom =
+
+    let mutable state = 1u
+    let mangle (n : UInt64) = (n &&& (0x7fffffff |> uint64)) + (n >>> 31)
+
+    let nextDouble() =
+        state <- (state |> uint64) * 48271UL |> mangle |> mangle |> uint32
+        (float state) / (float Int32.MaxValue)
+
+let headingStyle = 
+    [
+        Border(Border.Bottom XLBorderStyleValues.Medium)
+        FontEmphasis Bold
+        FontEmphasis Italic 
+    ]
+
+[
+    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
+        Cell [
+            String heading
+            yield! headingStyle
+            HorizontalAlignment alignment
+        ]
+    
+    Go NewRow
+
+    for item in ["Apples"; "Oranges"; "Pears"] do
+        Cell [
+            String item
+        ]
+        Cell [
+            Float ((PseudoRandom.nextDouble()*1000.))
+            FormatCode "$0.00"
+        ]
+        Cell [
+            Integer (int (PseudoRandom.nextDouble()*100.))
+            FormatCode "#,##0"
+        ]
+        Go NewRow
+]
+|> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
+     alt="Number Format and Alignment example"
+     style="width: 250px;" />
+
+---
 ## Border and Font Styling
 
 You can add border styling and font emphasis (bold, italic, underline or strikethrough) styling using `Border (...)` and `FontEmphasis ...` cell properties.
@@ -268,6 +423,11 @@ let headingStyle =
 |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
 
 ```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/ComposedStyling.PNG?raw=true"
+     alt="Composed Styling example"
+     style="width: 150px;" />
+
+---
 ## Font Name and Size
 
 You can set the font name using `FontName` and the size using `FontSize`:
@@ -390,65 +550,6 @@ let getPerformance (categoryIndex : int) (supplierIndex : int) =
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/TextRotation.PNG?raw=true"
      alt="Wrap Text Example"
      style="width: 500px;" />
-
----
-## Number Formatting and Alignment
-
-Number styling can be applied using standard Excel format strings.  You can also apply horizontal alignment.
-<!-- Test -->
-
-```fsharp
-open System
-open System.IO
-open FsExcel
-open ClosedXML.Excel
-
-module PseudoRandom =
-
-    let mutable state = 1u
-    let mangle (n : UInt64) = (n &&& (0x7fffffff |> uint64)) + (n >>> 31)
-
-    let nextDouble() =
-        state <- (state |> uint64) * 48271UL |> mangle |> mangle |> uint32
-        (float state) / (float Int32.MaxValue)
-
-let headingStyle = 
-    [
-        Border(Border.Bottom XLBorderStyleValues.Medium)
-        FontEmphasis Bold
-        FontEmphasis Italic 
-    ]
-
-[
-    for heading, alignment in ["Stock Item", Left; "Price", Right ; "Count", Right] do
-        Cell [
-            String heading
-            yield! headingStyle
-            HorizontalAlignment alignment
-        ]
-    
-    Go NewRow
-
-    for item in ["Apples"; "Oranges"; "Pears"] do
-        Cell [
-            String item
-        ]
-        Cell [
-            Float ((PseudoRandom.nextDouble()*1000.))
-            FormatCode "$0.00"
-        ]
-        Cell [
-            Integer (int (PseudoRandom.nextDouble()*100.))
-            FormatCode "#,##0"
-        ]
-        Go NewRow
-]
-|> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
-
-```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NumberFormatAndAlignment.PNG?raw=true"
-     alt="Number Format and Alignment example"
-     style="width: 250px;" />
 
 ---
 ## Formulae
@@ -622,6 +723,33 @@ module PseudoRandom =
      style="width: 250px;" />
 
 ---
+## Named cells
+
+To create work*sheet* scoped name use  `Name <name>` or `ScopedName (<name>, NameScope.Worksheet)`.
+
+To create work*book* scoped name use `ScopedName (<name>, NameScope.Workbook)`.
+<!-- Test -->
+
+```fsharp
+open System.IO
+open FsExcel
+
+[
+    Cell [ 
+        String "JohnDoe"
+        Name "Username" ]
+    Cell [ 
+        String "john.doe@company.com"
+        ScopedName ("Email", NameScope.Workbook) ]
+]
+|> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
+
+```
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/NamedCells.PNG?raw=true"
+     alt="Named Cells example"
+     style="width: 250px;" />
+
+---
 ## Adding a Border to Merged Cells
 
 To add a border to all cells in an Item list that includes *merged cells*, use:
@@ -705,90 +833,11 @@ open FsExcel
      style="width: 500px;" />
 
 ---
-## Absolute Positioning
-
-FsExcel is designed to save you from having to keep track of absolute row- and column-numbers. However sometimes you might want to position a cell at an absolute row or column position - or both.
-
-After the explicitly-positioned cell, subsequent cells are by default rendered to the right again.
-<!-- Test -->
-
-```fsharp
-open System.IO
-open FsExcel
-open ClosedXML.Excel
-
-[
-    Go (Col 3)
-    Cell [ String "Col 3"]
-    Go (Row 4)
-    Cell [ String "Row 4"]
-    Go (RC(6, 5))
-    Cell [ String "R6C5"]
-    Cell [ String "R6C6"]
-]
-|> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
-
-```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/AbsolutePositioning.PNG?raw=true"
-     alt="Absolute Positioning example"
-     style="width: 350px;" />    
-
----
-Remember that, by default, successive cells are placed to the right of their predecessors? Sometimes (rarely) you might want to suppress that behaviour completely. To do that use `Next Stay`.
-<!-- Test -->
-
-```fsharp
-open System.IO
-open FsExcel
-
-[
-    for i in 1..5 do
-        Cell [
-            Integer i
-            Next Stay
-        ]
-        Go(DownBy i)
-]
-|> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
-
-```
 <img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/Stay.PNG?raw=true"
      alt="Stay example"
      style="width: 150px;" />
 
 ---
-## Named cells
-
-To create worksheet scoped name use  
-`
-Name "Username"
-`  
-or  
-`
-ScopedName ("Email", NameScope.Worksheet)
-`  
-
-To create workbook scoped name use  
-`
-ScopedName ("Email", NameScope.Workbook)
-`
-<!-- Test -->
-
-```fsharp
-open System.IO
-open FsExcel
-
-[
-    Cell [ 
-        String "JohnDoe"
-        Name "Username" ]
-    Cell [ 
-        String "john.doe@company.com"
-        ScopedName ("Email", NameScope.Workbook) ]
-]
-|> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
-
-```
 ## Worksheets (Tabs)
 
 By default, all cells are placed into a worksheet (tab) called "Sheet1".  You can override this, and create additional worksheets, using `Worksheet ...`.
@@ -1308,48 +1357,6 @@ open FsExcel
     $"Bytes length: {bytes.Length}"
 
 ```
-## Data Types
-
-FsExcel supports the following data types for cell content:
-
-- String
-- Integer
-- Float
-- Boolean
-- DateTime
-- TimeSpan
-<!-- Test -->
-
-```fsharp
-open System
-open System.IO
-open FsExcel
-
-[
-    Cell [ String "String"]; Cell [ String "string" ]
-    Go NewRow
-    Cell [ String "Integer" ]; Cell [ Integer 42 ]
-    Go NewRow
-    Cell [ String "Number" ]; Cell [ Float Math.PI ]
-    Go NewRow
-    Cell [ String "Boolean" ]; Cell [ Boolean false  ]
-    Go NewRow
-    Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
-    Go NewRow
-    Cell [ String "TimeSpan" ]
-    Cell [ 
-        TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
-        FormatCode "hh:mm:ss"
-    ]
-]
-|> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
-
-```
-<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/DataTypes.PNG?raw=true"
-     alt="Data Types example"
-     style="width: 200px;" />
-
----
 ## Rendering as HTML
 
 You can render a workbook as a set of HTML tables. You will get one table per worksheet.

@@ -94,153 +94,61 @@ module Test6 =
 module Test7 =
     
     open System.IO
-    open System.Globalization
     open FsExcel
     open ClosedXML.Excel
     
     [
-        for heading in ["Month"; "Letter Count"] do
-            Cell [
-                String heading
-                Border (Border.Bottom XLBorderStyleValues.Medium)
-                FontEmphasis Bold
-                FontEmphasis Italic
-            ]
-        Go NewRow
-        
-        for m in 1..12 do
-            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
-            Cell [ 
-                String monthName
-                FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
-                if monthName = "May" then
-                    FontEmphasis StrikeThrough
-            ]
-            Cell [ Integer monthName.Length ]
-            Go NewRow
+        Go (Col 3)
+        Cell [ String "Col 3"]
+        Go (Row 4)
+        Cell [ String "Row 4"]
+        Go (RC(6, 5))
+        Cell [ String "R6C5"]
+        Cell [ String "R6C6"]
     ]
-    |> Render.AsFile (Path.Combine(savePath, "Styling.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     
 module Test8 =
     
     open System.IO
-    open System.Globalization
     open FsExcel
-    open ClosedXML.Excel
-    
-    let headingStyle = 
-        [
-            Border(Border.Bottom XLBorderStyleValues.Medium)
-            FontEmphasis Bold
-            FontEmphasis Italic 
-        ]
     
     [
-        for heading in ["Month"; "Letter Count"] do
+        for i in 1..5 do
             Cell [
-                String heading
-                yield! headingStyle
+                Integer i
+                Next Stay
             ]
-        Go NewRow
-        
-        for m in 1..12 do
-            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
-            Cell [ String monthName ]
-            Cell [ Integer monthName.Length ]
-            Go NewRow
+            Go(DownBy i)
     ]
-    |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
     
 module Test9 =
     
+    open System
     open System.IO
-    open System.Globalization
     open FsExcel
-    open ClosedXML.Excel
-    
-    let fontNames = 
-        SixLabors.Fonts.SystemFonts.Collection.Families
-        |> Seq.map (fun font -> font.Name)
-        |> Seq.sort
-        |> Seq.truncate 20
     
     [
-        for i, fontName in fontNames |> Seq.indexed do
-            Cell [
-                String fontName
-                FontName fontName
-                FontSize (10 + (i * 2) |> float)
-            ]
-            Go NewRow
+        Cell [ String "String"]; Cell [ String "string" ]
+        Go NewRow
+        Cell [ String "Integer" ]; Cell [ Integer 42 ]
+        Go NewRow
+        Cell [ String "Number" ]; Cell [ Float Math.PI ]
+        Go NewRow
+        Cell [ String "Boolean" ]; Cell [ Boolean false  ]
+        Go NewRow
+        Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
+        Go NewRow
+        Cell [ String "TimeSpan" ]
+        Cell [ 
+            TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
+            FormatCode "hh:mm:ss"
+        ]
     ]
-    |> Render.AsFile (Path.Combine(savePath, "FontNameSize.xlsx"))
+    |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
 module Test10 =
-    
-    open System.IO
-    open FsExcel
-    open ClosedXML.Excel
-    
-    [
-        Cell [ String "Without wrap text:"
-               HorizontalAlignment Center
-               VerticalAlignment Middle
-               CellSize (ColWidth 16) ]
-        Cell [ String "The quick brown fox jumps over the lazy dog."
-               HorizontalAlignment Center
-               VerticalAlignment Middle ]
-        Go NewRow
-        Cell [ String "With wrap text:"
-               HorizontalAlignment Center
-               VerticalAlignment Middle 
-               CellSize (ColWidth 16) ]
-        Cell [ String "The quick brown fox jumps over the lazy dog."
-               HorizontalAlignment Center
-               VerticalAlignment Middle
-               WrapText true ]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
-    
-module Test11 =
-    
-    open System
-    open FsExcel
-    
-    let p, m, g = "⏺", "◑", "⭘"
-    let performances = 
-        [|
-            [| p; m; g; g; p;  p; g; p; p; g |]
-            [| g; m; g; m; g;  p; g; p; p; g |]
-            [| g; m; m; g; g;  p; g; g; p; g |]
-            [| m; m; m; p; p;  p; g; m; p; g |]
-        
-            [| p; p; p; p; g;  g; m; m; p; g |]
-            [| p; g; p; g; g;  g; p; g; m; m |]
-            [| g; p; g; p; m;  p; m; p; p; g |]
-            [| p; p; m; g; p;  p; p; m; p; m |]
-        |]
-    
-    let getPerformance (categoryIndex : int) (supplierIndex : int) =
-        performances[supplierIndex-1][categoryIndex-1]
-    
-    [
-        Go (RC(1, 2))
-        for category in 1..10 do
-            Cell [String $"Category {category}"; TextRotation 45; CellSize (RowHeight 45)]
-        Go NewRow
-        for supplier in 1..8 do
-            Cell [String $"Supplier {supplier}"; CellSize (ColWidth 10)]
-            Go NewRow
-        Go (RC(2, 2))
-        Go (Indent 2)
-        for supplier in 1..8 do
-            for category in 1..10 do
-                Cell [ String (getPerformance category supplier); HorizontalAlignment Center]
-            Go NewRow
-    ]
-    |> Render.AsFile (System.IO.Path.Combine(savePath, "TextRotation.xlsx"))
-    
-module Test12 =
     
     open System
     open System.IO
@@ -289,7 +197,156 @@ module Test12 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
     
+module Test11 =
+    
+    open System.IO
+    open System.Globalization
+    open FsExcel
+    open ClosedXML.Excel
+    
+    [
+        for heading in ["Month"; "Letter Count"] do
+            Cell [
+                String heading
+                Border (Border.Bottom XLBorderStyleValues.Medium)
+                FontEmphasis Bold
+                FontEmphasis Italic
+            ]
+        Go NewRow
+        
+        for m in 1..12 do
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
+            Cell [ 
+                String monthName
+                FontEmphasis (Underline XLFontUnderlineValues.DoubleAccounting)
+                if monthName = "May" then
+                    FontEmphasis StrikeThrough
+            ]
+            Cell [ Integer monthName.Length ]
+            Go NewRow
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "Styling.xlsx"))
+    
+module Test12 =
+    
+    open System.IO
+    open System.Globalization
+    open FsExcel
+    open ClosedXML.Excel
+    
+    let headingStyle = 
+        [
+            Border(Border.Bottom XLBorderStyleValues.Medium)
+            FontEmphasis Bold
+            FontEmphasis Italic 
+        ]
+    
+    [
+        for heading in ["Month"; "Letter Count"] do
+            Cell [
+                String heading
+                yield! headingStyle
+            ]
+        Go NewRow
+        
+        for m in 1..12 do
+            let monthName = CultureInfo.GetCultureInfoByIetfLanguageTag("en-GB").DateTimeFormat.GetMonthName(m)
+            Cell [ String monthName ]
+            Cell [ Integer monthName.Length ]
+            Go NewRow
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "ComposedStyling.xlsx"))
+    
 module Test13 =
+    
+    open System.IO
+    open System.Globalization
+    open FsExcel
+    open ClosedXML.Excel
+    
+    let fontNames = 
+        SixLabors.Fonts.SystemFonts.Collection.Families
+        |> Seq.map (fun font -> font.Name)
+        |> Seq.sort
+        |> Seq.truncate 20
+    
+    [
+        for i, fontName in fontNames |> Seq.indexed do
+            Cell [
+                String fontName
+                FontName fontName
+                FontSize (10 + (i * 2) |> float)
+            ]
+            Go NewRow
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "FontNameSize.xlsx"))
+    
+module Test14 =
+    
+    open System.IO
+    open FsExcel
+    open ClosedXML.Excel
+    
+    [
+        Cell [ String "Without wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle ]
+        Go NewRow
+        Cell [ String "With wrap text:"
+               HorizontalAlignment Center
+               VerticalAlignment Middle 
+               CellSize (ColWidth 16) ]
+        Cell [ String "The quick brown fox jumps over the lazy dog."
+               HorizontalAlignment Center
+               VerticalAlignment Middle
+               WrapText true ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
+    
+module Test15 =
+    
+    open System
+    open FsExcel
+    
+    let p, m, g = "⏺", "◑", "⭘"
+    let performances = 
+        [|
+            [| p; m; g; g; p;  p; g; p; p; g |]
+            [| g; m; g; m; g;  p; g; p; p; g |]
+            [| g; m; m; g; g;  p; g; g; p; g |]
+            [| m; m; m; p; p;  p; g; m; p; g |]
+        
+            [| p; p; p; p; g;  g; m; m; p; g |]
+            [| p; g; p; g; g;  g; p; g; m; m |]
+            [| g; p; g; p; m;  p; m; p; p; g |]
+            [| p; p; m; g; p;  p; p; m; p; m |]
+        |]
+    
+    let getPerformance (categoryIndex : int) (supplierIndex : int) =
+        performances[supplierIndex-1][categoryIndex-1]
+    
+    [
+        Go (RC(1, 2))
+        for category in 1..10 do
+            Cell [String $"Category {category}"; TextRotation 45; CellSize (RowHeight 45)]
+        Go NewRow
+        for supplier in 1..8 do
+            Cell [String $"Supplier {supplier}"; CellSize (ColWidth 10)]
+            Go NewRow
+        Go (RC(2, 2))
+        Go (Indent 2)
+        for supplier in 1..8 do
+            for category in 1..10 do
+                Cell [ String (getPerformance category supplier); HorizontalAlignment Center]
+            Go NewRow
+    ]
+    |> Render.AsFile (System.IO.Path.Combine(savePath, "TextRotation.xlsx"))
+    
+module Test16 =
     
     open System
     open System.IO
@@ -342,7 +399,7 @@ module Test13 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
     
-module Test14 =
+module Test17 =
     
     open System.IO
     open FsExcel
@@ -375,7 +432,7 @@ module Test14 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
     
-module Test15 =
+module Test18 =
     
     open System
     open System.IO
@@ -420,7 +477,22 @@ module Test15 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
     
-module Test16 =
+module Test19 =
+    
+    open System.IO
+    open FsExcel
+    
+    [
+        Cell [ 
+            String "JohnDoe"
+            Name "Username" ]
+        Cell [ 
+            String "john.doe@company.com"
+            ScopedName ("Email", NameScope.Workbook) ]
+    ]
+    |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
+    
+module Test20 =
     
     open System.IO
     open System
@@ -478,54 +550,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "BorderMergedCells.xlsx"))  
     
-module Test17 =
-    
-    open System.IO
-    open FsExcel
-    open ClosedXML.Excel
-    
-    [
-        Go (Col 3)
-        Cell [ String "Col 3"]
-        Go (Row 4)
-        Cell [ String "Row 4"]
-        Go (RC(6, 5))
-        Cell [ String "R6C5"]
-        Cell [ String "R6C6"]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
-    
-module Test18 =
-    
-    open System.IO
-    open FsExcel
-    
-    [
-        for i in 1..5 do
-            Cell [
-                Integer i
-                Next Stay
-            ]
-            Go(DownBy i)
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
-    
-module Test19 =
-    
-    open System.IO
-    open FsExcel
-    
-    [
-        Cell [ 
-            String "JohnDoe"
-            Name "Username" ]
-        Cell [ 
-            String "john.doe@company.com"
-            ScopedName ("Email", NameScope.Workbook) ]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
-    
-module Test20 =
+module Test21 =
     
     open System.IO
     open FsExcel
@@ -582,7 +607,7 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test21 =
+module Test22 =
     
     open System.IO
     open ClosedXML.Excel
@@ -609,7 +634,7 @@ module Test21 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test22 =
+module Test23 =
     
     open System.IO
     open System.Globalization
@@ -626,7 +651,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test23 =
+module Test24 =
     
     open System.IO
     open System
@@ -656,7 +681,7 @@ module Test23 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test24 =
+module Test25 =
     
     open System.IO
     open System.Globalization
@@ -692,7 +717,7 @@ module Test24 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test25 =
+module Test26 =
     
     open System.IO
     open System
@@ -795,7 +820,7 @@ module Test25 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     
-module Test26 =
+module Test27 =
     
     open System
     open System.IO
@@ -858,31 +883,6 @@ module Test26 =
         |> Table.fromInstance Table.Direction.Horizontal cellStyleHorizontal
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
-    
-module Test27 =
-    
-    open System
-    open System.IO
-    open FsExcel
-    
-    [
-        Cell [ String "String"]; Cell [ String "string" ]
-        Go NewRow
-        Cell [ String "Integer" ]; Cell [ Integer 42 ]
-        Go NewRow
-        Cell [ String "Number" ]; Cell [ Float Math.PI ]
-        Go NewRow
-        Cell [ String "Boolean" ]; Cell [ Boolean false  ]
-        Go NewRow
-        Cell [ String "DateTime" ]; Cell [ DateTime (System.DateTime(1903, 12, 17)) ]
-        Go NewRow
-        Cell [ String "TimeSpan" ]
-        Cell [ 
-            TimeSpan (System.TimeSpan(hours=1, minutes=2, seconds=3)) 
-            FormatCode "hh:mm:ss"
-        ]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
 module Test28 =
     
