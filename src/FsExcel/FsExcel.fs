@@ -962,6 +962,7 @@ module Render =
                     let range = crToStr (CellReference.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore
                 | (SpanDepth (span, depth), SpanDepth (colSpan, rowDepth)) ->
+                    // TODO raise an exception here or design this out.
                     ws |> ignore // ignore this case: cannot merge between two arbitary 
                 // TODO: ideally, want to ignore the incomplete pattern match altogether to prevent user trying this option
 

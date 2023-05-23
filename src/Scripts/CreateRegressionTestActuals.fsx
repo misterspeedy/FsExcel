@@ -495,64 +495,6 @@ module Test19 =
 module Test20 =
     
     open System.IO
-    open System
-    open ClosedXML.Excel
-    open FsExcel 
-    
-    
-    [   Go NewRow
-        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
-            Cell [
-                String heading
-                FontEmphasis Bold
-                FontName "Calibri"
-                FontSize 11
-                HorizontalAlignment Center
-                FontColor (XLColor.FromArgb(0, 255, 255, 255))
-                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
-                Border (Border.All XLBorderStyleValues.Thin)
-                CellSize (ColWidth colWidth)
-            ]
-        Go NewRow
-        Style [ HorizontalAlignment Center
-                VerticalAlignment Middle
-                BackgroundColor (XLColor.FromArgb(0, 240, 240, 210))]
-        Cell [  Integer 1
-                Name "ID" ] 
-        Cell [  String "Ford Fiesta" ]
-        Cell [  String "Car Technical Details:"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 1"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 2"
-                Next (DownBy 1)]
-        Cell [  String "Technical Detail 3"
-                Name "LastL" ]
-        Go (RC (3, 4))
-        Cell [  String "AB12 CDE" 
-                Name "Reg" ]
-        Go (RC (6, 4))
-        Cell [Name "RegEnd"]
-        Go (RC (7, 3))
-        Cell [  String "Another Technical Detail"
-                FontEmphasis Italic
-                Name "TD" 
-                Next Stay]
-        Go (DownBy 1)
-        Cell [ Name "info"]
-    
-        MergeCells (ColRowLabel ("B", 3), ColRowLabel ("B", 6))
-        MergeCells (NamedCell "ID", ColRowLabel ("A", 6))
-        MergeCells (ColRowLabel ("C", 7), NamedCell "info")
-        MergeCells (NamedCell "Reg", NamedCell "RegEnd") 
-        BorderMergedCell [ BorderType (Border.All XLBorderStyleValues.Thin)
-                           ColorBorder (BorderColor.All (XLColor.FromArgb(0, 68, 114, 196)))]
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "BorderMergedCells.xlsx"))  
-    
-module Test21 =
-    
-    open System.IO
     open FsExcel
     
     let britishCultureNativeName = "English (United Kingdom)"
@@ -607,7 +549,7 @@ module Test21 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test22 =
+module Test21 =
     
     open System.IO
     open ClosedXML.Excel
@@ -634,7 +576,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test23 =
+module Test22 =
     
     open System.IO
     open System.Globalization
@@ -651,7 +593,7 @@ module Test23 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test24 =
+module Test23 =
     
     open System.IO
     open System
@@ -681,7 +623,7 @@ module Test24 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test25 =
+module Test24 =
     
     open System.IO
     open System.Globalization
@@ -717,110 +659,7 @@ module Test25 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test26 =
-    
-    open System.IO
-    open System
-    open ClosedXML.Excel
-    open FsExcel
-    
-    [   Go NewRow
-        for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Registration", 16.89 ] do
-            Cell [
-                String heading
-                FontEmphasis Bold
-                FontName "Calibri"
-                FontSize 11
-                HorizontalAlignment Center
-                FontColor (XLColor.FromArgb(0, 255, 255, 255))
-                BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
-                Border(Border.All XLBorderStyleValues.Thin)
-                CellSize (ColWidth colWidth)
-            ]
-        Go NewRow
-        Cell [  Integer 1
-                HorizontalAlignment Left
-                VerticalAlignment TopMost
-                Name "ID" ] 
-        Cell [  String "Ford Fiesta"
-                HorizontalAlignment Center
-                VerticalAlignment Middle ] 
-        Cell [  String "Car Technical Details:"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 1"
-                Next (DownBy 1) ]
-        Cell [  String "Technical Detail 2"
-                Next (DownBy 1)]
-        Cell [  String "Technical Detail 3"
-                Name "LastL" ]
-        Go (RC (3, 4))
-        Cell [  String "AB12 CDE" 
-                HorizontalAlignment Right
-                VerticalAlignment Base
-                Name "Reg" ]
-        Go (RC (6, 4))
-        Cell [Name "RegEnd"]
-        Go (RC (7, 3))
-        Cell [  String "Another Technical Detail"
-                FontEmphasis Italic
-                VerticalAlignment Middle
-                Name "TD" 
-                Next Stay]
-        Go (DownBy 1)
-        Cell [ Name "info"]
-    
-        MergeCells ((ColRowLabel ("B", 3), ColRowLabel ("B", 6)))
-        MergeCells ((NamedCell "ID", ColRowLabel ("A", 6)))
-        MergeCells ((ColRowLabel ("C", 7), NamedCell "info")) 
-        MergeCells ((NamedCell "Reg", NamedCell "RegEnd")) 
-        
-        Go (RC (10, 1))
-        Cell [  String "Merging from a starting cell given a depth and span"
-                BackgroundColor (XLColor.FromArgb(0, 80, 180, 220))
-                FontEmphasis Bold
-                HorizontalAlignment Center ] 
-        MergeCells ((ColRowLabel ("A", 10), ColRowLabel ("D", 10)))
-    
-        Go (RC (12, 2))
-        Cell [  String "The components that make up a car are: "
-                Name "components" 
-                HorizontalAlignment Left
-                VerticalAlignment TopMost
-                Border(Border.All XLBorderStyleValues.MediumDashDot)]
-        Go (RC (12, 4))
-        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
-        Go (RC (14, 4))
-        Cell [ Border(Border.All XLBorderStyleValues.MediumDashDot)]
-    
-        Go (RC (15, 2))
-        Cell [  String "Road Tax"
-                HorizontalAlignment Center
-                VerticalAlignment Middle
-                Border(Border.All XLBorderStyleValues.SlantDashDot)]
-        Go (RC (16, 2))
-        Cell [ Border(Border.All XLBorderStyleValues.SlantDashDot)]
-    
-        MergeCells ((NamedCell "components", SpanDepth (3, 3)))
-        MergeCells ((ColRowLabel ("B", 15), SpanDepth (1, 2))) 
-    
-        Go (RC (17, 4))
-        Cell [  String "Insurance"
-                Name "insurance" // NamedCells cannot begin with a number
-                Border(Border.All XLBorderStyleValues.Dashed) ]
-        Go (RC (17, 3))
-        Cell [ Border(Border.All XLBorderStyleValues.Dashed)]
-        Go (RC (17, 2))
-        Cell [ Border(Border.All XLBorderStyleValues.Dashed)] 
-       
-        Go (RC (16, 4))
-        Cell [  String "Signature"]
-    
-        MergeCells ((SpanDepth (3, 1), NamedCell "insurance")) 
-        MergeCells ((SpanDepth (2, 2), ColRowLabel ("D", 16))) 
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
-    
-module Test27 =
+module Test25 =
     
     open System
     open System.IO
@@ -884,7 +723,7 @@ module Test27 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test28 =
+module Test26 =
     
     open System
     open System.IO
@@ -913,7 +752,7 @@ module Test28 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test29 =
+module Test27 =
     
     open System
     open System.IO
@@ -943,7 +782,7 @@ module Test29 =
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
     
 [<AutoOpen>]
-module Test30 =
+module Test28 =
     
     #r "nuget: ClosedXML"
     
@@ -1010,7 +849,7 @@ module Test30 =
         
     let yearStatsRecords = yearStats |> YearStats.fromValues
     
-module Test31 =
+module Test29 =
     
     open System.IO
     open FsExcel
@@ -1034,7 +873,7 @@ module Test31 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableSimple.xlsx"))
     
-module Test32 =
+module Test30 =
     
     open System.IO
     open FsExcel
@@ -1056,7 +895,7 @@ module Test32 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableTotals.xlsx"))
     
-module Test33 =
+module Test31 =
     
     open System.IO
     open FsExcel
@@ -1082,7 +921,7 @@ module Test33 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormat.xlsx"))
     
-module Test34 =
+module Test32 =
     
     open System.IO
     open FsExcel
@@ -1145,7 +984,7 @@ module Test34 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormulae.xlsx"))
     
-module Test35 =
+module Test33 =
     
     open System.IO
     open FsExcel
@@ -1179,7 +1018,7 @@ module Test35 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableClass.xlsx"))
     
-module Test36 =
+module Test34 =
     
     open System.IO
     open FsExcel
@@ -1204,7 +1043,7 @@ module Test36 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
     
-module Test37 =
+module Test35 =
     
     open System.IO
     open FsExcel
