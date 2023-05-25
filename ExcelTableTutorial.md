@@ -175,7 +175,7 @@ open ClosedXML.Excel
 ---
 ### Adding a number format for a table column
 
-In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
+In the previous example, the totals row cells (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
 <!-- Test -->
 
 ```fsharp
