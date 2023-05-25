@@ -190,7 +190,7 @@ open ClosedXML.Excel
 
 ### Adding a number format for a table column
 
-In the previous example, the totals rows (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
+In the previous example, the totals row cells (showing averages) have more decimal places than the values used to compute them.  You can set the number format for an entire table column, including the total cell if displayed) with `ColFormatCodes`.
 <!-- Test -->
 
 #!fsharp
@@ -237,7 +237,7 @@ To achieve this:
 
 `ColFormula` takes:
 
-- A list of column names - each *must* be the name of one of the table columns.
+- A column name - this *must* be the name of one of the table columns.
 - A string containing the required formula - e.g. `"=[Coal]+[Oil]+[NaturalGas]"`.
 
 Typically the formula will use [structured references](https://support.microsoft.com/en-us/office/using-structured-references-with-excel-tables-f5ed2452-2337-4f71-bed3-c8ae6d2b276e) to other items in the table. In this example, `[Coal]`, `[Oil]` and `[NaturalGas]` are structured references to the columns with these names.
