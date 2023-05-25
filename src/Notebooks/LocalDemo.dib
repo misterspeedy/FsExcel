@@ -19,26 +19,32 @@ open System
 open FsExcel 
 open ClosedXML.Excel
 
-type Hours =
-    {
-        ActualHours : float
-        ExpectedHours : float
-        PercentageCalculation : float
-    }
-
-let data =
-    [
-        { ActualHours = 10.0; ExpectedHours = 100.0; PercentageCalculation = 0.0 }
-        { ActualHours = 10.0; ExpectedHours = 9.0; PercentageCalculation = 0.0 }
-    ]
-
 [
-    Table [
-        TableName "Hours"
-        TableItems data
-        ColFormula ("PercentageCalculation", "=[ActualHours]/[ExpectedHours]*100")
-        ColFormatCodes (["ActualHours"; "ExpectedHours"], "0.0")
-        ColFormatCodes (["PercentageCalculation"], "0")
+    Style [ FontSize 8 ]
+
+    Cell [ String "Merged using ColRowLabel" ]
+    MergeCells((ColRowLabel("A", 1)), (ColRowLabel("B", 1)))
+    
+    BorderMergedCell [ BorderType (Border.All XLBorderStyleValues.Double)
+                       ColorBorder (BorderColor.All (XLColor.FromArgb(0, 68, 114, 196)))]
+    Go NewRow
+    Cell [ 
+        String "Merged using NamedCell"
+        Name "startmerge"
     ]
+    Cell [ Name "endmerge" ]
+    MergeCells(NamedCell "startmerge", NamedCell "endmerge")
+
+    Go NewRow
+    Cell [ String "Merged using SpanDepth" ]
+    MergeCells((ColRowLabel("A", 3), SpanDepth(2, 1)))
+
+    // BorderMergedCell [ BorderType (Border.All XLBorderStyleValues.Double)
+    //                    ColorBorder (BorderColor.All (XLColor.FromArgb(0, 255, 0, 99)))]
+
+    Go (RC(5, 5))
+    Cell [ String "5 ,5"; Border(Border.Bottom XLBorderStyleValues.Medium) ]
+
+
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
+|> Render.AsFile (Path.Combine(savePath, "MergedCellsInvestigation.xlsx"))  

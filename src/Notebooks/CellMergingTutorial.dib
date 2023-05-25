@@ -41,6 +41,8 @@ The column span and row depth of a merged cell from a starting cell can be speci
 * **Reverse Merging** i.e. merging from bottom right to top left with the starting cell being in the bottom right hand corner of the merged cell. This method loses the cell name, cell contents, cell shading of the original starting cell. However, the bottom right hand corner of the original starting cell border is retained. In the case of starting with e.g cell B2 and requesting a reverse merge `SpanDepth of (5, 5)`, i.e. merging to beyond the excel sheet boundaries, the cell to merge to will be defaulted to cell A1. Reverse merging is achieved by having `SpanDepth` as the _first_ item in the `MergeCells` tuple:
     *    `MergeCells ((SpanDepth (3, 3)), NamedCell "CellName")`
     *    `MergeCells ((SpanDepth (1, 2)), (ColRowLabel ("B", 15))`
+
+Merges which lead to a column reference beyond the maximum supported by Excel ("XFD") will result in an `ArgumentException`.
 <!-- Test -->
 
 #!fsharp
@@ -107,74 +109,56 @@ open FsExcel
 
 ## Adding a Border to Merged Cells
 
-To add a border to all cells in an Item list that includes *merged cells*, use:
+To add a border to all merged cells, use:
 
 `BorderMergedCell [ BorderType (Border.x XLBorderStyleValues.<borderStyle>); ColorBorder (BorderColor.<side> (XLColor.FromArgb(<a>, <r>, <g>, <b>)))]`
 
 where `<side>` = `All|Top|Right|Bottom|Left`.  Include this border styling *after* any merged cells.
 
-TODO Work out how this is applying only to merged cells - and clarify this in doc.
+The specified borders will be applied to *all merged cells that exist at the time `BorderMergedCell` is invoked*.  For this reason it isn't possible to have varied styles of border for different merged cells in a worksheet.  The choices are:
+
+- Same border applied to all merged cells. 
+
+    To achieve this, invoke `BorderMergedCell` once after all merged calls have been created.
+
+- Some merged cells have borders, others have no borders. 
+
+    To achieve this, invoke `BorderMergedCell` after the creation of merged cells which do require borders, and before the creation of merged cells which do not require borders. Remember that you can use absolute positioning (`Go(RC(<col>, <row>))`) to place cells in a different positional order from their creation order.
 
 In contrast to cell borders, other appearance properties (such as font color, background color, font emphasis and font style) are retained when a cell is merged.
 <!-- Test -->
 
 #!fsharp
 
+***here - it is actually bordering all cells. May need to redesign.
+
 open System.IO
 open System
 open ClosedXML.Excel
 open FsExcel 
 
-
-[   Go NewRow
-    for heading, colWidth in ["ID", 3.22; "Car Name", 10.33; "Car Description", 49.33; "Car Regestration", 16.89 ] do
-        Cell [
-            String heading
-            FontEmphasis Bold
-            FontName "Calibri"
-            FontSize 11
-            HorizontalAlignment Center
-            FontColor (XLColor.FromArgb(0, 255, 255, 255))
-            BackgroundColor (XLColor.FromArgb(0, 68, 114, 196))
-            Border (Border.All XLBorderStyleValues.Thin)
-            CellSize (ColWidth colWidth)
-        ]
+[ 
+    Cell [ String "Title Area"; HorizontalAlignment Center ]
+    MergeCells((ColRowLabel("A", 1)), SpanDepth(6, 1))
     Go NewRow
-    Style [ HorizontalAlignment Center
-            VerticalAlignment Middle
-            BackgroundColor (XLColor.FromArgb(0, 240, 240, 210))]
-    Cell [  Integer 1
-            Name "ID" ] 
-    Cell [  String "Ford Fiesta" ]
-    Cell [  String "Car Technical Details:"
-            Next (DownBy 1) ]
-    Cell [  String "Technical Detail 1"
-            Next (DownBy 1) ]
-    Cell [  String "Technical Detail 2"
-            Next (DownBy 1)]
-    Cell [  String "Technical Detail 3"
-            Name "LastL" ]
-    Go (RC (3, 4))
-    Cell [  String "AB12 CDE" 
-            Name "Reg" ]
-    Go (RC (6, 4))
-    Cell [Name "RegEnd"]
-    Go (RC (7, 3))
-    Cell [  String "Another Technical Detail"
-            FontEmphasis Italic
-            Name "TD" 
-            Next Stay]
-    Go (DownBy 1)
-    Cell [ Name "info"]
 
-    // Merging between named and specific cells
-    MergeCells (ColRowLabel ("B", 3), ColRowLabel ("B", 6))
-    MergeCells (NamedCell "ID", ColRowLabel ("A", 6))
-    MergeCells (ColRowLabel ("C", 7), NamedCell "info")
-    MergeCells (NamedCell "Reg", NamedCell "RegEnd") 
-    // Adding a border to merged cells - any original border around a single cell is lost post merging cells
-    BorderMergedCell [ BorderType (Border.All XLBorderStyleValues.Thin)
-                       ColorBorder (BorderColor.All (XLColor.FromArgb(0, 68, 114, 196)))]
+    for c in 1..6 do
+        Cell [ String $"Column {c}" ]
+    Go NewRow
+        
+    for r in 0..4 do
+        for c in 0..5 do
+            Cell [ Integer (r*c)]
+        Go NewRow
+
+    Cell [ String "Footer Area"; HorizontalAlignment Center ]
+    MergeCells((ColRowLabel("A", 8)), SpanDepth(6, 1))
+
+    BorderMergedCell [ 
+        BorderType (Border.All XLBorderStyleValues.Double)
+        ColorBorder (BorderColor.All (XLColor.FromArgb(0, 128, 128, 128)))
+    ]
+
 ]
 |> Render.AsFile (Path.Combine(savePath, "BorderMergedCells.xlsx"))  
 
@@ -188,20 +172,9 @@ open FsExcel
 
 ## Merging Cells and Vertical Alignment
 
-
-**Vertical Alignment** for a given cell can be achieved by using `Vertical Alignment [Base, Middle, TopMost]`.
+**Vertical Alignment** for a given cell can be achieved by using `VerticalAlignment Base|Middle|TopMost`.
 
 Note that when using two `NamedCell` references in a `MergeCells ()` call, the cell names must differ between the first and second cell.  For example the following construct will not result in merged cells (though it does not cause an error):
-
-```fsharp
-[
-    Cell [String "Hello"; Name "name"]
-    Cell [String "Hello2"; Name "name"]
-    MergeCells ((NamedCell "name", NamedCell "name"))
-] 
-```
-
-Merges which lead to a column reference beyond the maximum supported by Excel ("XFD") will result in an `ArgumentException`.
 
 <!-- Test -->
 
