@@ -19,26 +19,13 @@ open System
 open FsExcel 
 open ClosedXML.Excel
 
-type Hours =
-    {
-        ActualHours : float
-        ExpectedHours : float
-        PercentageCalculation : float
-    }
-
-let data =
-    [
-        { ActualHours = 10.0; ExpectedHours = 100.0; PercentageCalculation = 0.0 }
-        { ActualHours = 10.0; ExpectedHours = 9.0; PercentageCalculation = 0.0 }
-    ]
-
 [
-    Table [
-        TableName "Hours"
-        TableItems data
-        ColFormula ("PercentageCalculation", "=[ActualHours]/[ExpectedHours]*100")
-        ColFormatCodes (["ActualHours"; "ExpectedHours"], "0.0")
-        ColFormatCodes (["PercentageCalculation"], "0")
+    Cell [ 
+        String "Hello" 
+        Merge(3, 4)
+        VerticalAlignment Middle
     ]
+    for _ in 0..3 do Go NewRow
+    Cell [ String "I am the next cell" ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

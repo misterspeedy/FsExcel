@@ -78,6 +78,7 @@ type CellProp =
     | Name of string
     | ScopedName of name: string * scope: NameScope
     | CellSize of Size
+    | Merge of colCount: int * rowCount : int
 
 module CellProps =
 
@@ -931,6 +932,13 @@ module Render =
                             cell.WorksheetColumn().Width <- width
                         | RowHeight height ->
                             cell.WorksheetRow().Height <- height
+                    | Merge(cc, rc) ->
+                        let r1 = cell.WorksheetRow().RowNumber()
+                        let r2 = r1 + rc - 1
+                        let c1 = cell.WorksheetColumn().ColumnNumber()
+                        let c2 = c1 + cc - 1
+                        let range = ws.Range(r1, c1, r2, c2) 
+                        range.Merge() |> ignore
             | MergeCells (c1, c2) ->
                 let ws = getCurrentWorksheet()
                 let crToStr (c : string, r : int) = c + string(r)            
