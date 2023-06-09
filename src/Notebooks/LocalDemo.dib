@@ -22,10 +22,21 @@ open ClosedXML.Excel
 [
     Cell [ 
         String "Hello" 
-        Merge(3, 4)
+        Merge(colCount=3, rowCount=4)
         VerticalAlignment Middle
+        HorizontalAlignment Center
+        Border (Border.All XLBorderStyleValues.Medium)
+        BorderColor (BorderColor.All ClosedXML.Excel.XLColor.BlizzardBlue)
+        //
+        FontEmphasis Bold
+        FontEmphasis Italic
     ]
-    for _ in 0..3 do Go NewRow
-    Cell [ String "I am the next cell" ]
+    for _ in 0..5 do 
+        Go (DownBy 1)
+    Cell [ 
+        String "One cell"
+        Border (Border.All XLBorderStyleValues.Thick) 
+        BorderColor (BorderColor.All ClosedXML.Excel.XLColor.Raspberry)
+    ]
 ]
 |> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))

@@ -860,35 +860,71 @@ module Render =
                     | FontSize x ->
                         cell.Style.Font.FontSize <- x
                     | BorderColor bc ->
-                        match bc with
-                        | BorderColor.Top c ->
-                            cell.Style.Border.TopBorderColor <- c
-                        | BorderColor.Right c ->
-                            cell.Style.Border.RightBorderColor <- c
-                        | BorderColor.Bottom c ->
-                            cell.Style.Border.BottomBorderColor <- c
-                        | BorderColor.Left c ->
-                            cell.Style.Border.LeftBorderColor <- c
-                        | BorderColor.All c ->
-                            cell.Style.Border.TopBorderColor <- c
-                            cell.Style.Border.RightBorderColor <- c
-                            cell.Style.Border.BottomBorderColor <- c
-                            cell.Style.Border.LeftBorderColor <- c
+                        if cell.IsMerged() then
+                            let range = cell.MergedRange()
+                            let cells = range.Cells()
+                            match bc with
+                            | BorderColor.Top c ->
+                                cells.Style.Border.TopBorderColor <- c
+                            | BorderColor.Right c ->
+                                cells.Style.Border.RightBorderColor <- c
+                            | BorderColor.Bottom c ->
+                                cells.Style.Border.BottomBorderColor <- c
+                            | BorderColor.Left c ->
+                                cells.Style.Border.LeftBorderColor <- c
+                            | BorderColor.All c ->
+                                cells.Style.Border.TopBorderColor <- c
+                                cells.Style.Border.RightBorderColor <- c
+                                cells.Style.Border.BottomBorderColor <- c
+                                cells.Style.Border.LeftBorderColor <- c
+                        else                    
+                            match bc with
+                                | BorderColor.Top c ->
+                                    cell.Style.Border.TopBorderColor <- c
+                                | BorderColor.Right c ->
+                                    cell.Style.Border.RightBorderColor <- c
+                                | BorderColor.Bottom c ->
+                                    cell.Style.Border.BottomBorderColor <- c
+                                | BorderColor.Left c ->
+                                    cell.Style.Border.LeftBorderColor <- c
+                                | BorderColor.All c ->
+                                    cell.Style.Border.TopBorderColor <- c
+                                    cell.Style.Border.RightBorderColor <- c
+                                    cell.Style.Border.BottomBorderColor <- c
+                                    cell.Style.Border.LeftBorderColor <- c
                     | Border b ->
-                        match b with
-                        | Border.Top style ->
-                            cell.Style.Border.TopBorder <- style
-                        | Border.Right style ->
-                            cell.Style.Border.RightBorder <- style
-                        | Border.Bottom style ->
-                            cell.Style.Border.BottomBorder <- style
-                        | Border.Left style ->
-                            cell.Style.Border.LeftBorder <- style
-                        | Border.All style ->
-                            cell.Style.Border.TopBorder <- style
-                            cell.Style.Border.RightBorder <- style
-                            cell.Style.Border.BottomBorder <- style
-                            cell.Style.Border.LeftBorder <- style
+                        if cell.IsMerged() then
+                            let range = cell.MergedRange()
+                            let cells = range.Cells()
+                            match b with
+                            | Border.Top style ->
+                                cells.Style.Border.TopBorder <- style
+                            | Border.Right style ->
+                                cells.Style.Border.RightBorder <- style
+                            | Border.Bottom style ->
+                                cells.Style.Border.BottomBorder <- style
+                            | Border.Left style ->
+                                cells.Style.Border.LeftBorder <- style
+                            | Border.All style ->
+                                cells.Style.Border.TopBorder <- style
+                                cells.Style.Border.RightBorder <- style
+                                cells.Style.Border.BottomBorder <- style
+                                cells.Style.Border.LeftBorder <- style
+                        else
+                            match b with
+                            | Border.Top style ->
+                                cell.Style.Border.TopBorder <- style
+                            | Border.Right style ->
+                                cell.Style.Border.RightBorder <- style
+                            | Border.Bottom style ->
+                                cell.Style.Border.BottomBorder <- style
+                            | Border.Left style ->
+                                cell.Style.Border.LeftBorder <- style
+                            | Border.All style ->
+                                cell.Style.Border.TopBorder <- style
+                                cell.Style.Border.RightBorder <- style
+                                cell.Style.Border.BottomBorder <- style
+                                cell.Style.Border.LeftBorder <- style
                     | BackgroundColor c ->
                         cell.Style.Fill.BackgroundColor <- c
                     | FontColor c ->
