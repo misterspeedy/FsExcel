@@ -92,18 +92,6 @@ module CellProps =
             | Next _ -> 1
             | _ -> 0)
 
-/// There are three ways to reference a cell. By its label e.g A12 or name e.g. "apple" (if the cell has been previously named) or by a cell's span and depth
-type CellLabel = 
-    /// Column and Row label
-    | ColRowLabel of Col:string * Row:int
-    /// This is used for referencing named cells
-    | NamedCell of string
-    /// This identifies the column span (e.g. 2 columns wide) and row depth (e.g. 3 rows deep) of a merged cell
-    | SpanDepth of ColSpan:int * RowDepth: int
-
-// no need to specify RowMerge (span vertically), ColumnMerge (span horizontally), RowColumnMerge (box)
-// Merge() + range takes care of it, no seperate definitions needed
-
 type AutoFit =
     | All
     | ColRange of int * int
@@ -578,10 +566,6 @@ type AutoFilter =
     /// <param name="column">The column number within the range to be filtered.</param>
     | BelowAverage of range : AutoFilterRange * column : int
 
-type StyleMergedCell =
-    | BorderType of Border
-    | ColorBorder of BorderColor
-
 type TotalsRowItem =
     | Label of string
     | Function of XLTotalsRowFunction
@@ -610,14 +594,12 @@ module TableProperty =
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
-    | BorderMergedCell of borderProps : StyleMergedCell list
     | Go of Position
     | Worksheet of string
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
     | SizeAll of Size 
-    | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
     | Table of TableProperty list
 
@@ -975,39 +957,6 @@ module Render =
                         let c2 = c1 + cc - 1
                         let range = ws.Range(r1, c1, r2, c2) 
                         range.Merge() |> ignore
-            | MergeCells (c1, c2) ->
-                let ws = getCurrentWorksheet()
-                let crToStr (c : string, r : int) = c + string(r)            
-                match c1, c2 with
-                | (ColRowLabel (cSt, rSt), ColRowLabel (cE, rE)) -> 
-                    let range = crToStr (cSt, rSt) + ":" + crToStr (cE, rE)
-                    ws.Range(range).Merge() |> ignore
-                | (ColRowLabel (cSt, rSt), NamedCell cell2) -> 
-                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
-                    ws.Range(range).Merge() |> ignore
-                | (NamedCell cell1, ColRowLabel (cE, rE)) -> 
-                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (cE, rE)
-                    ws.Range(range).Merge() |> ignore 
-                | (NamedCell cell1, NamedCell cell2) ->
-                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
-                    ws.Range(range).Merge() |> ignore
-                | (NamedCell cell1, SpanDepth (colSpan, rowDepth)) ->
-                    let cell = (CellReference.namedCellToCR cell1 ws)
-                    let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (CellReference.spanDepthToCellReference cell colSpan rowDepth)
-                    ws.Range(range).Merge() |> ignore
-                | (ColRowLabel (cSt, rSt), SpanDepth (colSpan, rowDepth)) ->
-                    let range = crToStr (cSt, rSt) + ":" + crToStr (CellReference.spanDepthToCellReference (cSt, rSt) colSpan rowDepth)
-                    ws.Range(range).Merge() |> ignore
-                | (SpanDepth (colSpan, rowDepth), NamedCell cell2) ->
-                    let cell = (CellReference.namedCellToCR cell2 ws)
-                    let range = crToStr (CellReference.cellReverseSpanDepthToCR cell colSpan rowDepth) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
-                    ws.Range(range).Merge() |> ignore
-                | (SpanDepth (colSpan, rowDepth), ColRowLabel (cE, rE)) ->
-                    let range = crToStr (CellReference.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
-                    ws.Range(range).Merge() |> ignore
-                | (SpanDepth (span, depth), SpanDepth (colSpan, rowDepth)) ->
-                    ws |> ignore // ignore this case: cannot merge between two arbitary 
-                // TODO: ideally, want to ignore the incomplete pattern match altogether to prevent user trying this option
 
             | AutoFit af ->
                 let ws = getCurrentWorksheet()
@@ -1033,46 +982,9 @@ module Render =
                     ws.Rows().Height <- height
             | Style s ->
                 style <- s
-            | BorderMergedCell style ->
-                let ws = getCurrentWorksheet()
-                for borderStyle in style do
-                    match borderStyle with
-                    | BorderType borderstyle ->
-                        match borderstyle with
-                            | Border.Top style ->
-                                ws.Cells().Style.Border.TopBorder <- style
-                            | Border.Right style ->
-                                ws.Cells().Style.Border.RightBorder <- style
-                            | Border.Bottom style ->
-                                ws.Cells().Style.Border.BottomBorder <- style
-                            | Border.Left style ->
-                                ws.Cells().Style.Border.LeftBorder <- style
-                            | Border.All style ->
-                                ws.Cells().Style.Border.TopBorder <- style
-                                ws.Cells().Style.Border.RightBorder <- style
-                                ws.Cells().Style.Border.BottomBorder <- style
-                                ws.Cells().Style.Border.LeftBorder <- style
-                    | ColorBorder bordercolour ->
-                        match bordercolour with
-                            | BorderColor.Top c ->
-                                ws.Cells().Style.Border.TopBorderColor <- c
-                            | BorderColor.Right c ->
-                                ws.Cells().Style.Border.RightBorderColor <- c
-                            | BorderColor.Bottom c ->
-                                ws.Cells().Style.Border.BottomBorderColor <- c
-                            | BorderColor.Left c ->
-                                ws.Cells().Style.Border.LeftBorderColor <- c
-                            | BorderColor.All c ->
-                                ws.Cells().Style.Border.TopBorderColor <- c
-                                ws.Cells().Style.Border.RightBorderColor <- c
-                                ws.Cells().Style.Border.BottomBorderColor <- c
-                                ws.Cells().Style.Border.LeftBorderColor <- c
-            
             | AutoFilter autoFilter ->
                 let ws = getCurrentWorksheet()
-
                 processAutoFilter ws autoFilter
-
             | Table properties ->
                 // TODO does this have to be repeated so much?:
                 let ws = getCurrentWorksheet()
