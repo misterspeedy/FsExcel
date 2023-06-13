@@ -603,6 +603,19 @@ type Item =
     | AutoFilter of AutoFilter list
     | Table of TableProperty list
 
+type CellMergeRange =
+    | Unmerged of cell:IXLCell
+    | Merged of cells:IXLCells
+
+module CellMergeRange =
+
+    let fromCell (cell : IXLCell) = 
+        if cell.IsMerged() then
+            let range = cell.MergedRange()
+            range.Cells() |> Merged
+        else
+            cell |> Unmerged
+
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
     let AsWorkBook (items : Item list) =
@@ -842,9 +855,23 @@ module Render =
                     | FontSize x ->
                         cell.Style.Font.FontSize <- x
                     | BorderColor bc ->
-                        if cell.IsMerged() then
-                            let range = cell.MergedRange()
-                            let cells = range.Cells()
+                        match cell |> CellMergeRange.fromCell with
+                        | Unmerged oneCell ->
+                            match bc with
+                                | BorderColor.Top c ->
+                                    oneCell.Style.Border.TopBorderColor <- c
+                                | BorderColor.Right c ->
+                                    oneCell.Style.Border.RightBorderColor <- c
+                                | BorderColor.Bottom c ->
+                                    oneCell.Style.Border.BottomBorderColor <- c
+                                | BorderColor.Left c ->
+                                    oneCell.Style.Border.LeftBorderColor <- c
+                                | BorderColor.All c ->
+                                    oneCell.Style.Border.TopBorderColor <- c
+                                    oneCell.Style.Border.RightBorderColor <- c
+                                    oneCell.Style.Border.BottomBorderColor <- c
+                                    oneCell.Style.Border.LeftBorderColor <- c
+                        | Merged cells ->
                             match bc with
                             | BorderColor.Top c ->
                                 cells.Style.Border.TopBorderColor <- c
@@ -859,25 +886,24 @@ module Render =
                                 cells.Style.Border.RightBorderColor <- c
                                 cells.Style.Border.BottomBorderColor <- c
                                 cells.Style.Border.LeftBorderColor <- c
-                        else                    
-                            match bc with
-                                | BorderColor.Top c ->
-                                    cell.Style.Border.TopBorderColor <- c
-                                | BorderColor.Right c ->
-                                    cell.Style.Border.RightBorderColor <- c
-                                | BorderColor.Bottom c ->
-                                    cell.Style.Border.BottomBorderColor <- c
-                                | BorderColor.Left c ->
-                                    cell.Style.Border.LeftBorderColor <- c
-                                | BorderColor.All c ->
-                                    cell.Style.Border.TopBorderColor <- c
-                                    cell.Style.Border.RightBorderColor <- c
-                                    cell.Style.Border.BottomBorderColor <- c
-                                    cell.Style.Border.LeftBorderColor <- c
                     | Border b ->
-                        if cell.IsMerged() then
-                            let range = cell.MergedRange()
-                            let cells = range.Cells()
+                        match cell |> CellMergeRange.fromCell with
+                        | Unmerged oneCell ->
+                            match b with
+                            | Border.Top style ->
+                                oneCell.Style.Border.TopBorder <- style
+                            | Border.Right style ->
+                                oneCell.Style.Border.RightBorder <- style
+                            | Border.Bottom style ->
+                                oneCell.Style.Border.BottomBorder <- style
+                            | Border.Left style ->
+                                oneCell.Style.Border.LeftBorder <- style
+                            | Border.All style ->
+                                oneCell.Style.Border.TopBorder <- style
+                                oneCell.Style.Border.RightBorder <- style
+                                oneCell.Style.Border.BottomBorder <- style
+                                oneCell.Style.Border.LeftBorder <- style
+                        | Merged cells ->
                             match b with
                             | Border.Top style ->
                                 cells.Style.Border.TopBorder <- style
@@ -892,21 +918,6 @@ module Render =
                                 cells.Style.Border.RightBorder <- style
                                 cells.Style.Border.BottomBorder <- style
                                 cells.Style.Border.LeftBorder <- style
-                        else
-                            match b with
-                            | Border.Top style ->
-                                cell.Style.Border.TopBorder <- style
-                            | Border.Right style ->
-                                cell.Style.Border.RightBorder <- style
-                            | Border.Bottom style ->
-                                cell.Style.Border.BottomBorder <- style
-                            | Border.Left style ->
-                                cell.Style.Border.LeftBorder <- style
-                            | Border.All style ->
-                                cell.Style.Border.TopBorder <- style
-                                cell.Style.Border.RightBorder <- style
-                                cell.Style.Border.BottomBorder <- style
-                                cell.Style.Border.LeftBorder <- style
                     | BackgroundColor c ->
                         cell.Style.Fill.BackgroundColor <- c
                     | FontColor c ->
