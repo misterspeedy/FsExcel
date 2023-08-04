@@ -12,17 +12,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: |
+          6.0.x
+          7.0.x
     - name: Restore dependencies
-      run: dotnet restore src/FsExcel
+      run: dotnet restore
+      working-directory: src
     - name: Build
-      run: dotnet build --no-restore src/FsExcel
+      run: dotnet build --no-restore
+      working-directory: src
+    - name: Dib to Markdown
+      run: dotnet fsi DibToMarkdown.fsx
+      working-directory: src/Scripts
+    - name: Dib to scripts
+      run: dotnet fsi DibToActualsScript.fsx
+      working-directory: src/Scripts
+    - name: Create regression
+      run: dotnet fsi CreateRegressionTestActuals.fsx
+      working-directory: src/Scripts
     - name: Test
-      run: dotnet test --no-build --verbosity normal src/FsExcel
+      run: dotnet test --verbosity normal
+      working-directory: src
     - name: Publish FsExcel
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
