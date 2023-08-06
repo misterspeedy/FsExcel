@@ -8,9 +8,10 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -38,6 +39,7 @@ jobs:
       run: dotnet test --verbosity normal
       working-directory: src
     - name: Publish FsExcel
+      if: matrix.os == 'ubuntu-latest'
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
           PROJECT_FILE_PATH: src/FsExcel/FsExcel.fsproj
