@@ -5,7 +5,7 @@ open System.IO
 open Xunit
 open FsExcel
 
-let tempPath = "/temp"
+let tempPath = __SOURCE_DIRECTORY__ + "/temp"
 
 [<Fact>]
 let ``Volume test 1`` () =
