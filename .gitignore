@@ -4,3 +4,4 @@ bin/
 .fake
 src/Tests/RegressionTests/Actual
 .vs
+src/Tests/VolumeTests/temp
