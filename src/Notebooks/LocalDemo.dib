@@ -20,23 +20,23 @@ open FsExcel
 open ClosedXML.Excel
 
 [
+    Cell [ String "Ordinary cell above" ]
+    Go NewRow
     Cell [ 
-        String "Hello" 
-        Merge(colCount=3, rowCount=4)
+        String "Merged cell 3 cols x 4 rows" 
+        Merge(3, 4)
         VerticalAlignment Middle
         HorizontalAlignment Center
-        Border (Border.All XLBorderStyleValues.Medium)
-        BorderColor (BorderColor.All ClosedXML.Excel.XLColor.BlizzardBlue)
-        //
         FontEmphasis Bold
         FontEmphasis Italic
+        Border (Border.All XLBorderStyleValues.Thick)
+        BorderColor (BorderColor.All ClosedXML.Excel.XLColor.Red)
     ]
-    for _ in 0..5 do 
-        Go (DownBy 1)
-    Cell [ 
-        String "One cell"
-        Border (Border.All XLBorderStyleValues.Thick) 
-        BorderColor (BorderColor.All ClosedXML.Excel.XLColor.Raspberry)
-    ]
+    Go (Indent 4)
+    for i in 0..3 do
+        Cell [ String $"Ordinary cell {i}" ]
+        Go NewRow
+    Go (Indent 1)
+    Cell [ String "Ordinary cell below" ] 
 ]
-|> Render.AsFile (System.IO.Path.Combine(savePath, "LocalDemo.xlsx"))
+|> Render.AsFile (System.IO.Path.Combine(savePath, "MergedCells.xlsx"))
