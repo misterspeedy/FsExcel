@@ -154,30 +154,6 @@ module Test8 =
 module Test9 =
     
     open System.IO
-    open System.Globalization
-    open FsExcel
-    open ClosedXML.Excel
-    
-    let fontNames = 
-        SixLabors.Fonts.SystemFonts.Collection.Families
-        |> Seq.map (fun font -> font.Name)
-        |> Seq.sort
-        |> Seq.truncate 20
-    
-    [
-        for i, fontName in fontNames |> Seq.indexed do
-            Cell [
-                String fontName
-                FontName fontName
-                FontSize (10 + (i * 2) |> float)
-            ]
-            Go NewRow
-    ]
-    |> Render.AsFile (Path.Combine(savePath, "FontNameSize.xlsx"))
-    
-module Test10 =
-    
-    open System.IO
     open FsExcel
     open ClosedXML.Excel
     
@@ -201,7 +177,7 @@ module Test10 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WrapText.xlsx"))
     
-module Test11 =
+module Test10 =
     
     open System
     open FsExcel
@@ -240,7 +216,7 @@ module Test11 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "TextRotation.xlsx"))
     
-module Test12 =
+module Test11 =
     
     open System
     open System.IO
@@ -289,7 +265,7 @@ module Test12 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NumberFormatAndAlignment.xlsx"))
     
-module Test13 =
+module Test12 =
     
     open System
     open System.IO
@@ -342,7 +318,7 @@ module Test13 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Formulae.xlsx"))
     
-module Test14 =
+module Test13 =
     
     open System.IO
     open FsExcel
@@ -375,7 +351,7 @@ module Test14 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Color.xlsx"))
     
-module Test15 =
+module Test14 =
     
     open System
     open System.IO
@@ -420,7 +396,7 @@ module Test15 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "RangeStyle.xlsx"))
     
-module Test16 =
+module Test15 =
     
     open System.IO
     open System
@@ -478,7 +454,7 @@ module Test16 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "BorderMergedCells.xlsx"))  
     
-module Test17 =
+module Test16 =
     
     open System.IO
     open FsExcel
@@ -495,7 +471,7 @@ module Test17 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AbsolutePositioning.xlsx"))
     
-module Test18 =
+module Test17 =
     
     open System.IO
     open FsExcel
@@ -510,7 +486,7 @@ module Test18 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Stay.xlsx"))
     
-module Test19 =
+module Test18 =
     
     open System.IO
     open FsExcel
@@ -525,7 +501,7 @@ module Test19 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "NamedCells.xlsx"))
     
-module Test20 =
+module Test19 =
     
     open System.IO
     open FsExcel
@@ -582,7 +558,7 @@ module Test20 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "Worksheets.xlsx"))
     
-module Test21 =
+module Test20 =
     
     open System.IO
     open ClosedXML.Excel
@@ -609,7 +585,7 @@ module Test21 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "WorksheetsRevised.xlsx"))
     
-module Test22 =
+module Test21 =
     
     open System.IO
     open System.Globalization
@@ -626,7 +602,7 @@ module Test22 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "ColumnWidthRowHeight.xlsx"))
     
-module Test23 =
+module Test22 =
     
     open System.IO
     open System
@@ -656,7 +632,7 @@ module Test23 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "IndividualCellSize.xlsx"))
     
-module Test24 =
+module Test23 =
     
     open System.IO
     open System.Globalization
@@ -692,7 +668,7 @@ module Test24 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "AutosizeColumns.xlsx"))
     
-module Test25 =
+module Test24 =
     
     open System.IO
     open System
@@ -795,7 +771,7 @@ module Test25 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "MergeCellsWithVerticalAlignment.xlsx"))
     
-module Test26 =
+module Test25 =
     
     open System
     open System.IO
@@ -859,7 +835,7 @@ module Test26 =
         |> fun cells -> cells @ [ AutoFit All ]
         |> Render.AsFile (Path.Combine(savePath, "RecordInstanceHorizontal.xlsx")))
     
-module Test27 =
+module Test26 =
     
     open System
     open System.IO
@@ -884,7 +860,7 @@ module Test27 =
     ]
     |> Render.AsFile (Path.Combine(savePath, "DataTypes.xlsx"))
     
-module Test28 =
+module Test27 =
     
     open System
     open System.IO
@@ -913,7 +889,7 @@ module Test28 =
     headings @ rows @ [ AutoFit All; AutoFilter [ EnableOnly RangeUsed ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterEnableOnly.xlsx"))
     
-module Test29 =
+module Test28 =
     
     open System
     open System.IO
@@ -943,7 +919,7 @@ module Test29 =
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
     
 [<AutoOpen>]
-module Test30 =
+module Test29 =
     
     #r "nuget: ClosedXML"
     
@@ -1010,7 +986,7 @@ module Test30 =
         
     let yearStatsRecords = yearStats |> YearStats.fromValues
     
-module Test31 =
+module Test30 =
     
     open System.IO
     open FsExcel
@@ -1034,7 +1010,7 @@ module Test31 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableSimple.xlsx"))
     
-module Test32 =
+module Test31 =
     
     open System.IO
     open FsExcel
@@ -1056,7 +1032,7 @@ module Test32 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableTotals.xlsx"))
     
-module Test33 =
+module Test32 =
     
     open System.IO
     open FsExcel
@@ -1082,7 +1058,7 @@ module Test33 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormat.xlsx"))
     
-module Test34 =
+module Test33 =
     
     open System.IO
     open FsExcel
@@ -1145,7 +1121,7 @@ module Test34 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormulae.xlsx"))
     
-module Test35 =
+module Test34 =
     
     open System.IO
     open FsExcel
@@ -1179,7 +1155,7 @@ module Test35 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableClass.xlsx"))
     
-module Test36 =
+module Test35 =
     
     open System.IO
     open FsExcel
@@ -1204,7 +1180,7 @@ module Test36 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
     
-module Test37 =
+module Test36 =
     
     open System.IO
     open FsExcel
