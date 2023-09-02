@@ -272,8 +272,6 @@ let headingStyle =
 
 You can set the font name using `FontName` and the size using `FontSize`:
 
-<!-- Test -->
-
 ```fsharp
 open System.IO
 open System.Globalization

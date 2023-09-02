@@ -1,4 +1,5 @@
 {
     "task.allowAutomaticTasks": "on",
-    "editor.inlayHints.enabled": "offUnlessPressed"
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "dotnet.defaultSolution": "src/FsExcel.sln"
 }
