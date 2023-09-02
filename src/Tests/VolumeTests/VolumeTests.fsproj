@@ -4,7 +4,9 @@
     <TargetFrameworks>net6;net481</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>net6</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Tests.fs" />
   </ItemGroup>

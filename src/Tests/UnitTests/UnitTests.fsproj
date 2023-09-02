@@ -4,7 +4,9 @@
     <TargetFrameworks>net7;net481</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>net7</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="CellReferenceTests.fs" />
   </ItemGroup>
