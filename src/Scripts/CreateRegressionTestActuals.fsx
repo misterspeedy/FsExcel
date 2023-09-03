@@ -1,5 +1,5 @@
 #r "nuget: ClosedXML"
-#r "../FsExcel/bin/Debug/netstandard2.1/FsExcel.dll"
+#r "../FsExcel/bin/Debug/netstandard2.0/FsExcel.dll"
 let savePath = __SOURCE_DIRECTORY__ + "/../Tests/RegressionTests/Actual"
 module Test1 =
     
