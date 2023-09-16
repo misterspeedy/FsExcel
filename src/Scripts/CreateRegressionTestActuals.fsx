@@ -918,8 +918,124 @@ module Test28 =
     headings @ rows @ [ AutoFit All; AutoFilter [ GreaterThanInt (RangeUsed, 2, 3); EqualToBool (RangeUsed, 5, true) ] ]
     |> Render.AsFile (Path.Combine(savePath, "AutoFilterCompound.xlsx"))
     
-[<AutoOpen>]
 module Test29 =
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; FreezePanes (Panes (1, 1)) ]
+    |> Render.AsFile (Path.Combine(savePath, "FreezePanes.xlsx"))
+    
+module Test30 =
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; FreezePanes TopRow ]
+    |> Render.AsFile (Path.Combine(savePath, "FreezePanesTopRow.xlsx"))
+    
+module Test31 =
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; FreezePanes FirstColumn ]
+    |> Render.AsFile (Path.Combine(savePath, "FreezePanesFirstColumn.xlsx"))
+    
+module Test32 =
+    
+    open System
+    open System.IO
+    open FsExcel
+    
+    let headings =
+        [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+          Cell [ String "IntCol"; HorizontalAlignment Center ]
+          Cell [ String "FloatCol"; HorizontalAlignment Center ]
+          Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+          Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+          Go NewRow ]
+    
+    let rows =
+        [ 1 .. 5 ]
+        |> Seq.map(fun i ->
+            [ Cell [ String $"String{i}" ]
+              Cell [ Integer i ]
+              Cell [ Float ((i |> float) + 0.1) ]
+              Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+              Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+              Go NewRow ])
+        |> Seq.collect id
+        |> List.ofSeq
+    
+    headings @ rows @ [ AutoFit All; FreezePanes TopRow; FreezePanes UnfreezePanes ]
+    |> Render.AsFile (Path.Combine(savePath, "FreezePanesUnfreezePanes.xlsx"))
+    
+[<AutoOpen>]
+module Test33 =
     
     #r "nuget: ClosedXML"
     
@@ -986,7 +1102,7 @@ module Test29 =
         
     let yearStatsRecords = yearStats |> YearStats.fromValues
     
-module Test30 =
+module Test34 =
     
     open System.IO
     open FsExcel
@@ -1010,7 +1126,7 @@ module Test30 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableSimple.xlsx"))
     
-module Test31 =
+module Test35 =
     
     open System.IO
     open FsExcel
@@ -1032,7 +1148,7 @@ module Test31 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableTotals.xlsx"))
     
-module Test32 =
+module Test36 =
     
     open System.IO
     open FsExcel
@@ -1058,7 +1174,7 @@ module Test32 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormat.xlsx"))
     
-module Test33 =
+module Test37 =
     
     open System.IO
     open FsExcel
@@ -1121,7 +1237,7 @@ module Test33 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableColumnFormulae.xlsx"))
     
-module Test34 =
+module Test38 =
     
     open System.IO
     open FsExcel
@@ -1155,7 +1271,7 @@ module Test34 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableClass.xlsx"))
     
-module Test35 =
+module Test39 =
     
     open System.IO
     open FsExcel
@@ -1180,7 +1296,7 @@ module Test35 =
     ]
     |> Render.AsFile (System.IO.Path.Combine(savePath, "ExcelTableStyle.xlsx"))
     
-module Test36 =
+module Test40 =
     
     open System.IO
     open FsExcel

@@ -1754,6 +1754,195 @@ AutoFilter applied:
 
 #!markdown
 
+## Freeze Panes
+
+You can `Freeze Panes` for a WorkSheet.
+
+* [Freeze Panes](#freeze-panes)
+* [Freeze Top Row](#freeze-top-row)
+* [Freeze First Column](#freeze-first-column)
+* [Unfreeze Columns](#unfreeze-panes)
+
+> Note: There is an issue with `Freeze Panes`. If it is disabled in Excel `Split` is left enabled. If you disable `Freeze Panes` in Excel, you will also have to disable `Split`.
+
+> `ClosedXml` issue: [Distorted Header when Scrolling](https://github.com/ClosedXML/ClosedXML/issues/1681#issuecomment-1129045199)
+
+
+### Freeze Panes
+
+In the example below cell `B2` is selected. `Freeze Panes` is set to `Freeze Panes`.
+<!-- Test -->
+
+#!fsharp
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; FreezePanes (Panes (1, 1)) ]
+|> Render.AsFile (Path.Combine(savePath, "FreezePanes.xlsx"))
+
+#!markdown
+
+Cursor at `B2` > `Freeze Panes`:
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FreezePanes.PNG?raw=true"
+     alt="Freeze Panes Freeze Panes example"
+     style="width: 384;" />
+
+### Freeze Top Row
+
+In the example below `Freeze Panes` is set to `Freeze Top Row`.
+<!-- Test -->
+
+#!fsharp
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; FreezePanes TopRow ]
+|> Render.AsFile (Path.Combine(savePath, "FreezePanesTopRow.xlsx"))
+
+#!markdown
+
+`Freeze Panes` >  `Freeze Top Row`:
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FreezePanesTopRow.PNG?raw=true"
+     alt="Freeze Panes Freeze Top Row example"
+     style="width: 386;" />
+
+
+### Freeze First Column
+
+In the example below `Freeze Panes` is set to `Freeze First Column`.
+<!-- Test -->
+
+#!fsharp
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; FreezePanes FirstColumn ]
+|> Render.AsFile (Path.Combine(savePath, "FreezePanesFirstColumn.xlsx"))
+
+#!markdown
+
+`Freeze Panes` > `Freeze First Column`:
+
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FreezePanesFirstColumn.PNG?raw=true"
+     alt="Freeze Panes > Freeze First Column example"
+     style="width: 388;" />
+
+
+### Unfreeze Panes
+
+In the example below `Freeze Panes` is set to `Unfreeze Panes`.
+
+> Not that in the code below I first `Freeze Panes` prior to unfreezing them. This is for demonstration purposes only.
+<!-- Test -->
+
+#!fsharp
+
+open System
+open System.IO
+open FsExcel
+
+let headings =
+    [ Cell [ String "StringCol"; HorizontalAlignment Center ]
+      Cell [ String "IntCol"; HorizontalAlignment Center ]
+      Cell [ String "FloatCol"; HorizontalAlignment Center ]
+      Cell [ String "DateTimeCol"; HorizontalAlignment Center ]
+      Cell [ String "BooleanCol"; HorizontalAlignment Center ]
+      Go NewRow ]
+
+let rows =
+    [ 1 .. 5 ]
+    |> Seq.map(fun i ->
+        [ Cell [ String $"String{i}" ]
+          Cell [ Integer i ]
+          Cell [ Float ((i |> float) + 0.1) ]
+          Cell [ DateTime (DateTime.Parse("15-July-2017 05:33:00").AddMinutes(i)) ]
+          Cell [ Boolean (i % 2 |> Convert.ToBoolean) ]
+          Go NewRow ])
+    |> Seq.collect id
+    |> List.ofSeq
+
+headings @ rows @ [ AutoFit All; FreezePanes TopRow; FreezePanes UnfreezePanes ]
+|> Render.AsFile (Path.Combine(savePath, "FreezePanesUnfreezePanes.xlsx"))
+
+#!markdown
+
+`Freeze Panes` > `Unfreeze Panes`:
+
+<img src="https://github.com/misterspeedy/FsExcel/blob/main/assets/FreezePanesUnfreeze.PNG?raw=true"
+     alt="Freeze Panes > Unfreeze Panes example"
+     style="width: 376;" />
+
+#!markdown
+
 ## Excel Tables
 
 To create [Excel Tables](https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c), see the separate [Excel Table Tutorial](https://github.com/misterspeedy/FsExcel/blob/main/ExcelTableTutorial.md).
