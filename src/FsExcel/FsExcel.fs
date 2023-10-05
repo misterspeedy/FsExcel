@@ -92,7 +92,7 @@ module CellProps =
             | _ -> 0)
 
 /// There are three ways to reference a cell. By its label e.g A12 or name e.g. "apple" (if the cell has been previously named) or by a cell's span and depth
-type CellLabel = 
+type CellLabel =
     /// Column and Row label
     | ColRowLabel of Col:string * Row:int
     /// This is used for referencing named cells
@@ -590,7 +590,7 @@ type TotalsRowItem =
 type TableProperty =
     | TableName of string
     | Items of obj list
-    | Theme of XLTableTheme 
+    | Theme of XLTableTheme
     | ShowHeaderRow of bool
     | ShowRowStripes of bool
     | ShowColumnStripes of bool
@@ -606,6 +606,12 @@ module TableProperty =
     let TableItems<'T> (items :'T list) =
         items |> List.map box |> TableProperty.Items
 
+type FreezePanes =
+    | TopRow
+    | FirstColumn
+    | Panes of row : int * column : int
+    | UnfreezePanes
+
 type Item =
     | Cell of props : CellProp list
     | Style of props : CellProp list
@@ -615,10 +621,11 @@ type Item =
     | AutoFit of AutoFit
     | Workbook of XLWorkbook
     | InsertRowsAbove of int
-    | SizeAll of Size 
+    | SizeAll of Size
     | MergeCells of c1:CellLabel * c2:CellLabel
     | AutoFilter of AutoFilter list
     | Table of TableProperty list
+    | FreezePanes of FreezePanes
 
 module Render =
     /// Renders the provided items and returns a ClosedXml XLWorkbook instance.
@@ -895,8 +902,8 @@ module Render =
                     | HorizontalAlignment h ->
                         match h with
                         | Left ->
-                            cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Left                        
-                        | Center -> 
+                            cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Left
+                        | Center ->
                             cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Center
                         | Right ->
                             cell.Style.Alignment.Horizontal <- XLAlignmentHorizontalValues.Right
@@ -933,17 +940,17 @@ module Render =
                             cell.WorksheetRow().Height <- height
             | MergeCells (c1, c2) ->
                 let ws = getCurrentWorksheet()
-                let crToStr (c : string, r : int) = c + string(r)            
+                let crToStr (c : string, r : int) = c + string(r)
                 match c1, c2 with
-                | (ColRowLabel (cSt, rSt), ColRowLabel (cE, rE)) -> 
+                | (ColRowLabel (cSt, rSt), ColRowLabel (cE, rE)) ->
                     let range = crToStr (cSt, rSt) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore
-                | (ColRowLabel (cSt, rSt), NamedCell cell2) -> 
+                | (ColRowLabel (cSt, rSt), NamedCell cell2) ->
                     let range = crToStr (cSt, rSt) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
                     ws.Range(range).Merge() |> ignore
-                | (NamedCell cell1, ColRowLabel (cE, rE)) -> 
+                | (NamedCell cell1, ColRowLabel (cE, rE)) ->
                     let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (cE, rE)
-                    ws.Range(range).Merge() |> ignore 
+                    ws.Range(range).Merge() |> ignore
                 | (NamedCell cell1, NamedCell cell2) ->
                     let range = crToStr (CellReference.namedCellToCR cell1 ws) + ":" + crToStr (CellReference.namedCellToCR cell2 ws)
                     ws.Range(range).Merge() |> ignore
@@ -962,7 +969,7 @@ module Render =
                     let range = crToStr (CellReference.cellReverseSpanDepthToCR (cE, rE) colSpan rowDepth) + ":" + crToStr (cE, rE)
                     ws.Range(range).Merge() |> ignore
                 | (SpanDepth (span, depth), SpanDepth (colSpan, rowDepth)) ->
-                    ws |> ignore // ignore this case: cannot merge between two arbitary 
+                    ws |> ignore // ignore this case: cannot merge between two arbitary
                 // TODO: ideally, want to ignore the incomplete pattern match altogether to prevent user trying this option
 
             | AutoFit af ->
@@ -1023,7 +1030,7 @@ module Render =
                                 ws.Cells().Style.Border.RightBorderColor <- c
                                 ws.Cells().Style.Border.BottomBorderColor <- c
                                 ws.Cells().Style.Border.LeftBorderColor <- c
-            
+
             | AutoFilter autoFilter ->
                 let ws = getCurrentWorksheet()
 
@@ -1054,9 +1061,9 @@ module Render =
                     | TableName _
                     | Items _ ->
                         ()
-                    | Theme theme -> 
+                    | Theme theme ->
                         table.Theme <- theme
-                    | ShowHeaderRow b -> 
+                    | ShowHeaderRow b ->
                         table.ShowHeaderRow <- b
                     | Totals(names, totalItem) ->
 
@@ -1065,7 +1072,7 @@ module Render =
                             table.ShowTotalsRow <- includesTotalsRow
                             let field = table.Field(name)
                             match totalItem with
-                            | Label label -> 
+                            | Label label ->
                                 field.TotalsRowLabel <- label
                             | Function f ->
                                 field.TotalsRowFunction <- f
@@ -1082,17 +1089,30 @@ module Render =
                         let field = table.Field(name)
                         field.DataCells
                         |> Seq.iter (fun cell -> cell.FormulaA1 <- formula)
-                    | ShowRowStripes b -> 
+                    | ShowRowStripes b ->
                         table.ShowRowStripes <- b
-                    | ShowColumnStripes b -> 
+                    | ShowColumnStripes b ->
                         table.ShowColumnStripes <- b
-                    | EmphasizeFirstColumn b -> 
+                    | EmphasizeFirstColumn b ->
                         table.EmphasizeFirstColumn <- b
-                    | EmphasizeLastColumn b -> 
+                    | EmphasizeLastColumn b ->
                         table.EmphasizeLastColumn <- b
                     | ShowAutoFilter b -> table.ShowAutoFilter <- b)
 
                 r <- r + items.Length + if includesTotalsRow then 2 else 1
+
+            | FreezePanes freezePanes ->
+                let ws = getCurrentWorksheet()
+
+                match freezePanes with
+                | TopRow ->
+                    ws.SheetView.FreezeRows(1)
+                | FirstColumn ->
+                    ws.SheetView.FreezeColumns(1)
+                | Panes (row, column) ->
+                    ws.SheetView.Freeze(row, column)
+                | UnfreezePanes ->
+                    ws.SheetView.Freeze(0, 0)
 
         wb
 
